@@ -17,8 +17,7 @@
   --arc-base: 15%;
   --arc-spread: 260%;
   --rect-scale: 0.95;
-  --duration: 3s; // time for one rectangle to cross the screen
-  --duration: 3s;
+  --duration: 5s; // time for one rectangle to cross the screen
   --stagger: calc(var(--duration) / var(--count)); // evenly spaced, seamless loop
 }
 

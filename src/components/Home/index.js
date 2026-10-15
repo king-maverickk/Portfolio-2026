@@ -4,10 +4,10 @@ import cn from 'classnames';
 
 import DotGrid from 'components/DotGrid';
 import styles from './index.module.scss';
+
 const COLORS = [
   '#FF5A5F', '#FF9F1C', '#FFD23F', '#A7C957',
-  '#2EC4B6', '#3A86FF', '#5E60CE', '#9D4EDD',
-  '#F72585', '#FB6F92', '#06D6A0', '#118AB2'
+  '#2EC4B6', '#3A86FF'
 ];
 
 function Home(props) {
