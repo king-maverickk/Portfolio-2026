@@ -1,8 +1,9 @@
 @use "../utils" as *;
 @use "../global" as *;
 
-// Lets CSS animate --p smoothly (0 = at the originLine)
-@property --p {
+// --t is the only animated value: 0 → 1 over one full cycle of one rectangle.
+// Position, width and height are all derived from it.
+@property --t {
   syntax: '<number>';
   inherits: false;
   initial-value: 0;
@@ -16,15 +17,19 @@
 
   --arc-base: 15%;
   --arc-spread: 260%;
-  --rect-scale: 0.95;
-  --duration: 5s; // time for one rectangle to cross the screen
-  --stagger: calc(var(--duration) / var(--count)); // evenly spaced, seamless loop
-}
+  --rect-scale: 0.95; // final height, as a fraction of the arc gap
+  --rect-start: 0.5;  // height when born, as a fraction of the arc gap
+  --duration: 5s;     // time for one rectangle to cross the screen (same meaning as before)
 
-// End value (0.5) is how far the rectangles slide, as a fraction of section width
+  // --count rects per side = (--count - 1) full-size slots + 1 that's emerging
+  --w: calc(0.5 / (var(--count) - 1)); // one slot's width, as a fraction of section width
+  --cycle: calc(var(--duration) * var(--count) / (var(--count) - 1));
+  --stagger: calc(var(--cycle) / var(--count));
+} 
+
 @keyframes rectSlide {
-  from { --p: 0;   z-index: 0; }
-  to   { --p: 0.5; z-index: 100; }
+  from { --t: 0; z-index: 0; }
+  to   { --t: 1; z-index: 100; }
 }
 
 .line {
@@ -72,25 +77,37 @@
 }
 
 .rect {
-  --p: 0.15; // final state if the animation is off
+  // Static pose when the animation is off (reduced motion): evenly tiled
+  --t: calc(var(--i, 0) / var(--count));
+
+  // Inner-edge position as a fraction of section width.
+  // -w = fully tucked behind the originLine, 0 = finished emerging, 0.5 = off-screen
+  --p: calc(var(--t) * (0.5 + var(--w)) - var(--w));
+
+  --edge: max(var(--p), 0); // visible inner edge, pinned to the originLine while emerging
+  --emerge: min(1, (var(--p) + var(--w)) / var(--w)); // 0 → 1 while emerging, then stays 1
+  --scale: calc(var(--rect-start) + (var(--rect-scale) - var(--rect-start)) * var(--emerge));
+  --gap: calc(var(--arc-base) + var(--arc-spread) * var(--edge) * var(--edge));
+  --width: calc((var(--w) + min(var(--p), 0)) * 100%); // grows 0 → one slot while emerging
 
   position: absolute;
   top: 50%;
-  height: calc((var(--arc-base) + var(--arc-spread) * var(--p) * var(--p)) * var(--rect-scale));
-  aspect-ratio: 16 / 10;
+  width: var(--width);
+  height: calc(var(--gap) * var(--scale));
   transform: translateY(-50%);
   background: var(--color, #fff);
   border: 1px solid #111;
   box-sizing: border-box;
   pointer-events: none;
-  animation: rectSlide var(--duration) linear calc(var(--i, 0) * var(--stagger) * -1) infinite;
+  animation: rectSlide var(--cycle) linear calc(var(--i, 0) * var(--stagger) * -1) infinite;
 }
+
 .rectLeft {
-  right: calc(50% + var(--p) * 100%);
+  right: calc(50% + var(--edge) * 100%);
 }
 
 .rectRight {
-  left: calc(50% + var(--p) * 100%);
+  left: calc(50% + var(--edge) * 100%);
 }
 
 .content {
