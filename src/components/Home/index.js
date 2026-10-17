@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import cn from 'classnames';
 
 import DotGrid from 'components/DotGrid';
+import ProjectStages from 'components/ProjectStages';
+import homeProject from 'components/ProjectStages/projectStages';
 import styles from './index.module.scss';
 
 const COLORS = [
@@ -14,6 +16,7 @@ function Home(props) {
   const shift = Math.floor(COLORS.length / 2);
 
   return (
+    <>
     <div
       className={cn(styles.root, props.className, 'home')}
       style={{ '--count': COLORS.length }}
@@ -82,6 +85,8 @@ function Home(props) {
         </section>
       </div>
     </div>
+    <ProjectStages project={homeProject} />
+    </>
   );
 }
 
