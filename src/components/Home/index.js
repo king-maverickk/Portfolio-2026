@@ -61,7 +61,7 @@ function Home(props) {
       <div className={styles.content}>
         <section className={styles.heroCopy} aria-label="Introduction">
           <h1 className={styles.headline}>
-            <img className={styles.sketchWord} src="/sketch-handwritten.svg" alt="Sketch" />
+            <img fetchPriority='high' className={styles.sketchWord} src="/sketch-handwritten.svg" alt="Sketch" />
             <span className={styles.arrow} aria-hidden="true">→</span>
             <span className={styles.screenWord}>Screen</span>
             <span className={styles.arrow} aria-hidden="true">→</span>
