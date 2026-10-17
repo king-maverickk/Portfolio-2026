@@ -114,8 +114,109 @@
 }
 
 .content {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 101;
+}
+
+.heroCopy {
+  position: absolute;
+  z-index: 2;
+  top: 10%;
+  left: 50%;
+  width: min(100% - 2rem, 1100px);
+  transform: translateX(-50%);
+  color: #111;
+  text-align: center;
+}
+
+.headline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: clamp(0.45rem, 1.5vw, 1.25rem);
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+}
+
+.sketchWord {
+  display: block;
+  width: clamp(7.5rem, 13vw, 11rem);
+  height: auto;
+  flex: 0 1 auto;
+}
+
+.arrow {
+  font: inherit;
+  letter-spacing: -0.08em;
+}
+
+.screenWord {
+  font-weight: 400;
+}
+
+.motionWord {
+  display: inline-flex;
+  white-space: nowrap;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+}
+
+.motionLetter {
+  display: inline-block;
+  animation: motionTypeWave 8s ease-in-out calc(var(--letter-index) * 110ms) infinite;
+  will-change: font-weight, font-style, font-family;
+}
+
+@keyframes motionTypeWave {
+  0%, 12%, 100% { font-family: "Segoe UI", Arial, sans-serif; font-style: normal; font-weight: 400; }
+  22%, 34% { font-family: "Segoe UI", Arial, sans-serif; font-style: italic; font-weight: 400; }
+  44%, 56% { font-family: "Segoe UI", Arial, sans-serif; font-style: normal; font-weight: 700; }
+  66%, 88% { font-family: "Pixelify Sans", monospace; font-style: normal; font-weight: 500; }
+}
+
+.subtitle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  margin: clamp(2rem, 5vw, 4.25rem) 0 0;
+  font-family: "Outfit", sans-serif;
+  font-size: clamp(1.05rem, 1.55vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+}
+
+@media (max-width: 600px) {
+  .heroCopy {
+    top: 24%;
+  }
+
+  .headline {
+    column-gap: 0.45rem;
+    row-gap: 0.2rem;
+    font-size: clamp(1.7rem, 7vw, 2.5rem);
+  }
+
+  .sketchWord {
+    width: clamp(6.4rem, 29vw, 8.5rem);
+  }
+
+  .subtitle {
+    margin-top: 1.7rem;
+    font-size: clamp(0.95rem, 4vw, 1.2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motionLetter {
+    animation: none;
+  }
 }
 
 @media (max-width: 768px) {

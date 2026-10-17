@@ -56,7 +56,30 @@ function Home(props) {
       ))}
 
       <div className={styles.content}>
-        {/* your actual page content */}
+        <section className={styles.heroCopy} aria-label="Introduction">
+          <h1 className={styles.headline}>
+            <img className={styles.sketchWord} src="/sketch-handwritten.svg" alt="Sketch" />
+            <span className={styles.arrow} aria-hidden="true">→</span>
+            <span className={styles.screenWord}>Screen</span>
+            <span className={styles.arrow} aria-hidden="true">→</span>
+            <span className={styles.motionWord} aria-label="Motion">
+              {Array.from('Motion').map((letter, index) => (
+                <span
+                  className={styles.motionLetter}
+                  style={{ '--letter-index': index }}
+                  aria-hidden="true"
+                  key={`${letter}-${index}`}
+                >
+                  {letter}
+                </span>
+              ))}
+            </span>
+          </h1>
+          <p className={styles.subtitle}>
+            <span>Motheo Moleko,</span>
+            <span>designer-developer in Hamilton, Ontario</span>
+          </p>
+        </section>
       </div>
     </div>
   );
