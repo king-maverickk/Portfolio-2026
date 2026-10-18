@@ -155,13 +155,13 @@ DotGrid.propTypes = {
 DotGrid.defaultProps = {
   className: undefined,
   dotSize: 5,
-  spacing: 45,
+  spacing: 25,
   radius: 140,
   push: 18,
   grow: 1.8,
   ease: 0.12,
   baseAlpha: 0.08,
-  hoverAlpha: 0.35,
+  hoverAlpha: 0.65,
   color: '0, 0, 0'
 };
 
