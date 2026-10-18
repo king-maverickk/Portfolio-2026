@@ -1,7 +1,6 @@
 $card-bg: #383838;
 $blue: #2864e8;
 $tile-bg: #b39ae6;
-$dot: #d4d4d8;
 $radius: 14px;
 $column-gap: clamp(1rem, 2vw, 1.6rem);
 $tile-gap: 1rem;
@@ -9,9 +8,6 @@ $tile-gap: 1rem;
 .section {
   position: relative;
   padding: 2.5rem 5.5% 4rem;
-  background-color: #f6f7f9;
-  background-image: radial-gradient(circle, $dot 1.7px, transparent 2px);
-  background-size: 30px 30px;
 }
 
 .inner {
