@@ -5,6 +5,7 @@ import cn from 'classnames';
 import DotGrid from 'components/DotGrid';
 import ProjectStages from 'components/ProjectStages';
 import homeProject from 'components/ProjectStages/projectStages';
+import HowIllDeliver from 'components/HowIllDeliver';
 import styles from './index.module.scss';
 
 const COLORS = [
@@ -86,6 +87,7 @@ function Home(props) {
       </div>
     </div>
     <ProjectStages project={homeProject} />
+    <HowIllDeliver />
     </>
   );
 }

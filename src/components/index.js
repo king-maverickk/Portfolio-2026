@@ -1,3 +1,4 @@
 import Home from './Home';
+import HowIllDeliver from './HowIllDeliver';
 
-export default { Home };
+export default { Home, HowIllDeliver };
