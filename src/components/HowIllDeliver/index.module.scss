@@ -172,20 +172,23 @@
   }
 
   .how {
-    grid-area: 4 / 1 / 5 / 5;
+    grid-area: 4 / 1 / span 1 / span 4;
+    text-align: center;
   }
 
   .deliver {
-    grid-area: 5 / 2 / 7 / 6;
+    grid-area: 5 / 4 / span 1 / span 3;
+    text-align: left;
   }
 
   .for {
-    grid-area: 6 / 1 / 8 / 4;
+    grid-area: 6 / 2 / span 1 / span 2;
+    text-align: left;
   }
 
   .you {
-    grid-area: 7 / 3 / 8 / 6;
-    justify-self: end;
+    grid-area: 7 / 4 / span 1 / span 2;
+    text-align: left;
   }
 
   .annotation {
@@ -193,17 +196,17 @@
   }
 
   .openToWork {
-    grid-area: 9 / 1 / 10 / 3;
+    grid-area: 9 / 1 / span 1 / span 2;
+    text-align: left;
   }
 
   .freelance {
-    grid-area: 8 / 3 / 10 / 6;
-    justify-self: end;
-    align-self: end;
+    grid-area: 9 / 3 / span 1 / span 3;
+    text-align: right;
   }
 
   .hiringManager {
-    grid-area: 10 / 2 / 11 / 5;
-    justify-self: center;
+    grid-area: 10 / 2 / span 1 / span 3;
+    text-align: center;
   }
 }
