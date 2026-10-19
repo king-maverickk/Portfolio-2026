@@ -82,6 +82,8 @@
 
 
 .annotation {
+  --hit-extend: 12px; // how far the click area grows past the text, per side
+
   position: relative;
   z-index: 1;
   align-self: center;
@@ -103,8 +105,20 @@
     opacity: 0.6;
     transform: translateY(-2px);
   }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: calc(var(--hit-extend) * -1);
+  }
 }
 
+// Touch devices need a bigger target than a mouse cursor
+@media (pointer: coarse) {
+  .annotation {
+    --hit-extend: 20px;
+  }
+}
 .openToWork {
   grid-area: 3 / 3 / 3 / 5;
   text-align: right;
