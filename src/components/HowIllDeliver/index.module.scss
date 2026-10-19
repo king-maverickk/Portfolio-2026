@@ -24,6 +24,27 @@
   min-height: 0;
 }
 
+.revealItem {
+  display: inline-flex;
+  min-width: 0;
+  opacity: 0;
+  text-decoration: none;
+  transform: translateX(0);
+  transform-origin: top left;
+  will-change: transform, opacity;
+}
+
+.revealItem[data-reveal-direction='right'] {
+  transform-origin: top right;
+}
+
+.scaleItem {
+  display: inline-block;
+  transform: scale(0.15);
+  transform-origin: inherit;
+  will-change: transform;
+}
+
 
 .content {
   position: absolute;
@@ -240,5 +261,15 @@
   .hiringManager {
     grid-area: 10 / 2 / span 1 / span 3;
     text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revealItem,
+  .scaleItem {
+    opacity: 1;
+    transform: none;
+    animation: none;
+    will-change: auto;
   }
 }
