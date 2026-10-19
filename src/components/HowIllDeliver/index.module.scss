@@ -107,24 +107,32 @@
 
   position: relative;
   z-index: 1;
+  display: flex;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
   align-self: center;
   margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
+  padding: 8px 16px;
+  border: 2px solid var(--annotation-border-color);
+  border-radius: 100px;
+  background: #fff;
+  color: #2b2b2b;
   font: inherit;
   font-family: "Outfit", "Segoe UI", sans-serif;
-  font-size: clamp(1rem, 1.2vw, 1.25rem);
-  line-height: 1.2;
+  font-size: 1rem;
+  line-height: 1;
   letter-spacing: 0.01em;
+  white-space: nowrap;
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
 
   &:hover,
   &:focus-visible {
-    opacity: 0.6;
     transform: translateY(-2px);
+    background: #2b2b2b;
+    color: #fff;
   }
 
   &::after {
@@ -141,18 +149,24 @@
   }
 }
 .openToWork {
+  --annotation-border-color: #ff0000;
+
   grid-area: 3 / 3 / 3 / 5;
-  text-align: right;
+  justify-self: end;
 }
 
 .freelance {
+  --annotation-border-color: #22C55E;
+
   grid-area: 4 / 7 / 6 / 9;
-  text-align: center;
+  justify-self: center;
 }
 
 .hiringManager {
+  --annotation-border-color: #3794FE;
+
   grid-area: 6 / 4 / 6 / 6;
-  text-align: right;
+  justify-self: end;
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
@@ -232,7 +246,7 @@
   }
 
   .deliver {
-    grid-area: 5 / 4 / span 1 / span 3;
+    grid-area: 5 / 3 / span 1 / span 3;
     text-align: left;
   }
 
@@ -247,22 +261,22 @@
   }
 
   .annotation {
-    font-size: clamp(0.65rem, 2.6vw, 0.85rem);
+    font-size: clamp(0.85rem, 2.6vw, 0.85rem);
   }
 
   .openToWork {
     grid-area: 9 / 1 / span 1 / span 2;
-    text-align: left;
+    justify-self: start;
   }
 
   .freelance {
     grid-area: 9 / 3 / span 1 / span 3;
-    text-align: right;
+    justify-self: end;
   }
 
   .hiringManager {
     grid-area: 10 / 2 / span 1 / span 3;
-    text-align: center;
+    justify-self: center;
   }
 }
 
