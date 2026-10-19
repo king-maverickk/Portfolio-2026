@@ -6,7 +6,13 @@ import styles from './index.module.scss';
 
 const CELLS = Array.from({ length: 12 * 8 }, (_, index) => index);
 
-function HowIllDeliver({ className }) {
+const ANNOTATIONS = [
+  { id: 'open-to-work', label: '(open to work)', className: styles.openToWork },
+  { id: 'freelance', label: '(freelance/contract)', className: styles.freelance },
+  { id: 'hiring-manager', label: '(hiring manager)', className: styles.hiringManager }
+];
+
+function HowIllDeliver({ className, onAnnotationClick }) {
   return (
     <section className={cn(styles.section, className)} aria-label="How I'll deliver for you">
       {CELLS.map((cell) => (
@@ -18,19 +24,27 @@ function HowIllDeliver({ className }) {
           <span className={styles.how}>How I’ll</span>
           <span className={styles.deliver}>deliver</span>
           <span className={styles.for}>for</span>
-          <span className={styles.you}>you</span>
+          <span className={styles.you}>You</span>
         </h2>
 
-        <p className={cn(styles.annotation, styles.openToWork)}>(open to work)</p>
-        <p className={cn(styles.annotation, styles.freelance)}>(freelance/contract)</p>
-        <p className={cn(styles.annotation, styles.hiringManager)}>(hiring manager)</p>
+        {ANNOTATIONS.map(({ id, label, className: areaClass }) => (
+          <button
+            type="button"
+            key={id}
+            className={cn(styles.annotation, areaClass)}
+            onClick={() => onAnnotationClick?.(id)}
+          >
+            {label}
+          </button>
+        ))}
       </div>
     </section>
   );
 }
 
 HowIllDeliver.propTypes = {
-  className: PropTypes.string
+  className: PropTypes.string,
+  onAnnotationClick: PropTypes.func
 };
 
 export default HowIllDeliver;

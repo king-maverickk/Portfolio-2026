@@ -35,18 +35,21 @@
 }
 
 .headline {
-  position: absolute;
-  inset: 0;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
-  grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
-  gap: var(--how-ill-deliver-gutter);
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
   align-items: center;
   margin: 0;
+  pointer-events: none; // headline isn't interactive
   font-family: "Outfit", "Segoe UI", sans-serif;
   font-size: clamp(4.5rem, 2.4427480916rem + 8.3969vi, 10rem);
   font-weight: 500;
   letter-spacing: -0.065em;
+  cursor: default;
+  pointer-events: none;
+  /* removed: position, inset, gap, own template columns/rows */
 }
 
 .how,
@@ -77,13 +80,29 @@
   line-height: 0.8;
 }
 
+
 .annotation {
+  position: relative;
+  z-index: 1;
   align-self: center;
   margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
   font-family: "Outfit", "Segoe UI", sans-serif;
   font-size: clamp(0.7rem, 1vw, 0.95rem);
   line-height: 1.2;
   letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 0.6;
+    transform: translateY(-2px);
+  }
 }
 
 .openToWork {
@@ -103,9 +122,9 @@
 
 @media (min-width: 768px) and (max-width: 1199px) {
   .section,
-  .content,
-  .headline {
+  .content {
     --columns: 8;
+    --rows: 8;
   }
 
   .section,
@@ -149,8 +168,7 @@
 
 @media (max-width: 767px) {
   .section,
-  .content,
-  .headline {
+  .content {
     --columns: 5;
     --rows: 10;
   }
