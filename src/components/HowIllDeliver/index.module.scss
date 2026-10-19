@@ -65,7 +65,7 @@
   margin: 0;
   pointer-events: none; // headline isn't interactive
   font-family: "Outfit", "Segoe UI", sans-serif;
-  font-size: clamp(4.5rem, 2.4427480916rem + 8.3969vi, 10rem);
+  font-size: clamp(3.5rem, 15.5vw, 9rem);
   font-weight: 500;
   letter-spacing: -0.065em;
   cursor: default;
@@ -115,7 +115,7 @@
   color: inherit;
   font: inherit;
   font-family: "Outfit", "Segoe UI", sans-serif;
-  font-size: clamp(0.7rem, 1vw, 0.95rem);
+  font-size: clamp(1rem, 1.2vw, 1.25rem);
   line-height: 1.2;
   letter-spacing: 0.01em;
   cursor: pointer;
@@ -201,6 +201,12 @@
   }
 }
 
+@media (max-width: 999px) {
+  .headline {
+    font-size: clamp(3.5rem, 15.5vw, 7.25rem);
+  }
+}
+
 @media (max-width: 767px) {
   .section,
   .content {
@@ -218,10 +224,6 @@
 
   .content {
     inset: 0 10px;
-  }
-
-  .headline {
-    font-size: clamp(3.5rem, 12vi, 4.5rem);
   }
 
   .how {
