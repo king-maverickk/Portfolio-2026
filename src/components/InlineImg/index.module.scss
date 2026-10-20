@@ -26,7 +26,6 @@
   vertical-align: middle;
   transform: translateY(var(--inline-img-nudge, 0));
   overflow: hidden;
-  border-radius: var(--inline-img-radius, 0.3em);
   line-height: 0;
 
   // Inline SVGs passed through `icon` fill the box.
@@ -57,18 +56,6 @@
   display: block;
   width: auto;
   height: 100%;
-}
-
-.pill {
-  --inline-img-radius: 999px;
-}
-
-.soft {
-  --inline-img-radius: 0.3em;
-}
-
-.square {
-  --inline-img-radius: 0;
 }
 
 // Hover spin. Both ends of each keyframe list the same functions (translateY

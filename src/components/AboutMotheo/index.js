@@ -94,9 +94,9 @@ function AboutMotheo({
           <p className={styles.lead}>
             <HoverWords>
                 I speak six{' '}
-                <InlineImg ratio={1.2} after=",">languages</InlineImg> plus{' '}
-                <InlineImg ratio={1}>design</InlineImg> and{' '}
-                <InlineImg ratio={1.5} after=".">code</InlineImg> Based in Hamilton, I
+                <InlineImg ratio={1.2} src={`/assets/Home/about_speech_bubble.png`} after=",">languages</InlineImg> plus{' '}
+                <InlineImg ratio={1} src={`assets/Home/about_design_wheel.png`}>design</InlineImg> and{' '}
+                <InlineImg ratio={1.5} src={`assets/Home/about_code_chip.png`} after=".">code</InlineImg> Based in Hamilton, I
                 design websites and build them too.
             </HoverWords>
           </p>
@@ -115,13 +115,13 @@ function AboutMotheo({
               <p className={styles.entryText}>
                 Six years ago I began teaching myself to code, and I learned by
                 building: full-stack apps,{' '}
-                <InlineImg ratio={1} after=",">cloud</InlineImg> and the DevOps
+                <InlineImg ratio={1} src={`assets/Home/about_azure_logo.png`} after=",">cloud</InlineImg> and the DevOps
                 work of getting something live and keeping it there. Somewhere
                 along the way design started pulling at me, until I was spending
                 as much time on how things looked and moved as on how they worked. 
                 <br/> <br/>
                 I’ve competed in three hackathons, placing{' '}
-                <InlineImg ratio={1}>3rd</InlineImg> at a Microsoft one in 2025
+                <InlineImg ratio={1} src={`assets/Home/about_bronze_medal.png`}>3rd</InlineImg> at a Microsoft one in 2025
                 for building a generative AI app that turns historical topics 
                 into geotagged podcast shorts with audio narration, and I’ve 
                 shipped three sites since then.
@@ -132,9 +132,9 @@ function AboutMotheo({
               <h3 className={styles.entryTitle}>My Craft</h3>
               <p className={styles.entryText}>
                 I spend hours collecting{' '}
-                <InlineImg ratio={1.3} after=":">references</InlineImg> layouts,
+                <InlineImg ratio={1.3} src={`assets/Home/about_references.png`} after=":">references</InlineImg> layouts,
                 color combinations, interactions I can’t stop thinking about. I
-                keep a <InlineImg ratio={1.4}>notebook</InlineImg> where I work
+                keep a <InlineImg src={`assets/Home/about_notebook_collage.png`} ratio={1.4}>notebook</InlineImg> where I work
                 out how I’d recreate them, how the layout is built, how the motion
                 probably works. Most of those ideas never leave the page. The ones
                 that do get everything I’ve got, and I don’t stop until they’re
@@ -149,7 +149,7 @@ function AboutMotheo({
                 it wasn’t easy. I wanted people to talk shop with, so I started
                 Hamilton Creative Group, a place for designers, developers,
                 animators and other digital media{' '}
-                <InlineImg ratio={2.2}>creatives</InlineImg> to meet up. Now we
+                <InlineImg ratio={2.2} src={`assets/Home/about_hcg_mouse.png`}>creatives</InlineImg> to meet up. Now we
                 have two weekly meetups. It’s the same instinct as everything
                 above: if what I want isn’t there, I build it.
               </p>
