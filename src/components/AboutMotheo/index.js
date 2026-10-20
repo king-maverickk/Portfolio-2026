@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import cn from 'classnames';
 
 import InlineImg from '../InlineImg';
+import HoverWords from 'components/HoverWords';
 
 import styles from './index.module.scss';
 
@@ -91,15 +92,19 @@ function AboutMotheo({
         <div className={styles.intro}>
           <p className={styles.label}>about</p>
           <p className={styles.lead}>
-            I speak six{' '}
-            <InlineImg ratio={1.2} after=",">languages</InlineImg> plus{' '}
-            <InlineImg ratio={1}>design</InlineImg> and{' '}
-            <InlineImg ratio={1.5} after=".">code</InlineImg> Based in Hamilton, I
-            design websites and build them too.
+            <HoverWords>
+                I speak six{' '}
+                <InlineImg ratio={1.2} after=",">languages</InlineImg> plus{' '}
+                <InlineImg ratio={1}>design</InlineImg> and{' '}
+                <InlineImg ratio={1.5} after=".">code</InlineImg> Based in Hamilton, I
+                design websites and build them too.
+            </HoverWords>
           </p>
           <p className={styles.statement}>
-            I started in code and followed my eye toward design, so now I can do
-            both. Every project gets a look built around what it needs to do.
+            <HoverWords>
+                I started in code and followed my eye toward design, so now I can do
+                both. Every project gets a look built around what it needs to do.
+            </HoverWords>
           </p>
         </div>
 

@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
 import styles from './index.module.scss';
 
+// Images at least this wide (width / height) flip on hover instead of
+// spinning, so a wide chip doesn't swing across the neighbouring lines.
+const WIDE_RATIO = 1.6;
+
 /**
  * An image (or inline SVG) that sits inside a line of text and scales with it.
+ * On hover it spins once, quickly (wide images flip instead).
  *
  * - `children`  The word the image should stay attached to (pass ONE word).
  *               The word, the image and `after` are wrapped in a nowrap span,
- *               so the image can never start a new line on its own.
+ *               so the image can never start a new line on its own. Hovering
+ *               the word spins the image too.
  * - `after`     Punctuation that follows the image (",", ".", ":"). It goes
  *               inside the nowrap span so it can't be orphaned either.
  * - `src`       Image URL. Omit `src` and `icon` to render a grey placeholder.
- * - `icon`      A React node (e.g. an inline <svg>) instead of `src`, handy
- *               when you want to animate it.
+ * - `icon`      A React node (e.g. an inline <svg>) instead of `src`.
  * - `alt`       Leave empty for decorative images (the default). Pass text only
  *               when the image carries meaning the sentence doesn't.
  * - `ratio`     width / height. Reserves space before the image loads and
@@ -36,8 +41,17 @@ function InlineImg({
   shape,
   className,
 }) {
+  const [spinning, setSpinning] = useState(false);
+
   const isPlaceholder = !src && !icon;
   const hasFixedBox = Boolean(ratio) || Boolean(icon) || isPlaceholder;
+  const isWide = ratio >= WIDE_RATIO;
+  const isBound = Boolean(children || after);
+
+  // Hover starts one spin. It's released when the animation ends, so the spin
+  // always completes (no snapping back if the cursor leaves early) and never
+  // plays in reverse.
+  const hoverProps = { onMouseEnter: () => setSpinning(true) };
 
   const style = {};
   if (size) style['--inline-img-size'] = size;
@@ -51,6 +65,8 @@ function InlineImg({
         {
           [styles.fixed]: hasFixedBox,
           [styles.placeholder]: isPlaceholder,
+          [styles.wide]: isWide,
+          [styles.spinning]: spinning,
         },
         className,
       )}
@@ -58,6 +74,10 @@ function InlineImg({
       role={alt ? 'img' : undefined}
       aria-label={alt || undefined}
       aria-hidden={alt ? undefined : true}
+      onAnimationEnd={(event) => {
+        if (event.target === event.currentTarget) setSpinning(false);
+      }}
+      {...(isBound ? {} : hoverProps)}
     >
       {src && (
         <img
@@ -72,10 +92,10 @@ function InlineImg({
     </span>
   );
 
-  if (!children && !after) return media;
+  if (!isBound) return media;
 
   return (
-    <span className={styles.bind}>
+    <span className={styles.bind} {...hoverProps}>
       {children}
       {media}
       {after}

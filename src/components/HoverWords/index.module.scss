@@ -1,0 +1,25 @@
+// The outer span stays still and owns the hover area.
+.word {
+  display: inline-block;
+}
+
+// transform only works on boxes, so the inner span is an inline-block too.
+.lift {
+  display: inline-block;
+}
+
+// Hover only on devices that have it, and never for people who have asked for
+// less motion.
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lift {
+    // Settles slowly, so a cursor sweeping along a line leaves a soft wave.
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .word:hover .lift {
+    transform: translateY(-0.12em);
+
+    // Rises fast.
+    transition-duration: 0.15s;
+  }
+}

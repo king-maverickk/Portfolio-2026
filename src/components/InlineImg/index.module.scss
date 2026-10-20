@@ -70,3 +70,37 @@
 .square {
   --inline-img-radius: 0;
 }
+
+// Hover spin. Both ends of each keyframe list the same functions (translateY
+// first), so a full 360deg turn interpolates as a turn and not as "no change".
+@keyframes spin {
+  from {
+    transform: translateY(var(--inline-img-nudge, 0)) rotate(0deg);
+  }
+
+  to {
+    transform: translateY(var(--inline-img-nudge, 0)) rotate(360deg);
+  }
+}
+
+@keyframes flip {
+  from {
+    transform: translateY(var(--inline-img-nudge, 0)) rotateY(0deg);
+  }
+
+  to {
+    transform: translateY(var(--inline-img-nudge, 0)) rotateY(360deg);
+  }
+}
+
+// Only on devices with hover, and never for people who have asked for less
+// motion. The `.spinning` class is added by the component on hover.
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .spinning {
+    animation: spin 0.5s cubic-bezier(0.3, 0.7, 0.3, 1);
+  }
+
+  .spinning.wide {
+    animation-name: flip;
+  }
+}
