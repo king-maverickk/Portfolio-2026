@@ -1,0 +1,26 @@
+.section {
+  --columns: 12;
+  --gutter: 20px;
+
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: var(--gutter);
+  align-items: stretch;
+  justify-items: stretch;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .section {
+    --columns: 8;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    --columns: 4;
+    width: auto;
+    margin-inline: 20px;
+  }
+}
