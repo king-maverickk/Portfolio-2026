@@ -1,0 +1,72 @@
+// Keeps the word, the image and any trailing punctuation on the same line.
+.bind {
+  white-space: nowrap;
+}
+
+// Tunable from a parent text style (set these on .lead, .paragraph, etc.):
+//   --inline-img-size    height in em, unitless (default 1.1)
+//   --inline-img-radius  corner radius (default 0.3em)
+//   --inline-img-gap     space between the word and the image (default 0.2em)
+//   --inline-img-nudge   vertical fine-tuning, e.g. -0.06em (default 0)
+.media {
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  height: calc(var(--inline-img-size, 1.1) * 1em);
+
+  // Negative block margins stop a tall image from pushing the line apart.
+  // Keep your line-height large enough that it doesn't collide with the
+  // neighbouring lines (roughly: line-height >= image height + 0.1em).
+  margin-block: -0.25em;
+  margin-inline-start: var(--inline-img-gap, 0.2em);
+
+  // `middle` centres the image on the x-height of the surrounding text.
+  // The nudge lets you correct for the font (Outfit sits slightly high or
+  // low depending on the weight) without touching the layout.
+  vertical-align: middle;
+  transform: translateY(var(--inline-img-nudge, 0));
+  overflow: hidden;
+  border-radius: var(--inline-img-radius, 0.3em);
+  line-height: 0;
+
+  // Inline SVGs passed through `icon` fill the box.
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Used when a ratio is given, when `icon` is used, and for placeholders.
+// Width comes from the height, so space is reserved before an image loads.
+.fixed {
+  aspect-ratio: var(--inline-img-ratio, 1);
+
+  .img {
+    width: 100%;
+    object-fit: cover;
+  }
+}
+
+// Grey box that follows the text colour, so it works on the dark card too.
+.placeholder {
+  background-color: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.img {
+  display: block;
+  width: auto;
+  height: 100%;
+}
+
+.pill {
+  --inline-img-radius: 999px;
+}
+
+.soft {
+  --inline-img-radius: 0.3em;
+}
+
+.square {
+  --inline-img-radius: 0;
+}
