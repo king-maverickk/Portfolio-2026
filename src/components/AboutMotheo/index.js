@@ -22,6 +22,7 @@ function AboutMotheo({ className }) {
           aria-label="Photo placeholder"
         />
       </div>
+      <div className={styles.detailsColumn} />
     </section>
   );
 }
