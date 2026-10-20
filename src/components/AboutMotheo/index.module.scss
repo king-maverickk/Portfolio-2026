@@ -9,6 +9,7 @@
   justify-items: stretch;
   box-sizing: border-box;
   width: 100%;
+  margin-top: 20vh;
 }
 
 .content {
@@ -288,7 +289,8 @@ a.projectCard:hover .arrow svg {
   .section {
     --columns: 4;
     width: auto;
-    margin-inline: 20px;
+    margin-inline: 8px;
+    margin-top: 50vh;
   }
 
   .content {
