@@ -187,7 +187,7 @@
   height: 100%;
   flex-direction: column;
   overflow: hidden;
-  border-left: 1px solid rgb(255 255 255 / 9%);
+  border-left: 2px solid var(--sheet-accent-color, rgb(255 255 255 / 9%));
   background: #2b2b2b;
   color: #f7f7f7;
   box-shadow: -16px 0 48px rgb(0 0 0 / 24%);
@@ -279,6 +279,16 @@
   .content {
     --columns: 8;
     --rows: 8;
+  }
+
+  .section {
+    height: auto;
+    min-height: 100svh;
+    grid-template-rows: repeat(var(--rows), minmax(6.5rem, 1fr));
+  }
+
+  .content {
+    grid-template-rows: repeat(var(--rows), minmax(6.5rem, 1fr));
   }
 
   .section,

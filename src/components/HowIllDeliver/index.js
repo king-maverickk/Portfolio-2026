@@ -87,6 +87,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   const closeButtonRef = useRef(null);
   const triggerRef = useRef(null);
   const [activeAnnotation, setActiveAnnotation] = useState(null);
+  const [sheetAccentColor, setSheetAccentColor] = useState(null);
   const isSheetOpen = activeAnnotation !== null;
 
   useEffect(() => {
@@ -131,6 +132,9 @@ function HowIllDeliver({ className, onAnnotationClick }) {
 
   const openSheet = (id, event) => {
     triggerRef.current = event.currentTarget;
+    setSheetAccentColor(
+      window.getComputedStyle(event.currentTarget).getPropertyValue('--annotation-border-color').trim()
+    );
     setActiveAnnotation(id);
     onAnnotationClick?.(id);
   };
@@ -261,6 +265,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
           <aside
             id="delivery-sheet"
             className={styles.sheet}
+            style={{ '--sheet-accent-color': sheetAccentColor }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="delivery-sheet-title"

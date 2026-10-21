@@ -7,16 +7,19 @@ beforeEach(() => {
 });
 
 test.each([
-  ['(open to work)', 'Open to work'],
-  ['(freelance/contract)', 'Freelance / contract'],
-  ['(hiring manager)', 'Hiring managers']
-])('opens the %s sheet with its own content', (annotation, title) => {
+  ['(open to work)', 'Open to work', '#ff0000'],
+  ['(freelance/contract)', 'Freelance / contract', '#22C55E'],
+  ['(hiring manager)', 'Hiring managers', '#3794FE']
+])('opens the %s sheet with its own content and accent color', (annotation, title, accentColor) => {
   render(<HowIllDeliver />);
 
-  fireEvent.click(screen.getByRole('button', { name: annotation }));
+  const trigger = screen.getByRole('button', { name: annotation });
+  trigger.style.setProperty('--annotation-border-color', accentColor);
+  fireEvent.click(trigger);
 
   expect(screen.getByRole('dialog')).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
+  expect(screen.getByRole('dialog').style.getPropertyValue('--sheet-accent-color')).toBe(accentColor);
 });
 
 test('closes the sheet with Escape and returns focus to its trigger', () => {
