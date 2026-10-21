@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
@@ -32,6 +33,33 @@ const ANNOTATIONS = [
   { id: 'hiring-manager', label: '(hiring manager)', className: styles.hiringManager }
 ];
 
+const SHEET_CONTENT = {
+  'open-to-work': {
+    title: 'Open to work',
+    description: 'I’m looking for my next opportunity.',
+    paragraphs: [
+      'I’m open to joining a team where thoughtful design and hands-on development come together to make useful, memorable digital experiences.',
+      'If you’re building something that could use a designer who can also bring ideas to life in code, I’d love to hear about it.'
+    ]
+  },
+  freelance: {
+    title: 'Freelance / contract',
+    description: 'Let’s make something great together.',
+    paragraphs: [
+      'I partner with teams and individuals to shape ideas into polished digital experiences, from early concepts and visual design through to a working build.',
+      'Whether you need a focused design engagement or extra hands to move a project forward, tell me what you’re working on and where you need support.'
+    ]
+  },
+  'hiring-manager': {
+    title: 'Hiring managers',
+    description: 'Looking for a designer-developer?',
+    paragraphs: [
+      'My work sits across the design and development process: I can help explore a direction, refine the details, and build the experience for the screen.',
+      'If that mix could be a fit for your team, I’d be happy to learn more about the role and what you’re creating.'
+    ]
+  }
+};
+
 function RevealItem({ children, className, direction = 'left', as: Element = 'span', ...props }) {
   return (
     <Element
@@ -56,6 +84,56 @@ RevealItem.propTypes = {
 
 function HowIllDeliver({ className, onAnnotationClick }) {
   const sectionRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const triggerRef = useRef(null);
+  const [activeAnnotation, setActiveAnnotation] = useState(null);
+  const isSheetOpen = activeAnnotation !== null;
+
+  useEffect(() => {
+    if (!isSheetOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setActiveAnnotation(null);
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusableElements = Array.from(
+        document.querySelectorAll('[data-sheet-dialog] button:not([disabled]), [data-sheet-dialog] [href], [data-sheet-dialog] [tabindex]:not([tabindex="-1"])')
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (!firstElement || !lastElement) return;
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      triggerRef.current?.focus();
+    };
+  }, [isSheetOpen]);
+
+  const openSheet = (id, event) => {
+    triggerRef.current = event.currentTarget;
+    setActiveAnnotation(id);
+    onAnnotationClick?.(id);
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -135,37 +213,89 @@ function HowIllDeliver({ className, onAnnotationClick }) {
     };
   }, []);
 
+  const sheet = activeAnnotation ? SHEET_CONTENT[activeAnnotation] : null;
+
   return (
-    <section
-      ref={sectionRef}
-      className={cn(styles.section, className)}
-      aria-label="How I'll deliver for you"
-    >
-      {Array.from({ length: GRID.columns * GRID.rows }, (_, index) => (
-        <div className={styles.cell} aria-hidden="true" key={index} />
-      ))}
-
-      <div className={styles.content}>
-        <h2 className={styles.headline}>
-          {HEADLINE_ITEMS.map(({ id, text, className: itemClass, direction }) => (
-            <RevealItem key={id} className={itemClass} direction={direction}>
-              {text}
-            </RevealItem>
-          ))}
-        </h2>
-
-        {ANNOTATIONS.map(({ id, label, className: areaClass }) => (
-          <button
-            type="button"
-            key={id}
-            className={cn(styles.annotation, areaClass)}
-            onClick={() => onAnnotationClick?.(id)}
-          >
-            <RevealItem>{label}</RevealItem>
-          </button>
+    <>
+      <section
+        ref={sectionRef}
+        className={cn(styles.section, className)}
+        aria-label="How I'll deliver for you"
+      >
+        {Array.from({ length: GRID.columns * GRID.rows }, (_, index) => (
+          <div className={styles.cell} aria-hidden="true" key={index} />
         ))}
-      </div>
-    </section>
+
+        <div className={styles.content}>
+          <h2 className={styles.headline}>
+            {HEADLINE_ITEMS.map(({ id, text, className: itemClass, direction }) => (
+              <RevealItem key={id} className={itemClass} direction={direction}>
+                {text}
+              </RevealItem>
+            ))}
+          </h2>
+
+          {ANNOTATIONS.map(({ id, label, className: areaClass }) => (
+            <button
+              type="button"
+              key={id}
+              className={cn(styles.annotation, areaClass)}
+              aria-haspopup="dialog"
+              aria-expanded={activeAnnotation === id}
+              aria-controls={activeAnnotation === id ? 'delivery-sheet' : undefined}
+              onClick={(event) => openSheet(id, event)}
+            >
+              <RevealItem>{label}</RevealItem>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {sheet && createPortal(
+        <div
+          className={styles.sheetBackdrop}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setActiveAnnotation(null);
+          }}
+        >
+          <aside
+            id="delivery-sheet"
+            className={styles.sheet}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delivery-sheet-title"
+            aria-describedby="delivery-sheet-description"
+            data-sheet-dialog=""
+          >
+            <header className={styles.sheetHeader}>
+              <div>
+                <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
+                <p id="delivery-sheet-description" className={styles.sheetDescription}>
+                  {sheet.description}
+                </p>
+              </div>
+              <button
+                ref={closeButtonRef}
+                type="button"
+                className={styles.sheetClose}
+                aria-label="Close sheet"
+                onClick={() => setActiveAnnotation(null)}
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </header>
+            <div className={styles.sheetBody}>
+              {sheet.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </aside>
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
 
