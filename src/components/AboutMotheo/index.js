@@ -92,13 +92,11 @@ function AboutMotheo({
         <div className={styles.intro}>
           <p className={styles.label}>about</p>
           <p className={styles.lead}>
-            <HoverWords>
                 I speak six{' '}
                 <InlineImg ratio={1.2} src={`/assets/Home/about_speech_bubble.png`} after=",">languages</InlineImg> plus{' '}
                 <InlineImg ratio={1} src={`assets/Home/about_design_wheel.png`}>design</InlineImg> and{' '}
                 <InlineImg ratio={1.5} src={`assets/Home/about_code_chip.png`} after=".">code</InlineImg> Based in Hamilton, I
                 design websites and build them too.
-            </HoverWords>
           </p>
           <p className={styles.statement}>
             <HoverWords>
