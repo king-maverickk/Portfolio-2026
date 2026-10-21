@@ -276,6 +276,8 @@ a.projectCard:hover .arrow svg {
 @media (max-width: 1199px) {
   .section {
     --columns: 8;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .content {
