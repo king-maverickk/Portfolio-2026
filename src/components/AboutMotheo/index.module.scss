@@ -293,8 +293,9 @@ a.projectCard:hover .arrow svg {
   .section {
     --columns: 4;
     width: auto;
-    margin-inline: 8px;
     margin-top: 50vh;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .content {
