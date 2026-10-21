@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import styles from './index.module.scss';
+
+// Same condition the SCSS uses for the hover effect.
+const HOVER_QUERY = '(hover: hover)';
+
+// False on the first render (and on the server), then true once we know the
+// device can hover. Touch-only devices never get the wrapped version.
+function useCanHover() {
+  const [canHover, setCanHover] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia(HOVER_QUERY);
+    const update = () => setCanHover(query.matches);
+
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+
+  return canHover;
+}
 
 // Two spans per word: the outer one stays put and owns the hover area, the
 // inner one moves. If the hovered element itself moved, the cursor would slip
@@ -19,7 +39,9 @@ Word.propTypes = {
 };
 
 /**
- * Wraps every word of its children so it can lift on hover.
+ * Wraps every word of its children so it can lift on hover. On devices that
+ * can't hover (phones, most tablets) it renders the children untouched, so the
+ * layout there is exactly what you'd get without it.
  *
  * - Strings are split into words. The spaces stay plain text between the
  *   words, so line wrapping, selecting and copying behave as normal.
@@ -30,6 +52,10 @@ Word.propTypes = {
  *   a word of its own and can wrap onto a new line alone.
  */
 function HoverWords({ children }) {
+  const canHover = useCanHover();
+
+  if (!canHover) return <>{children}</>;
+
   const parts = [];
 
   React.Children.forEach(children, (child, index) => {

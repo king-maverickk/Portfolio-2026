@@ -26,6 +26,7 @@
   vertical-align: middle;
   transform: translateY(var(--inline-img-nudge, 0));
   overflow: hidden;
+  border-radius: var(--inline-img-radius, 0.3em);
   line-height: 0;
 
   // Inline SVGs passed through `icon` fill the box.
@@ -37,12 +38,17 @@
 }
 
 // Used when a ratio is given, when `icon` is used, and for placeholders.
-// Width comes from the height, so space is reserved before an image loads.
+// The width is height x ratio, so space is reserved before an image loads.
+// The image is taken out of the flow, so it can't influence the box's size
+// (a wrapper like HoverWords can't size itself off the file's natural width).
 .fixed {
-  aspect-ratio: var(--inline-img-ratio, 1);
+  width: calc(var(--inline-img-size, 1.1) * 1em * var(--inline-img-ratio, 1));
 
   .img {
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
     object-fit: cover;
   }
 }
