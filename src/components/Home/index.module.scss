@@ -100,7 +100,6 @@
   box-sizing: border-box;
   overflow: hidden;
   pointer-events: none;
-  border-radius: 4px;
   animation: rectSlide var(--cycle) linear calc(var(--i, 0) * var(--stagger) * -1) infinite;
 }
 
