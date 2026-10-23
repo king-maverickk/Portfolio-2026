@@ -113,6 +113,8 @@
 
 .rectLeft {
   right: calc(50% + var(--edge) * 100%);
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
 
   .media {
     object-position: right;
@@ -121,6 +123,8 @@
 
 .rectRight {
   left: calc(50% + var(--edge) * 100%);
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
 
   .media {
     object-position: left;
