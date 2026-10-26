@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
+import DeliverySheets from 'components/DeliverySheets';
+import hiringManagers from 'components/DeliverySheets/datasets/hiringManagers';
 import styles from './index.module.scss';
 
 const GRID = {
@@ -58,6 +60,11 @@ const SHEET_CONTENT = {
       'If that mix could be a fit for your team, I’d be happy to learn more about the role and what you’re creating.'
     ]
   }
+};
+
+// Annotations with a dataset open the two-sheet layout; the rest still open the single sheet.
+const SHEET_DATASETS = {
+  'hiring-manager': hiringManagers
 };
 
 function RevealItem({ children, className, direction = 'left', as: Element = 'span', ...props }) {
@@ -218,6 +225,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   }, []);
 
   const sheet = activeAnnotation ? SHEET_CONTENT[activeAnnotation] : null;
+  const dataset = activeAnnotation ? SHEET_DATASETS[activeAnnotation] : null;
 
   return (
     <>
@@ -262,41 +270,52 @@ function HowIllDeliver({ className, onAnnotationClick }) {
             if (event.target === event.currentTarget) setActiveAnnotation(null);
           }}
         >
-          <aside
-            id="delivery-sheet"
-            className={styles.sheet}
-            style={{ '--sheet-accent-color': sheetAccentColor }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="delivery-sheet-title"
-            aria-describedby="delivery-sheet-description"
-            data-sheet-dialog=""
-          >
-            <header className={styles.sheetHeader}>
-              <div>
-                <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
-                <p id="delivery-sheet-description" className={styles.sheetDescription}>
-                  {sheet.description}
-                </p>
+          {dataset ? (
+            <DeliverySheets
+              dataset={dataset}
+              title={sheet.title}
+              description={sheet.description}
+              accentColor={sheetAccentColor}
+              closeButtonRef={closeButtonRef}
+              onClose={() => setActiveAnnotation(null)}
+            />
+          ) : (
+            <aside
+              id="delivery-sheet"
+              className={styles.sheet}
+              style={{ '--sheet-accent-color': sheetAccentColor }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="delivery-sheet-title"
+              aria-describedby="delivery-sheet-description"
+              data-sheet-dialog=""
+            >
+              <header className={styles.sheetHeader}>
+                <div>
+                  <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
+                  <p id="delivery-sheet-description" className={styles.sheetDescription}>
+                    {sheet.description}
+                  </p>
+                </div>
+                <button
+                  ref={closeButtonRef}
+                  type="button"
+                  className={styles.sheetClose}
+                  aria-label="Close sheet"
+                  onClick={() => setActiveAnnotation(null)}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M18 6 6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </header>
+              <div className={styles.sheetBody}>
+                {sheet.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
               </div>
-              <button
-                ref={closeButtonRef}
-                type="button"
-                className={styles.sheetClose}
-                aria-label="Close sheet"
-                onClick={() => setActiveAnnotation(null)}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </header>
-            <div className={styles.sheetBody}>
-              {sheet.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          </aside>
+            </aside>
+          )}
         </div>,
         document.body
       )}

@@ -1,0 +1,566 @@
+// Two overlaid sheets (left: roles and scenario, right: resume and details) shared by every annotation dataset.
+// Type scale is shadcn-small: 14px UI text, 12-13px labels, one larger display moment (the scenario sentence).
+// Emphasis is always bold + underline, so highlighted text reads the same everywhere.
+
+@mixin button-reset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@mixin underline-cue {
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: color 160ms ease, text-decoration-color 160ms ease;
+}
+
+.dialog {
+  --sheet-bg: #2b2b2b;
+  --sheet-surface: #353535;
+  --sheet-border: rgb(255 255 255 / 10%);
+  --sheet-text: #f7f7f7;
+  --sheet-muted: #a3a3a3;
+  --sheet-accent: var(--sheet-accent-color, #3794fe);
+  --stage-bg: #232323;
+  --paper-text: #2b2b2b;
+  --paper-muted: #666;
+  --paper-rule: #e6e6e6;
+  --paper-accent: #2864e8;
+
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none; // the gap between the sheets stays clickable on the backdrop
+  color: var(--sheet-text);
+  font-family: "Outfit", "Segoe UI", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.sheet {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--sheet-bg);
+  pointer-events: auto;
+}
+
+.left {
+  width: clamp(22rem, 30vw, 32.5rem);
+  border-right: 2px solid var(--sheet-accent);
+  box-shadow: 16px 0 48px rgb(0 0 0 / 24%);
+  animation: sheet-enter-left 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.right {
+  width: clamp(32rem, 46vw, 54rem);
+  border-left: 2px solid var(--sheet-accent);
+  box-shadow: -16px 0 48px rgb(0 0 0 / 24%);
+  animation: sheet-enter-right 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.close {
+  @include button-reset;
+
+  position: fixed;
+  z-index: 2;
+  top: 20px;
+  right: 20px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--sheet-muted);
+  pointer-events: auto;
+  transition: background-color 160ms ease, color 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(255 255 255 / 10%);
+    color: #fff;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-width: 1.8;
+  }
+}
+
+// ---- Left sheet: roles and scenario ----
+
+.header {
+  flex: 0 0 auto;
+  padding: 28px 28px 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.description {
+  margin: 8px 0 0;
+  color: var(--sheet-muted);
+}
+
+.leftBody {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 40px;
+  overflow-y: auto;
+  padding: 8px 28px 32px;
+  overscroll-behavior: contain;
+}
+
+.roles {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.role {
+  @include button-reset;
+  @include underline-cue;
+
+  padding: 6px 0;
+  color: var(--sheet-muted);
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  text-align: left;
+
+  &:hover {
+    color: var(--sheet-text);
+  }
+}
+
+.roleActive {
+  color: var(--sheet-text);
+  font-weight: 600;
+  text-decoration-color: var(--sheet-accent);
+}
+
+.scenario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: auto;
+}
+
+.scenarioHeading {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+}
+
+.chip {
+  @include button-reset;
+  @include underline-cue;
+
+  padding: 4px 0;
+  color: var(--sheet-muted);
+  font-size: 0.8125rem;
+
+  &:hover {
+    color: var(--sheet-text);
+  }
+}
+
+.chipActive {
+  color: var(--sheet-text);
+  font-weight: 600;
+  text-decoration-color: var(--sheet-accent);
+}
+
+// Reserves five lines so the chips above don't jump when the sentence length changes.
+.sentenceWrap {
+  min-height: calc(5 * 1.12em);
+  font-size: clamp(1.5rem, 2.2vw, 2.125rem);
+}
+
+.sentence {
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  animation: text-enter 180ms ease-out both;
+}
+
+// ---- Right sheet: resume, rows, cards ----
+
+.fileHeader {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 72px 16px 28px; // right padding clears the close button
+}
+
+.fileName {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.switch {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, auto);
+  gap: 0 16px;
+}
+
+.switchItem {
+  @include button-reset;
+  @include underline-cue;
+
+  color: var(--sheet-muted);
+  font-size: 0.75rem;
+  text-align: left;
+
+  &:hover {
+    color: var(--sheet-text);
+  }
+}
+
+.switchItemActive {
+  color: var(--sheet-text);
+  font-weight: 600;
+  text-decoration-color: var(--sheet-accent);
+}
+
+.rightBody {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 28px;
+  overflow-y: auto;
+  padding: 0 28px 28px;
+  overscroll-behavior: contain;
+}
+
+.stage {
+  flex: 0 0 auto;
+  height: clamp(18rem, 52vh, 36rem);
+  overflow-y: auto;
+  padding: 28px 24px 0;
+  border-radius: 10px;
+  background: var(--stage-bg);
+  overscroll-behavior: contain;
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
+.paper {
+  position: relative;
+  width: min(100%, 34rem);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 40px 44px 56px;
+  border-radius: 4px 4px 0 0;
+  background: #fff;
+  color: var(--paper-text);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.paperName {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.paperTitle {
+  margin: 4px 0 0;
+  color: var(--paper-muted);
+  font-size: 0.875rem;
+}
+
+.paperContact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+  margin: 10px 0 0;
+  color: var(--paper-muted);
+}
+
+.paperSection {
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--paper-rule);
+}
+
+.paperHeading {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.paperText {
+  margin: 0;
+  color: var(--paper-muted);
+}
+
+.entry {
+  margin: 0 -12px 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 160ms ease;
+}
+
+.entryActive {
+  background: rgb(40 100 232 / 7%);
+}
+
+.entryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.entryTitle {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.entryMeta {
+  color: var(--paper-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.bullets {
+  margin: 6px 0 0;
+  padding-left: 1.1rem;
+  color: var(--paper-muted);
+
+  li + li {
+    margin-top: 4px;
+  }
+
+  li::marker {
+    color: #b8b8b8;
+  }
+}
+
+.skillLine {
+  margin: 0 0 6px;
+  color: var(--paper-muted);
+}
+
+.skillKind {
+  display: inline-block;
+  min-width: 5.5rem;
+  color: var(--paper-text);
+  font-weight: 600;
+}
+
+// Role highlight inside the resume: bold + underline, everything else stays quiet.
+.mark {
+  @include underline-cue;
+
+  text-underline-offset: 3px;
+}
+
+.markOn {
+  color: var(--paper-text);
+  font-weight: 600;
+  text-decoration-color: var(--paper-accent);
+}
+
+.rows {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: 16px;
+}
+
+.rowLabel {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.rowItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin: 0;
+}
+
+.rowItem {
+  @include button-reset;
+  @include underline-cue;
+
+  color: var(--sheet-muted);
+  text-align: left;
+
+  &:hover {
+    color: var(--sheet-text);
+  }
+}
+
+.rowItemActive {
+  color: var(--sheet-text);
+  font-weight: 600;
+  text-decoration-color: var(--sheet-accent);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  min-height: 8rem;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--sheet-border);
+  border-radius: 10px;
+  background: var(--sheet-surface);
+}
+
+.cardTitle {
+  margin: 0 0 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.cardList {
+  margin: 0;
+  padding: 0;
+  color: #d4d4d4;
+  font-size: 0.8125rem;
+  list-style: none;
+  animation: text-enter 180ms ease-out both;
+
+  li + li {
+    margin-top: 2px;
+  }
+}
+
+@keyframes sheet-enter-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes sheet-enter-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes text-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Stopgap until mobile is designed: the sheets stack into one scrolling column.
+@media (max-width: 899px) {
+  .dialog {
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    pointer-events: auto;
+    overscroll-behavior: contain;
+  }
+
+  .left,
+  .right {
+    width: 100%;
+    height: auto;
+    flex: 0 0 auto;
+    overflow: visible;
+    box-shadow: none;
+  }
+
+  .left {
+    border-right: 0;
+    border-bottom: 2px solid var(--sheet-accent);
+  }
+
+  .right {
+    border-left: 0;
+  }
+
+  .header {
+    padding-right: 72px;
+  }
+
+  .leftBody,
+  .rightBody {
+    overflow: visible;
+  }
+
+  .fileHeader {
+    flex-wrap: wrap;
+    padding-right: 28px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .left,
+  .right,
+  .sentence,
+  .cardList {
+    animation: none;
+  }
+
+  .role,
+  .chip,
+  .switchItem,
+  .rowItem,
+  .mark,
+  .entry,
+  .close {
+    transition: none;
+  }
+}
