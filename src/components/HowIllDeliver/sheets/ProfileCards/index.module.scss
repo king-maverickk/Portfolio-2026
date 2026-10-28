@@ -1,0 +1,225 @@
+@use '../scale' as *;
+
+// Stacked: full-width cards, one under the other.
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: u(12);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: u(40) u(7) u(8);
+  border-radius: u(12);
+  color: #000;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 3px;
+  }
+}
+
+.github {
+  background: linear-gradient(178.56deg, #161b22 1.22%, #fafeff 138.52%);
+}
+
+.linkedin {
+  background: linear-gradient(180deg, #4fb2f5 0%, #fafeff 100%);
+  box-shadow: 0 1px 8px 0 rgb(0 0 0 / 20%);
+}
+
+.head {
+  position: absolute;
+  top: u(8);
+  right: 0;
+  left: 0;
+  display: flex;
+  height: u(25);
+  align-items: center;
+  justify-content: center;
+  gap: u(8);
+  font-size: u(20);
+  font-weight: 500;
+  line-height: u(25);
+  white-space: nowrap;
+}
+
+.github .head {
+  color: #f7f7f7;
+}
+
+.linkedin .head {
+  color: #e3fcff;
+}
+
+.headIcon {
+  width: u(18);
+  height: u(18);
+  flex: none;
+}
+
+.body {
+  display: flex;
+  min-height: u(146);
+  flex: 1;
+  flex-direction: column;
+  padding: u(20) u(12) u(19);
+  border-radius: u(12);
+  background: #f7f7f7;
+  box-shadow: 0 u(2) u(6) u(-1) rgb(40 40 80 / 16%), inset 0 1px 0 #fff;
+}
+
+.github .body {
+  padding-bottom: u(6);
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: u(12);
+}
+
+.name {
+  min-width: 0;
+  font-size: u(20);
+  font-weight: 400;
+  line-height: u(25);
+  overflow-wrap: anywhere;
+}
+
+.avatar {
+  width: u(34);
+  height: u(34);
+  flex: none;
+  margin-top: u(-9);
+  border-radius: 100px;
+  filter: drop-shadow(0 u(4) u(4) rgb(0 0 0 / 25%));
+  object-fit: cover;
+}
+
+.about {
+  margin-top: u(8);
+  font-size: u(14);
+  font-weight: 200;
+  line-height: u(18);
+  opacity: 0.5;
+}
+
+.github .about {
+  margin-top: u(14);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: u(4) u(12);
+  margin-top: auto;
+  padding-top: u(12);
+}
+
+.stat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  white-space: nowrap;
+
+  b {
+    margin-right: u(3);
+    font-size: u(12);
+    font-weight: 500;
+    line-height: u(15);
+  }
+
+  span {
+    font-size: u(10);
+    font-weight: 400;
+    line-height: u(13);
+    opacity: 0.5;
+  }
+}
+
+.note {
+  flex-basis: 100%;
+  font-size: u(10);
+  line-height: u(13);
+  opacity: 0.5;
+}
+
+.foot {
+  font-size: u(12);
+  font-weight: 500;
+  line-height: u(15);
+  white-space: nowrap;
+}
+
+.view {
+  display: flex;
+  align-items: center;
+  color: #0a66c2;
+}
+
+.viewIcon {
+  width: u(12);
+  height: u(12);
+  flex: none;
+  margin-left: u(3);
+}
+
+// Scaled: two compact cards side by side, in a 480-wide column.
+[data-layout='scaled'] {
+  .cards {
+    flex-direction: row;
+    align-items: stretch;
+    gap: u(16);
+  }
+
+  .card {
+    max-width: u(300);
+    flex: 1 1 0;
+  }
+
+  .head {
+    font-size: u(18);
+  }
+
+  .name {
+    font-size: u(17);
+    line-height: u(22);
+  }
+
+  .about {
+    font-size: u(13);
+    line-height: u(17);
+  }
+
+  .aboutSmall {
+    font-size: u(12);
+  }
+
+  .row {
+    flex-wrap: nowrap;
+    gap: u(4);
+  }
+
+  .stat {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+
+    b {
+      margin: 0;
+    }
+  }
+
+  .foot {
+    font-size: u(11);
+  }
+}

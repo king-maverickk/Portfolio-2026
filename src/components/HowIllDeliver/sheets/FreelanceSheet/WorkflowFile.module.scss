@@ -1,0 +1,159 @@
+@use '../scale' as *;
+
+$line: #2b2b2b;
+
+.workflow {
+  --row: #{u(26)};
+
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.title {
+  margin: 0 0 u(6);
+  font-size: u(28);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+}
+
+.tree,
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Every item draws its own piece of the tree: an elbow from the line above to its row, and a continuation
+// down to the next sibling. The last sibling gets a rounded elbow and no continuation.
+.item {
+  position: relative;
+  padding-left: u(28);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: u(22);
+    height: calc(var(--row) / 2);
+    border-bottom: 1px solid $line;
+    border-left: 1px solid $line;
+  }
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--row) / 2);
+    bottom: 0;
+    left: 0;
+    border-left: 1px solid $line;
+  }
+
+  &:last-child::before {
+    border-bottom-left-radius: u(8);
+  }
+}
+
+// The intro line sits on the tree but has no branch of its own.
+.intro {
+  padding-bottom: u(10);
+
+  &::before {
+    display: none;
+  }
+
+  &:not(:last-child)::after {
+    top: 0;
+  }
+}
+
+.lead {
+  margin: 0;
+  font-size: u(14);
+  line-height: 1.5;
+}
+
+.recent {
+  margin: u(2) 0 0;
+  color: $faint;
+  font-size: u(12);
+  line-height: 1.5;
+}
+
+.row {
+  display: flex;
+  min-height: var(--row);
+  align-items: center;
+  gap: u(6);
+  line-height: 1.35;
+}
+
+.phaseIcon {
+  width: u(18);
+  height: u(18);
+  flex: none;
+}
+
+.phaseName {
+  font-size: u(16);
+}
+
+// The second level hangs under the middle of the phase's folder icon.
+.steps {
+  margin-left: u(8);
+}
+
+.step {
+  padding-left: u(26);
+
+  &::before {
+    width: u(20);
+  }
+
+  .row {
+    font-size: u(13);
+  }
+}
+
+.stepIcon {
+  width: u(15);
+  height: u(15);
+  flex: none;
+}
+
+.ai {
+  margin-top: auto;
+  padding-top: u(14);
+  border-top: 1px solid $rule;
+  font-size: u(12);
+  line-height: 1.5;
+
+  p {
+    margin: 0;
+  }
+}
+
+.aiHeading {
+  margin: 0 0 u(2);
+  font-size: u(14);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+[data-layout='stacked'] {
+  .title {
+    font-size: u(30);
+  }
+
+  .step .row {
+    align-items: flex-start;
+    padding: u(4) 0;
+  }
+
+  .ai {
+    margin-top: u(20);
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "",
+    "ACS_CONNECTION_STRING": "endpoint=https://<your-resource>.communication.azure.com/;accesskey=<key>",
+    "CONTACT_SENDER_ADDRESS": "DoNotReply@<your-domain-guid>.azurecomm.net",
+    "CONTACT_TO_ADDRESS": "you@example.com"
+  }
+}

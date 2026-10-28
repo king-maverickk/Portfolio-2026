@@ -1,0 +1,67 @@
+@use '../scale' as *;
+
+.lists {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: u(24);
+}
+
+.group {
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 u(6);
+  font-size: u(16);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 u(4);
+  margin: 0;
+  padding: 0;
+  color: $muted;
+  font-size: u(13);
+  line-height: 1.55;
+  list-style: none;
+
+  // Each item keeps its pipe, so a line only ever breaks after one.
+  li {
+    white-space: nowrap;
+  }
+
+  li:not(:last-child)::after {
+    content: '|';
+    content: '|' / '';
+    margin-left: u(4);
+  }
+}
+
+// Stacked layout: a label column and a wrapping list, one row per group.
+[data-layout='stacked'] {
+  .lists {
+    grid-template-columns: 1fr;
+    gap: u(14);
+  }
+
+  .group {
+    display: flex;
+    gap: u(12);
+  }
+
+  .title {
+    width: u(84);
+    flex: none;
+    margin: 0;
+    font-size: u(15);
+    font-weight: 600;
+  }
+
+  .items {
+    min-width: 0;
+    flex: 1;
+  }
+}

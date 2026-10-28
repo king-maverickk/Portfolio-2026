@@ -1,0 +1,63 @@
+@use '../scale' as *;
+
+// The "Typical project" pill at the top of the right column.
+.typical {
+  @include glass;
+
+  display: inline-flex;
+  height: u(40);
+  align-items: center;
+  gap: u(10);
+  margin: 0;
+  padding: 0 u(18);
+  border-radius: u(20);
+  color: #3d3d3d;
+  font-size: u(13);
+  white-space: nowrap;
+}
+
+.typicalIcon {
+  width: u(15);
+  height: u(15);
+  flex: none;
+}
+
+.start {
+  @include focus-ring;
+
+  height: u(40);
+  padding: 0 u(18);
+  border: 0;
+  border-radius: u(12);
+  background: $ink;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: u(13);
+  font-weight: 500;
+
+  &:hover {
+    background: #000;
+  }
+}
+
+// The Workflow paper has tighter side padding than the other two.
+[data-layout='scaled'] .paperWorkflow {
+  padding: u(28);
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: u(28);
+}
+
+.file {
+  min-width: 0;
+}
+
+[data-layout='stacked'] .start {
+  width: 100%;
+  height: u(48);
+  border-radius: u(14);
+}

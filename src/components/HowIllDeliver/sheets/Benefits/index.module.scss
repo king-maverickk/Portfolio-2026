@@ -1,0 +1,42 @@
+@use '../scale' as *;
+
+.heading {
+  margin: 0 0 u(12);
+  font-size: u(14);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: u(10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: u(10) u(14);
+  border-radius: u(12);
+  background: #fff;
+  color: #3d3d3d;
+  font-size: u(13);
+  line-height: 1.5;
+
+  b {
+    color: $ink;
+    font-weight: 600;
+  }
+}
+
+[data-layout='stacked'] {
+  .list {
+    gap: u(8);
+  }
+
+  .item {
+    padding: u(12) u(16);
+    border-radius: u(14);
+  }
+}

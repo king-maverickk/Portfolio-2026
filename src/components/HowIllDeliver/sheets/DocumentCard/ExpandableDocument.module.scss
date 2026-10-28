@@ -1,0 +1,85 @@
+@use '../scale' as *;
+
+// Fills the paper and extends to its bottom edge, so the fade runs right to the paper's edge.
+.root {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  margin-bottom: u(-36); // the paper's bottom padding
+}
+
+.preview {
+  min-height: 0;
+  flex: 1 1 0;
+  overflow: hidden;
+}
+
+.fade {
+  position: absolute;
+  right: u(-40);
+  bottom: 0;
+  left: u(-40);
+  height: u(110);
+  background: linear-gradient(to top, #fff 22%, rgb(255 255 255 / 0%));
+  pointer-events: none;
+}
+
+// The paper, as one big button. It is transparent: the document shows through.
+.expand {
+  @include focus-ring;
+
+  position: absolute;
+  inset: u(-36) u(-40) 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 u(18);
+  border: 0;
+  border-radius: 0 u(18) u(18) u(18);
+  background: transparent;
+  color: $ink;
+  cursor: zoom-in;
+  font: inherit;
+
+  &:focus-visible {
+    outline-offset: u(-4);
+  }
+
+  &:hover .hint,
+  &:focus-visible .hint {
+    background: $ink;
+    color: #fff;
+  }
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: u(8);
+  padding: u(8) u(14);
+  border-radius: u(16);
+  background: #fff;
+  box-shadow: 0 u(2) u(10) rgb(40 40 80 / 18%);
+  font-size: u(13);
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.hintIcon {
+  width: u(14);
+  height: u(14);
+  flex: none;
+}
+
+[data-layout='stacked'] .root {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+[data-layout='stacked'] .preview {
+  flex: 0 0 auto;
+  overflow: visible;
+}

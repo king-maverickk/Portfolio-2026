@@ -1,0 +1,61 @@
+@use '../scale' as *;
+
+.tabs {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 0 0 auto;
+  gap: u(6);
+  max-width: 100%;
+}
+
+.tab {
+  @include glass;
+  @include focus-ring;
+
+  display: flex;
+  height: u(32);
+  align-items: center;
+  gap: u(8);
+  padding: 0 u(14);
+  border: 0;
+  border-radius: u(12) u(12) 0 0;
+  background: rgb(255 255 255 / 45%);
+  color: #3d3d3d;
+  cursor: pointer;
+  font: inherit;
+  font-size: u(13);
+  white-space: nowrap;
+
+  &[aria-selected='true'] {
+    background: #fff;
+    color: $ink;
+    font-weight: 600;
+  }
+
+  &:hover:not([aria-selected='true']) {
+    background: rgb(255 255 255 / 70%);
+  }
+}
+
+.tab.static {
+  background: #fff;
+  color: $ink;
+  cursor: default;
+  font-weight: 600;
+}
+
+.icon {
+  width: u(15);
+  height: u(15);
+  flex: none;
+}
+
+.label {
+  @include bold-reserve;
+}
+
+// Stacked layout: taller tabs, easier to hit with a thumb.
+[data-layout='stacked'] .tab {
+  height: u(36);
+}

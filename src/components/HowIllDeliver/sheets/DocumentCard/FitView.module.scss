@@ -1,0 +1,86 @@
+@use '../scale' as *;
+
+// Covers the whole screen, sheet included. FitView.js sets --u on .page so the page fits the viewport.
+.viewer {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(246 246 248 / 80%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  color: $ink;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  pointer-events: auto;
+}
+
+.page {
+  @include paper-shadow;
+
+  width: u(620);
+  flex: none;
+  padding: u(36) u(44);
+  border-radius: u(18);
+  background: #fff;
+}
+
+.close {
+  @include glass;
+  @include focus-ring;
+
+  position: fixed;
+  top: u(28);
+  right: u(32);
+  display: grid;
+  width: u(40);
+  height: u(40);
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #3d3d3d;
+  cursor: pointer;
+
+  svg {
+    width: u(20);
+    height: u(20);
+  }
+}
+
+// The close button keeps a usable size however small the page is scaled.
+[data-layout='scaled'] .close {
+  top: 20px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Stacked: a normal scrolling reader.
+[data-layout='stacked'] .viewer {
+  display: block;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: u(72) u(12) u(24);
+}
+
+[data-layout='stacked'] .page {
+  width: 100%;
+  max-width: u(640);
+  margin: 0 auto;
+  padding: u(28) u(24);
+}
+
+[data-layout='stacked'] .close {
+  top: u(12);
+  right: u(12);
+  width: u(44);
+  height: u(44);
+}

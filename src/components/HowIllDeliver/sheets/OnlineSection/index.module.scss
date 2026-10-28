@@ -1,0 +1,22 @@
+@use '../scale' as *;
+
+.head {
+  display: flex;
+  min-height: u(24);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: u(12);
+}
+
+.heading {
+  margin: 0;
+  font-size: u(14);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+[data-layout='stacked'] .head {
+  flex-direction: column;
+  align-items: stretch;
+  gap: u(12);
+}

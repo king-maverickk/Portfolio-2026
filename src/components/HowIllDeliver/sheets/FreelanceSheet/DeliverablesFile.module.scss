@@ -1,0 +1,159 @@
+@use '../scale' as *;
+
+.deliverables {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.title {
+  margin: 0;
+  font-size: u(28);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+}
+
+.intro {
+  margin: u(4) 0 0;
+  padding-bottom: u(16);
+  border-bottom: 1px solid $rule;
+  font-size: u(14);
+  line-height: 1.5;
+}
+
+.packages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: u(8);
+  margin: u(16) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.package {
+  min-width: 0;
+  padding: u(14);
+  border-radius: u(12);
+  background: $ink;
+  color: #fff;
+}
+
+.packageName {
+  margin: 0;
+  font-size: u(13);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: u(6);
+  margin: u(2) 0 0;
+  font-size: u(28);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.prefix {
+  font-size: u(13);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.packageText {
+  margin: u(8) 0 0;
+  color: #d6d6d6;
+  font-size: u(12);
+  line-height: 1.5;
+}
+
+.note {
+  margin: u(8) 0 0;
+  color: $muted;
+  font-size: u(12);
+}
+
+.problemsHeading {
+  margin: u(22) 0 u(6);
+  font-size: u(13);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.problems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.problem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) u(16) minmax(0, 1fr);
+  align-items: center;
+  gap: u(12);
+  min-height: u(32);
+  border-top: 1px solid $rule;
+  font-size: u(13);
+  line-height: 1.4;
+
+  &:last-child {
+    border-bottom: 1px solid $rule;
+  }
+}
+
+.from {
+  color: $muted;
+}
+
+.arrow {
+  width: u(12);
+  height: u(12);
+  color: $ink;
+}
+
+.to {
+  font-weight: 600;
+}
+
+.after {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: u(24);
+  margin-top: auto;
+  padding-top: u(22);
+  font-size: u(12);
+  line-height: 1.5;
+
+  p {
+    margin: 0;
+    color: $muted;
+  }
+}
+
+.afterHeading {
+  margin: 0 0 u(2);
+  color: $ink;
+  font-size: u(13);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+[data-layout='stacked'] {
+  .packages {
+    grid-template-columns: 1fr;
+  }
+
+  .problem {
+    grid-template-columns: minmax(0, 1fr) u(16) minmax(0, 1fr);
+    padding: u(6) 0;
+  }
+
+  .after {
+    grid-template-columns: 1fr;
+    gap: u(14);
+  }
+}

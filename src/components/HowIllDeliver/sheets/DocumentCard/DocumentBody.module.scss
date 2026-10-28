@@ -1,0 +1,116 @@
+@use '../scale' as *;
+
+.doc {
+  color: $muted;
+  font-size: u(13);
+  line-height: 1.55;
+
+  p {
+    margin: 0;
+  }
+}
+
+.name {
+  margin: 0;
+  color: $ink;
+  font-size: u(26);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.role {
+  margin-top: u(4);
+  font-size: u(14);
+}
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 u(14);
+  margin-top: u(8);
+  font-size: u(12);
+}
+
+.rule {
+  margin-top: u(18);
+  border-top: 1px solid $rule;
+}
+
+.section {
+  margin-top: u(18);
+  padding-top: u(16);
+  border-top: 1px solid $rule;
+
+  &:first-of-type {
+    margin-top: u(18);
+  }
+}
+
+.heading {
+  margin: 0 0 u(6);
+  color: $ink;
+  font-size: u(13);
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.entry {
+  margin-top: u(12);
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+.entryHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: u(12);
+
+  b {
+    color: $ink;
+    font-size: u(13);
+    font-weight: 600;
+  }
+}
+
+.meta {
+  font-size: u(12);
+  white-space: nowrap;
+}
+
+.bullets {
+  margin: u(6) 0 0;
+  padding: 0 0 0 u(18);
+  list-style: disc;
+
+  li {
+    display: list-item; // the global reset sets li to block, which hides the bullet
+    list-style: disc;
+  }
+
+  li + li {
+    margin-top: u(2);
+  }
+}
+
+.line {
+  b {
+    color: $ink;
+    font-weight: 600;
+  }
+
+  & + & {
+    margin-top: u(4);
+  }
+}
+
+.letterText {
+  margin-top: u(12);
+}
+
+.rule + .letterText {
+  margin-top: u(22);
+}

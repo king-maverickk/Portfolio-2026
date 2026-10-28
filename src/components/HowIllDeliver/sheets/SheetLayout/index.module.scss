@@ -1,0 +1,236 @@
+@use '../scale' as *;
+
+.dialog {
+  --u: 0.0625rem; // stacked: 1 design pixel = 1px at the default font size
+  --glow: #2864e8;
+
+  position: absolute;
+  inset: 0;
+  color: $ink;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
+  font-size: u(14);
+  line-height: 1.5;
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ---- Scaled: the 1440 x 900 composition, fitted to the viewport ----
+// One design pixel is the smaller of (viewport width / 1440) and (viewport height / 900), capped so very
+// large screens don't blow the text up. Nothing in this layout scrolls: whichever axis is the tighter one
+// sets the size and the other axis simply has more breathing room.
+.scaled {
+  --u: min(calc(100vw / 1440), calc(100vh / 900), 1.5px);
+
+  overflow: hidden;
+  pointer-events: none; // gaps fall through to the backdrop, which closes the sheet
+}
+
+@supports (height: 100dvh) {
+  .scaled {
+    --u: min(calc(100vw / 1440), calc(100dvh / 900), 1.5px);
+  }
+}
+
+.glow {
+  position: absolute;
+  z-index: -1;
+  top: calc(var(--glow-y, 400) * var(--u));
+  left: var(--glow-x, 50%);
+  width: u(620);
+  height: u(660);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--glow) 45%, transparent),
+    color-mix(in srgb, var(--glow) 20%, transparent) 62%,
+    transparent
+  );
+  filter: blur(calc(44 * var(--u)));
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.columns {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: u(480) minmax(0, 1fr) u(480); // one standard column width
+  padding: 0 u(70) 0 u(56);
+}
+
+.left,
+.right {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.left {
+  grid-column: 1;
+  gap: u(20);
+  padding: u(52) 0 u(16);
+
+  [data-slot='benefits'] {
+    margin-top: u(18);
+  }
+
+  // Pinned to the bottom of the sheet.
+  [data-slot='scenario'] {
+    margin-top: auto;
+  }
+}
+
+.right {
+  grid-column: 3;
+  padding: u(30) 0 u(16);
+
+  [data-slot='top'] {
+    display: flex;
+    height: u(40);
+    flex: 0 0 auto;
+    align-items: center;
+    margin-bottom: u(43);
+  }
+
+  // The document takes whatever height is left, up to the height the design draws it at. On screens that are
+  // taller for their width the spare room opens up between the document and the lists, not inside the paper.
+  [data-slot='document'] {
+    display: flex;
+    min-height: 0;
+    max-height: u(670);
+    flex: 1 1 0;
+    flex-direction: column;
+  }
+
+  // Pinned to the bottom of the sheet.
+  [data-slot='lists'] {
+    margin-top: auto;
+    padding-top: u(16);
+  }
+}
+
+.slot {
+  position: relative;
+  min-width: 0;
+  pointer-events: auto;
+  isolation: isolate;
+}
+
+.header {
+  pointer-events: auto;
+}
+
+.title {
+  margin: 0;
+  font-size: u(24);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.description {
+  margin: u(6) 0 0;
+  color: $muted;
+  font-size: u(14);
+
+  p {
+    margin: 0;
+  }
+
+  p + p {
+    margin-top: u(2);
+    font-size: u(13);
+  }
+}
+
+.close {
+  @include glass;
+  @include focus-ring;
+
+  position: absolute;
+  z-index: 5;
+  top: u(28);
+  right: u(32);
+  display: grid;
+  width: u(40);
+  height: u(40);
+  flex: none;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #3d3d3d;
+  cursor: pointer;
+  pointer-events: auto;
+
+  svg {
+    width: u(20);
+    height: u(20);
+  }
+}
+
+// ---- Stacked: one scrolling column ----
+.stacked {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  // The accent glow, drawn behind the document.
+  .slot[data-slot='document']::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: calc(100% + #{u(28)});
+    height: u(640);
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--glow) 45%, transparent),
+      color-mix(in srgb, var(--glow) 20%, transparent) 62%,
+      transparent
+    );
+    filter: blur(calc(44 * var(--u)));
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+}
+
+// The role strip follows the reader down the page, so the role can be changed while reading the resume.
+.stacked [data-slot='top'] {
+  position: sticky;
+  z-index: 4;
+  top: u(8);
+}
+
+.column {
+  display: flex;
+  width: 100%;
+  max-width: u(600);
+  min-height: 100%;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: u(20) u(16) u(56);
+
+  > .slot {
+    margin-top: u(36);
+  }
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: u(12);
+
+  .title {
+    font-size: u(22);
+  }
+
+  .close {
+    position: static;
+    width: u(44);
+    height: u(44);
+  }
+}

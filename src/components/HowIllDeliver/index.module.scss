@@ -181,6 +181,16 @@
   animation: backdrop-enter 180ms ease-out both;
 }
 
+// The two-column sheets float over a light, blurred page instead of the dark side drawer's scrim.
+.sheetBackdropLight {
+  display: block;
+  background:
+    radial-gradient(#cdcdd4 1px, transparent 1px) 0 0 / 22px 22px,
+    rgb(246 246 248 / 80%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
 .sheet {
   display: flex;
   width: min(440px, 100%);

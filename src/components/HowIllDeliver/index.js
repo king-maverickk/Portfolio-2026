@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
-import DeliverySheets from 'components/DeliverySheets';
-import hiringManagers from 'components/DeliverySheets/datasets/hiringManagers';
+import SHEETS from './sheets';
+import useSheetLayout from './sheets/useSheetLayout';
 import styles from './index.module.scss';
 
 const GRID = {
@@ -35,6 +35,8 @@ const ANNOTATIONS = [
   { id: 'hiring-manager', label: '(hiring manager)', className: styles.hiringManager }
 ];
 
+// Titles and descriptions for every sheet. Only "open to work" still uses the original single sheet, which is
+// why it is the only entry with paragraphs.
 const SHEET_CONTENT = {
   'open-to-work': {
     title: 'Open to work',
@@ -46,26 +48,36 @@ const SHEET_CONTENT = {
   },
   freelance: {
     title: 'Freelance / contract',
-    description: 'Let’s make something great together.',
-    paragraphs: [
-      'I partner with teams and individuals to shape ideas into polished digital experiences, from early concepts and visual design through to a working build.',
-      'Whether you need a focused design engagement or extra hands to move a project forward, tell me what you’re working on and where you need support.'
-    ]
+    description: 'Have a project that needs a designer and a developer?',
+    detail: 'Independent, collaborative and open to your ideas.'
   },
   'hiring-manager': {
     title: 'Hiring managers',
-    description: 'Looking for a designer-developer?',
-    paragraphs: [
-      'My work sits across the design and development process: I can help explore a direction, refine the details, and build the experience for the screen.',
-      'If that mix could be a fit for your team, I’d be happy to learn more about the role and what you’re creating.'
-    ]
+    description: 'Looking for a designer-developer?'
   }
 };
 
-// Annotations with a dataset open the two-sheet layout; the rest still open the single sheet.
-const SHEET_DATASETS = {
-  'hiring-manager': hiringManagers
-};
+// Everything the Tab key may land on inside the open sheet, in page order.
+const FOCUSABLE = [
+  'button',
+  '[href]',
+  'input:not([type="hidden"])',
+  'textarea',
+  'select',
+  '[tabindex]'
+].map((selector) => `[data-sheet-dialog] ${selector}`).join(',');
+
+function getFocusableElements() {
+  return Array.from(document.querySelectorAll(FOCUSABLE)).filter((element) => {
+    if (element.disabled || element.getAttribute('tabindex') === '-1') return false;
+    // Only the checked radio in a group is a tab stop.
+    if (element.type === 'radio' && !element.checked && element.name) {
+      const group = document.getElementsByName(element.name);
+      return !Array.from(group).some((radio) => radio.checked);
+    }
+    return true;
+  });
+}
 
 function RevealItem({ children, className, direction = 'left', as: Element = 'span', ...props }) {
   return (
@@ -95,6 +107,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   const triggerRef = useRef(null);
   const [activeAnnotation, setActiveAnnotation] = useState(null);
   const [sheetAccentColor, setSheetAccentColor] = useState(null);
+  const layout = useSheetLayout();
   const isSheetOpen = activeAnnotation !== null;
 
   useEffect(() => {
@@ -112,9 +125,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
 
       if (event.key !== 'Tab') return;
 
-      const focusableElements = Array.from(
-        document.querySelectorAll('[data-sheet-dialog] button:not([disabled]), [data-sheet-dialog] [href], [data-sheet-dialog] [tabindex]:not([tabindex="-1"])')
-      );
+      const focusableElements = getFocusableElements();
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -225,7 +236,8 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   }, []);
 
   const sheet = activeAnnotation ? SHEET_CONTENT[activeAnnotation] : null;
-  const dataset = activeAnnotation ? SHEET_DATASETS[activeAnnotation] : null;
+  const twoColumnSheet = activeAnnotation ? SHEETS[activeAnnotation] : null;
+  const closeSheet = () => setActiveAnnotation(null);
 
   return (
     <>
@@ -265,19 +277,25 @@ function HowIllDeliver({ className, onAnnotationClick }) {
 
       {sheet && createPortal(
         <div
-          className={styles.sheetBackdrop}
+          className={cn(styles.sheetBackdrop, twoColumnSheet && styles.sheetBackdropLight)}
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setActiveAnnotation(null);
+            if (event.target === event.currentTarget) closeSheet();
           }}
         >
-          {dataset ? (
-            <DeliverySheets
-              dataset={dataset}
+          {twoColumnSheet ? (
+            <twoColumnSheet.Component
+              layout={layout}
+              glow={twoColumnSheet.glow}
+              glowAt={twoColumnSheet.glowAt}
               title={sheet.title}
-              description={sheet.description}
-              accentColor={sheetAccentColor}
+              description={(
+                <>
+                  <p>{sheet.description}</p>
+                  {sheet.detail && <p>{sheet.detail}</p>}
+                </>
+              )}
               closeButtonRef={closeButtonRef}
-              onClose={() => setActiveAnnotation(null)}
+              onClose={closeSheet}
             />
           ) : (
             <aside
@@ -302,7 +320,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
                   type="button"
                   className={styles.sheetClose}
                   aria-label="Close sheet"
-                  onClick={() => setActiveAnnotation(null)}
+                  onClick={closeSheet}
                 >
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M18 6 6 18M6 6l12 12" />

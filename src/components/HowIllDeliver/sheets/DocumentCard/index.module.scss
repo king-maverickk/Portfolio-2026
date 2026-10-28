@@ -1,0 +1,33 @@
+@use '../scale' as *;
+
+.card {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+}
+
+// The paper's top-left corner is square: that is where the active tab joins it.
+.paper {
+  @include paper-shadow;
+
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  padding: u(36) u(40);
+  border-radius: 0 u(18) u(18) u(18);
+  background: #fff;
+  color: $ink;
+}
+
+// Scaled: the paper is a fixed window onto its content, so nothing inside may spill out.
+[data-layout='scaled'] .paper {
+  overflow: hidden;
+}
+
+[data-layout='stacked'] .paper {
+  flex: 0 0 auto;
+  padding: u(24);
+}

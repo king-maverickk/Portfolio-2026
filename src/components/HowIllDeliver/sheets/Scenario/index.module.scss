@@ -1,0 +1,82 @@
+@use '../scale' as *;
+
+.scenario {
+  min-width: 0;
+}
+
+.heading {
+  margin: 0 0 u(12);
+  font-size: u(14);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: u(4) u(2);
+  margin-left: u(-12); // chip text lines up with the column edge
+}
+
+.chip {
+  @include focus-ring;
+
+  display: inline-flex;
+  align-items: center;
+  padding: u(6) u(12);
+  border: 0;
+  border-radius: u(16);
+  background: none;
+  color: $muted;
+  cursor: pointer;
+  font: inherit;
+  font-size: u(13);
+  line-height: 1.5;
+
+  &:hover {
+    color: $ink;
+  }
+
+  // Active is bold only: no underline, no highlight.
+  &[aria-pressed='true'] {
+    color: $ink;
+    font-weight: 700;
+  }
+}
+
+.chipText {
+  @include bold-reserve;
+}
+
+.sentence {
+  min-height: calc(var(--reserve-lines, 4) * 1.12em);
+  margin: u(14) 0 0;
+  color: $ink;
+  font-size: u(34);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+// Stacked layout: chips become pills, sentence a little smaller.
+[data-layout='stacked'] {
+  .chips {
+    margin-top: u(-2);
+  }
+
+  .chip {
+    height: u(36);
+    border-radius: u(18);
+
+    &[aria-pressed='true'] {
+      background: #fff;
+      box-shadow: 0 u(4) u(12) u(-4) rgb(40 40 80 / 30%);
+    }
+  }
+
+  .sentence {
+    min-height: 0;
+    margin-top: u(16);
+    font-size: u(28);
+  }
+}
