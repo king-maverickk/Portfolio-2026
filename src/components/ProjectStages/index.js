@@ -3,6 +3,43 @@ import { STAGE_ICONS } from './StageIcons';
 import { useActiveStage } from './useActiveStage';
 import styles from './index.module.scss';
 
+function prefersReducedMotion() {
+  return typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function StageVideo({ src, label, isActive }) {
+  const videoRef = useRef(null);
+  const [reducedMotion] = useState(prefersReducedMotion);
+
+  // Only play while this stage is the active one; pause otherwise to save CPU/bandwidth.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || reducedMotion) return;
+
+    if (isActive) {
+      const playing = video.play();
+      if (playing && typeof playing.catch === 'function') playing.catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, [isActive, reducedMotion]);
+
+  return (
+    <video
+      ref={videoRef}
+      className={styles.tileVideo}
+      src={src}
+      aria-label={label}
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      controls={reducedMotion}
+    />
+  );
+}
+
 function ProjectStages({ project }) {
   const { stages } = project;
   const { active, setActive, tileRefs } = useActiveStage(stages.length);
@@ -118,11 +155,23 @@ function ProjectStages({ project }) {
             <div
               key={stage.id}
               ref={(element) => { tileRefs.current[index] = element; }}
-              className={`${styles.tile} ${index === active ? styles.tileActive : ''}`}
+              className={[
+                styles.tile,
+                index === active ? styles.tileActive : '',
+                stage.video ? styles.tileHasVideo : ''
+              ].filter(Boolean).join(' ')}
               data-index={index}
               aria-label={`${stage.label} stage`}
             >
-              <span className={styles.tileLabel}>{stage.placeholder}</span>
+              {stage.video ? (
+                <StageVideo
+                  src={stage.video}
+                  label={stage.videoLabel || `${stage.label} stage video`}
+                  isActive={index === active}
+                />
+              ) : (
+                <span className={styles.tileLabel}>{stage.placeholder}</span>
+              )}
             </div>
           ))}
         </div>

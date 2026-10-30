@@ -6,7 +6,9 @@ const homeProject = {
       label: 'Sketch',
       icon: 'sketch',
       description: 'Early ideas take shape through quick sketches, references, and exploration.',
-      placeholder: 'Sketch designs and ideas go here'
+      placeholder: 'Sketch designs and ideas go here',
+      video: '/assets/Home/sketch_Freeform_Sketches.mp4',
+      videoLabel: 'Screen recording of freeform sketches taking shape'
     },
     {
       id: 'screen',

@@ -1,6 +1,7 @@
 $card-bg: #383838;
 $blue: #2864e8;
 $tile-bg: #b39ae6;
+$tile-border: #4FB2F5;
 $radius: 14px;
 $column-gap: clamp(1rem, 2vw, 1.6rem);
 $tile-gap: 1rem;
@@ -160,6 +161,7 @@ $tile-gap: 1rem;
   aspect-ratio: 16 / 10;
   align-items: flex-start;
   padding: clamp(16px, 2vw, 24px);
+  border: 2px solid $tile-border;
   border-radius: $radius;
   background: $tile-bg;
   color: #17121f;
@@ -170,6 +172,23 @@ $tile-gap: 1rem;
 
 .tileActive {
   opacity: 1;
+}
+
+// A tile that holds a video instead of the purple placeholder.
+.tileHasVideo {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  background: $card-bg; // neutral while the video loads, so no purple flash
+}
+
+.tileVideo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .tileLabel {
