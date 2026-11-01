@@ -140,7 +140,7 @@ function Home(props) {
         className={cn(styles.root, props.className, 'home')}
         style={{ '--count': PANEL_COUNT_PER_SIDE }}
       >
-        <DotGrid />
+        <DotGrid color="255, 255, 255" />
 
         <div className={styles.line} aria-hidden="true" />
         <div className={styles.originLine} aria-hidden="true" />

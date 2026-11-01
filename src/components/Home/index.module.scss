@@ -143,7 +143,7 @@
   left: 50%;
   width: min(100% - 2rem, 1100px);
   transform: translateX(-50%);
-  color: #111;
+  color: var(--text);
   text-align: center;
 }
 
@@ -167,6 +167,9 @@
   height: auto;
   flex: 0 1 auto;
   cursor: default;
+
+  // The handwritten SVG is solid black; flip it to match the light text.
+  filter: invert(1);
 }
 
 .arrow {
