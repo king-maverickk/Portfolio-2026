@@ -1,10 +1,13 @@
-// The outer span stays still and owns the hover area.
+// The outer span stays still and owns the hover area. It is a plain inline box
+// by default; see Word in index.js for why.
 .word {
-  display: inline-block;
+  --reveal-step: 26ms; // gap between one word starting and the next
 }
 
-// transform only works on boxes, so the inner span is an inline-block too.
-.lift {
+// transform only works on boxes, so on devices that can hover both spans become
+// inline-blocks.
+.hoverable,
+.hoverable .lift {
   display: inline-block;
 }
 
@@ -21,5 +24,35 @@
 
     // Rises fast.
     transition-duration: 0.15s;
+  }
+}
+
+// Fall-in. Only when motion is welcome; otherwise the words are just there.
+//
+// The offset is `top` on a relatively positioned box, not a transform, because
+// transforms don't apply to inline boxes and the words must stay inline on
+// touch devices. Relative offsets also never move the neighbouring words.
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    position: relative;
+    top: -0.45em;
+    opacity: 0;
+  }
+
+  .revealed {
+    animation: wordFall 0.7s cubic-bezier(0.33, 1, 0.68, 1) both;
+    animation-delay: calc(var(--reveal-delay, 0ms) + var(--word-index, 0) * var(--reveal-step));
+  }
+}
+
+@keyframes wordFall {
+  from {
+    top: -0.45em;
+    opacity: 0;
+  }
+
+  to {
+    top: 0;
+    opacity: 1;
   }
 }

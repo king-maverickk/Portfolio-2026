@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
@@ -53,6 +53,36 @@ function AboutMotheo({
   projectHref,
   projectImage,
 }) {
+  // The intro words fall into place once, as the intro scrolls into view. The
+  // trigger line sits 20% up from the bottom of the screen, so the words start
+  // while the card is sliding up over the header, not after it has settled.
+  const introRef = useRef(null);
+  const [introRevealed, setIntroRevealed] = useState(false);
+
+  useEffect(() => {
+    const node = introRef.current;
+    if (!node) return undefined;
+
+    // Without IntersectionObserver there is no way to know when it's in view,
+    // so show the text rather than leave it hidden.
+    if (!('IntersectionObserver' in window)) {
+      setIntroRevealed(true);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setIntroRevealed(true);
+        observer.disconnect();
+      },
+      { rootMargin: '0px 0px -20% 0px' },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   // A link only renders once it has a destination, so nothing ships dead.
   const links = [
     { label: 'Resume', href: resumeHref, icon: 'document' },
@@ -77,6 +107,7 @@ function AboutMotheo({
           className={styles.photo}
           role="img"
           aria-label="Photo placeholder"
+          
         />
       </div>
       <div className={styles.detailsColumn}>
@@ -89,10 +120,10 @@ function AboutMotheo({
             3rd       -> medal              references -> screenshot collage
             notebook  -> notebook page      creatives  -> "Digital Creative" chip
         */}
-        <div className={styles.intro}>
+        <div ref={introRef} className={styles.intro}>
           <p className={styles.label}>about</p>
           <p className={styles.lead}>
-              <HoverWords>
+              <HoverWords reveal revealed={introRevealed}>
                 I speak six{' '}
                 <InlineImg ratio={1.2} src={`/assets/Home/about_speech_bubble.png`} after=",">languages</InlineImg> plus{' '}
                 <InlineImg ratio={1} src={`assets/Home/about_design_wheel.png`}>design</InlineImg> and{' '}
@@ -101,7 +132,8 @@ function AboutMotheo({
               </HoverWords>
           </p>
           <p className={styles.statement}>
-            <HoverWords>
+            {/* Starts as the lead's last words land, so the two read as one sweep. */}
+            <HoverWords reveal revealed={introRevealed} revealDelay={450}>
                 I started in code and followed my eye toward design, so now I can do
                 both. Every project gets a look built around what it needs to do.
             </HoverWords>
