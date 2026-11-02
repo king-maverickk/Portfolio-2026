@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
@@ -32,6 +32,20 @@ const ANNOTATIONS = [
   { id: 'freelance', label: '(freelance/contract)', className: styles.freelance },
   { id: 'hiring-manager', label: '(hiring manager)', className: styles.hiringManager }
 ];
+
+// If the exit animation never reports back (a hidden tab, say) the sheet would
+// stay open forever. It is longer than the exit itself (600ms).
+const SHEET_CLOSE_FALLBACK_MS = 900;
+
+// The sheet is animated with the individual `translate` and `rotate`
+// properties. Where they aren't supported it simply appears and disappears.
+function canAnimateSheet() {
+  const supportsMotion = Boolean(
+    window.CSS && typeof window.CSS.supports === 'function' && window.CSS.supports('translate', '10px 0 0')
+  );
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return supportsMotion && !prefersReducedMotion;
+}
 
 const SHEET_CONTENT = {
   'open-to-work': {
@@ -88,18 +102,47 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   const triggerRef = useRef(null);
   const [activeAnnotation, setActiveAnnotation] = useState(null);
   const [sheetAccentColor, setSheetAccentColor] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const closingRef = useRef(false);
+  const closeTimerRef = useRef(null);
   const isSheetOpen = activeAnnotation !== null;
+
+  // Takes the sheet off the page for good, once its exit has finished.
+  const finishClose = useCallback(() => {
+    window.clearTimeout(closeTimerRef.current);
+    closingRef.current = false;
+    setIsClosing(false);
+    setActiveAnnotation(null);
+  }, []);
+
+  // Every way of closing (Esc, the Close button, a click on the backdrop) comes
+  // through here. With motion available the sheet slides back out first.
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return;
+
+    if (!canAnimateSheet()) {
+      setActiveAnnotation(null);
+      return;
+    }
+
+    closingRef.current = true;
+    setIsClosing(true);
+    closeTimerRef.current = window.setTimeout(finishClose, SHEET_CLOSE_FALLBACK_MS);
+  }, [finishClose]);
+
+  useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
 
   useEffect(() => {
     if (!isSheetOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    closeButtonRef.current?.focus();
+    // The sheet starts off screen, so don't let focusing it scroll anything.
+    closeButtonRef.current?.focus({ preventScroll: true });
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setActiveAnnotation(null);
+        requestClose();
         return;
       }
 
@@ -128,7 +171,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
       document.removeEventListener('keydown', handleKeyDown);
       triggerRef.current?.focus();
     };
-  }, [isSheetOpen]);
+  }, [isSheetOpen, requestClose]);
 
   const openSheet = (id, event) => {
     triggerRef.current = event.currentTarget;
@@ -257,39 +300,39 @@ function HowIllDeliver({ className, onAnnotationClick }) {
 
       {sheet && createPortal(
         <div
-          className={styles.sheetBackdrop}
+          className={cn(styles.sheetBackdrop, isClosing && styles.sheetBackdropClosing)}
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setActiveAnnotation(null);
+            if (event.target === event.currentTarget) requestClose();
           }}
         >
           <aside
             id="delivery-sheet"
-            className={styles.sheet}
+            className={cn(styles.sheet, isClosing && styles.sheetClosing)}
             style={{ '--sheet-accent-color': sheetAccentColor }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="delivery-sheet-title"
             aria-describedby="delivery-sheet-description"
             data-sheet-dialog=""
+            onAnimationEnd={(event) => {
+              // The two exit animations end together; the first to report is enough.
+              if (isClosing && event.target === event.currentTarget) finishClose();
+            }}
           >
             <header className={styles.sheetHeader}>
-              <div>
-                <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
-                <p id="delivery-sheet-description" className={styles.sheetDescription}>
-                  {sheet.description}
-                </p>
-              </div>
               <button
                 ref={closeButtonRef}
                 type="button"
                 className={styles.sheetClose}
                 aria-label="Close sheet"
-                onClick={() => setActiveAnnotation(null)}
+                onClick={requestClose}
               >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M18 6 6 18M6 6l12 12" />
-                </svg>
+                Close
               </button>
+              <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
+              <p id="delivery-sheet-description" className={styles.sheetDescription}>
+                {sheet.description}
+              </p>
             </header>
             <div className={styles.sheetBody}>
               {sheet.paragraphs.map((paragraph) => (
