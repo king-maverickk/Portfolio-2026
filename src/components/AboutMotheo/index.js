@@ -103,11 +103,10 @@ function AboutMotheo({
             designer-developer
           </p>
         </div>
-        <div
+        <img
           className={styles.photo}
-          role="img"
-          aria-label="Photo placeholder"
-          
+          src="/assets/Home/my-face.png"
+          alt="Motheo Moleko"
         />
       </div>
       <div className={styles.detailsColumn}>
