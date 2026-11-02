@@ -8,6 +8,7 @@ import homeProject from 'components/ProjectStages/projectStages';
 import HowIllDeliver from 'components/HowIllDeliver';
 import AboutMotheo from 'components/AboutMotheo';
 import HOME_ASSETS from './heroAssets';
+import useHeroActivity from './useHeroActivity';
 import styles from './index.module.scss';
 
 const PANEL_COUNT_PER_SIDE = 6;
@@ -58,15 +59,31 @@ function usePrefersReducedMotion() {
   return reducedMotion;
 }
 
-function HeroPanel({ asset, className, index }) {
+// Drops the file so the browser can free the decoder and everything it has
+// buffered. Removing the attribute alone isn't enough; load() makes it let go.
+function releaseVideo(video) {
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+}
+
+function HeroPanel({ asset, className, index, active, reducedMotion }) {
   const videoRef = useRef(null);
-  const reducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (asset.type !== 'video') return undefined;
 
     const video = videoRef.current;
     if (!video) return undefined;
+
+    // The hero has been off screen for a while: let the video go. It is
+    // re-attached below as soon as the hero comes back.
+    if (!active) {
+      releaseVideo(video);
+      return undefined;
+    }
+
+    if (video.getAttribute('src') !== asset.src) video.src = asset.src;
 
     if (reducedMotion) {
       video.pause();
@@ -92,17 +109,17 @@ function HeroPanel({ asset, className, index }) {
       observer.disconnect();
       video.pause();
     };
-  }, [asset.type, reducedMotion]);
+  }, [asset.src, asset.type, active, reducedMotion]);
 
   const panelStyle = { '--i': index };
 
   return (
     <div className={className} style={panelStyle} aria-hidden="true">
       {asset.type === 'video' ? (
+        // No src here on purpose: the effect above attaches and releases it.
         <video
           ref={videoRef}
           className={styles.media}
-          src={asset.src}
           muted
           loop
           playsInline
@@ -128,15 +145,22 @@ HeroPanel.propTypes = {
     src: PropTypes.string.isRequired
   }).isRequired,
   className: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired
+  index: PropTypes.number.isRequired,
+  active: PropTypes.bool.isRequired,
+  reducedMotion: PropTypes.bool.isRequired
 };
 
 function Home(props) {
   const assets = useState(() => getUniqueRandomAssets(HOME_ASSETS, PANEL_COUNT))[0];
+  const rootRef = useRef(null);
+  const heroActive = useHeroActivity(rootRef);
+  // Read once here instead of once per panel.
+  const reducedMotion = Boolean(usePrefersReducedMotion());
 
   return (
     <>
       <div
+        ref={rootRef}
         className={cn(styles.root, props.className, 'home')}
         style={{ '--count': PANEL_COUNT_PER_SIDE }}
       >
@@ -168,11 +192,15 @@ function Home(props) {
               asset={assets[index]}
               className={cn(styles.rect, styles.rectLeft)}
               index={index}
+              active={heroActive}
+              reducedMotion={reducedMotion}
             />
             <HeroPanel
               asset={assets[index + PANEL_COUNT_PER_SIDE]}
               className={cn(styles.rect, styles.rectRight)}
               index={index}
+              active={heroActive}
+              reducedMotion={reducedMotion}
             />
           </React.Fragment>
         ))}

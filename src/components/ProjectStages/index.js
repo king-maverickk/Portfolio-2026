@@ -11,19 +11,40 @@ function prefersReducedMotion() {
 function StageVideo({ src, label, isActive }) {
   const videoRef = useRef(null);
   const [reducedMotion] = useState(prefersReducedMotion);
+  const [inView, setInView] = useState(false);
 
-  // Only play while this stage is the active one; pause otherwise to save CPU/bandwidth.
+  // Being the active stage isn't enough to play: the first stage is active from
+  // page load, long before anyone has scrolled down to it, and it stays active
+  // after they scroll past. So also track whether the video is on screen.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || reducedMotion) return undefined;
+
+    if (!('IntersectionObserver' in window)) {
+      setInView(true);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.01 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [reducedMotion]);
+
+  // Play only while this stage is the active one AND on screen.
   useEffect(() => {
     const video = videoRef.current;
     if (!video || reducedMotion) return;
 
-    if (isActive) {
+    if (isActive && inView) {
       const playing = video.play();
       if (playing && typeof playing.catch === 'function') playing.catch(() => {});
     } else {
       video.pause();
     }
-  }, [isActive, reducedMotion]);
+  }, [isActive, inView, reducedMotion]);
 
   return (
     <video

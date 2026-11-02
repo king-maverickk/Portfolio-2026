@@ -31,6 +31,17 @@
   to   { --t: 1; z-index: 100; }
 }
 
+// Nothing in the hero needs to move while nobody can see it. useHeroActivity
+// sets data-offscreen on the root when the hero leaves the viewport or the tab
+// is hidden. The rectangles and the Motion letters both stop in place and pick
+// up where they left off.
+.root[data-offscreen='true'] {
+  .rect,
+  .motionLetter {
+    animation-play-state: paused;
+  }
+}
+
 .line {
   position: absolute;
   top: 50%;
