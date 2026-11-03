@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
+import Resume from './Resume';
+
 import styles from './index.module.scss';
 
 const GRID = {
@@ -67,6 +69,8 @@ const SHEET_CONTENT = {
   'hiring-manager': {
     title: 'Hiring managers',
     description: 'Looking for a designer-developer?',
+    // After the two lines, the resume itself, read in the page.
+    resume: true,
     paragraphs: [
       'My work sits across the design and development process: I can help explore a direction, refine the details, and build the experience for the screen.',
       'If that mix could be a fit for your team, I’d be happy to learn more about the role and what you’re creating.'
@@ -338,6 +342,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
               {sheet.paragraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
+              {sheet.resume && <Resume />}
             </div>
           </aside>
         </div>,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import HowIllDeliver from './index';
 
 beforeEach(() => {
@@ -20,6 +20,20 @@ test.each([
   expect(screen.getByRole('dialog')).toBeInTheDocument();
   expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
   expect(screen.getByRole('dialog').style.getPropertyValue('--sheet-accent-color')).toBe(accentColor);
+});
+
+test('the hiring manager sheet shows the resume after its two lines; the others do not', () => {
+  const { unmount } = render(<HowIllDeliver />);
+
+  fireEvent.click(screen.getByRole('button', { name: '(hiring manager)' }));
+  const dialog = screen.getByRole('dialog');
+  expect(within(dialog).getByRole('article', { name: 'Resume' })).toBeInTheDocument();
+  expect(within(dialog).getByText('Backend & Cloud Engineer, Queers Code')).toBeInTheDocument();
+  unmount();
+
+  render(<HowIllDeliver />);
+  fireEvent.click(screen.getByRole('button', { name: '(freelance/contract)' }));
+  expect(screen.queryByRole('article', { name: 'Resume' })).not.toBeInTheDocument();
 });
 
 test('closes the sheet with Escape and returns focus to its trigger', () => {
