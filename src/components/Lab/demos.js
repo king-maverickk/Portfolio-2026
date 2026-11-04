@@ -226,7 +226,7 @@ function GalleryCardDemo() {
 
 function SlideUpTextDemo() {
   return (
-    <ScaledFrame background="#ecebe7">
+    <ScaledFrame background="#dcd7cf">
       <LandingSlideUpText />
     </ScaledFrame>
   );
