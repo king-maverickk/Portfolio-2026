@@ -14,7 +14,13 @@ function DotGrid({
   ease,
   baseAlpha,
   hoverAlpha,
-  color
+  color,
+  pulse,
+  pulseSpeed,
+  pulseWidth,
+  pulsePush,
+  pulseGrow,
+  pulseGlow
 }) {
   const canvasRef = useRef(null);
 
@@ -24,6 +30,9 @@ function DotGrid({
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const pointer = { x: -9999, y: -9999 };
+    // Click pulses: rings that travel out from a click and fade as they go.
+    let pulses = [];
+    const MAX_PULSES = 4;
     let dots = [];
     let width = 0;
     let height = 0;
@@ -33,6 +42,18 @@ function DotGrid({
     function tick() {
       ctx.clearRect(0, 0, width, height);
       let moving = false;
+
+      // Where each pulse's ring is now; drop the ones that have faded out.
+      const now = performance.now();
+      const rings = [];
+      pulses = pulses.filter((p) => {
+        const front = ((now - p.start) / 1000) * pulseSpeed;
+        if (front > p.reach) return false;
+        const fade = 1 - front / p.reach;
+        rings.push({ x: p.x, y: p.y, front, strength: fade * fade });
+        return true;
+      });
+      if (rings.length) moving = true;
 
       for (const d of dots) {
         const dx = d.x - pointer.x;
@@ -58,10 +79,37 @@ function DotGrid({
           moving = true;
         }
 
-        const alpha = baseAlpha + d.glow * (hoverAlpha - baseAlpha);
+        // The pulse rings. Applied straight to this frame (not eased) so the
+        // wave stays crisp; once it has passed, the dot is simply back home.
+        let waveX = 0;
+        let waveY = 0;
+        let waveScale = 0;
+        let waveGlow = 0;
+        for (const ring of rings) {
+          const rx = d.x - ring.x;
+          const ry = d.y - ring.y;
+          const rDist = Math.hypot(rx, ry) || 1;
+          const offset = (rDist - ring.front) / pulseWidth;
+          if (offset > -3 && offset < 3) {
+            const amount = Math.exp(-offset * offset) * ring.strength;
+            waveX += (rx / rDist) * amount * pulsePush;
+            waveY += (ry / rDist) * amount * pulsePush;
+            waveScale += amount * (pulseGrow - 1);
+            waveGlow += amount * pulseGlow;
+          }
+        }
+
+        const glow = Math.min(1, d.glow + waveGlow);
+        const alpha = baseAlpha + glow * (hoverAlpha - baseAlpha);
         ctx.fillStyle = `rgba(${color}, ${alpha})`;
         ctx.beginPath();
-        ctx.arc(d.x + d.ox, d.y + d.oy, (dotSize / 2) * d.scale, 0, Math.PI * 2);
+        ctx.arc(
+          d.x + d.ox + waveX,
+          d.y + d.oy + waveY,
+          (dotSize / 2) * (d.scale + waveScale),
+          0,
+          Math.PI * 2
+        );
         ctx.fill();
       }
 
@@ -108,6 +156,25 @@ function DotGrid({
       start();
     }
 
+    // A click (or tap) sends a pulse out from that spot. `click` rather than
+    // `pointerdown`, so starting a scroll on a phone doesn't set one off;
+    // keyboard "clicks" (detail 0) have no position, so they're skipped.
+    function onClick(e) {
+      if (!pulse || reduceMotion || e.detail === 0) return;
+      pulses.push({
+        x: e.clientX,
+        y: e.clientY,
+        start: performance.now(),
+        // Far enough to cross the screen from wherever the click was.
+        reach: Math.max(
+          Math.hypot(Math.max(e.clientX, width - e.clientX), Math.max(e.clientY, height - e.clientY)),
+          400
+        ) + pulseWidth * 2
+      });
+      if (pulses.length > MAX_PULSES) pulses.shift();
+      start();
+    }
+
     function onPointerLeave() {
       pointer.x = -9999;
       pointer.y = -9999;
@@ -122,6 +189,7 @@ function DotGrid({
     build();
 
     window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('click', onClick, { passive: true });
     window.addEventListener('blur', onPointerLeave);
     window.addEventListener('resize', onResize);
     document.documentElement.addEventListener('pointerleave', onPointerLeave);
@@ -130,11 +198,15 @@ function DotGrid({
       cancelAnimationFrame(rafId);
       clearTimeout(resizeTimeout);
       window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('click', onClick);
       window.removeEventListener('blur', onPointerLeave);
       window.removeEventListener('resize', onResize);
       document.documentElement.removeEventListener('pointerleave', onPointerLeave);
     };
-  }, [dotSize, spacing, radius, push, grow, ease, baseAlpha, hoverAlpha, color]);
+  }, [
+    dotSize, spacing, radius, push, grow, ease, baseAlpha, hoverAlpha, color,
+    pulse, pulseSpeed, pulseWidth, pulsePush, pulseGrow, pulseGlow
+  ]);
 
   return <canvas ref={canvasRef} className={cn(styles.root, className)} aria-hidden="true" />;
 }
@@ -149,7 +221,13 @@ DotGrid.propTypes = {
   ease: PropTypes.number,     // 0-1, higher = snappier
   baseAlpha: PropTypes.number,
   hoverAlpha: PropTypes.number,
-  color: PropTypes.string     // "r, g, b"
+  color: PropTypes.string,    // "r, g, b"
+  pulse: PropTypes.bool,      // a wave from every click
+  pulseSpeed: PropTypes.number, // how fast the ring travels (px per second)
+  pulseWidth: PropTypes.number, // how thick the ring is (px)
+  pulsePush: PropTypes.number,  // how far it pushes dots outward (px)
+  pulseGrow: PropTypes.number,  // how much it swells dots (1 = not at all)
+  pulseGlow: PropTypes.number   // how much it lights dots up (0-1)
 };
 
 DotGrid.defaultProps = {
@@ -162,7 +240,13 @@ DotGrid.defaultProps = {
   ease: 0.12,
   baseAlpha: 0.08,
   hoverAlpha: 0.65,
-  color: '0, 0, 0'
+  color: '0, 0, 0',
+  pulse: true,
+  pulseSpeed: 900,
+  pulseWidth: 55,
+  pulsePush: 10,
+  pulseGrow: 1.7,
+  pulseGlow: 0.85
 };
 
 export default DotGrid;
