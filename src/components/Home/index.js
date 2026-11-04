@@ -6,6 +6,7 @@ import DotGrid from 'components/DotGrid';
 import ProjectStages from 'components/ProjectStages';
 import homeProject from 'components/ProjectStages/projectStages';
 import HowIllDeliver from 'components/HowIllDeliver';
+import ProjectsList from 'components/ProjectsList';
 import AboutMotheo from 'components/AboutMotheo';
 import ContactSection from 'components/ContactSection';
 import HOME_ASSETS from './heroAssets';
@@ -235,6 +236,7 @@ function Home(props) {
       </div>
       <ProjectStages project={homeProject} />
       <HowIllDeliver />
+      <ProjectsList />
       <AboutMotheo />
       <ContactSection />
     </>

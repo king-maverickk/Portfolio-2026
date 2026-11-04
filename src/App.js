@@ -10,6 +10,7 @@ import './fonts.css';
 // The Lab (and GSAP, which only it uses) loads when someone opens /lab, so the
 // home page doesn't download it.
 const Lab = lazy(() => import('./components/Lab'));
+const Projects = lazy(() => import('./components/Projects'));
 
 function App() {
   useEffect(() => {
@@ -27,6 +28,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route exact path="/lab" component={Lab} />
+          <Route exact path="/projects" component={Projects} />
         </Switch>
       </Suspense>
     </Router>

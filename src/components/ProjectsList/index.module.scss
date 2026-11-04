@@ -1,0 +1,158 @@
+// Project names in big type, a small picture either side, centred.
+
+$text: #f2f2f4;
+$muted: #a3a3ab;
+$blue: #2864e8;
+$font: "Outfit", "Segoe UI", sans-serif;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+.section {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14vh 5.5% 16vh;
+  color: $text;
+  font-family: $font;
+  text-align: center;
+}
+
+.label {
+  margin: 0 0 clamp(24px, 4vh, 40px);
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.list {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2px, 0.6vw, 8px);
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: block;
+  transition:
+    opacity 600ms $ease calc(var(--i) * 90ms),
+    transform 700ms $ease calc(var(--i) * 90ms);
+}
+
+// Before the list scrolls into view: rows wait below, invisible.
+.listWaiting .item {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: none;
+}
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.3vw, 22px);
+  padding: 0.04em 0.1em;
+  border-radius: 12px;
+  color: inherit;
+  font-size: clamp(2.2rem, 6.2vw, 5.75rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+  text-decoration: none;
+  transition: opacity 250ms ease;
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 6px;
+  }
+}
+
+.name {
+  text-wrap: balance;
+}
+
+.thumb {
+  flex: none;
+  width: 1.2em;
+  height: 0.8em;
+  border-radius: 0.1em;
+  object-fit: cover;
+  background: #2b2b2b;
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+// Hovering a row: its pictures tilt out; every other row steps back.
+.row:hover .thumbLeft,
+.row:focus-visible .thumbLeft {
+  transform: rotate(-8deg) scale(1.18) translateX(-0.06em);
+}
+
+.row:hover .thumbRight,
+.row:focus-visible .thumbRight {
+  transform: rotate(8deg) scale(1.18) translateX(0.06em);
+}
+
+.list:hover .row:not(:hover),
+.list:has(.row:focus-visible) .row:not(:focus-visible) {
+  opacity: 0.35;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  margin-top: clamp(40px, 7vh, 72px);
+  padding: 0 24px;
+  border-radius: 999px;
+  background: $blue;
+  color: #fff;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 200ms $ease, box-shadow 200ms ease;
+
+  &:hover {
+    box-shadow: 0 8px 22px rgb(40 100 232 / 35%);
+    transform: translateY(-2px);
+  }
+
+  &:hover .buttonArrow {
+    transform: translateX(3px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 3px;
+  }
+}
+
+.buttonArrow {
+  transition: transform 200ms $ease;
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding: 10vh 16px 12vh;
+  }
+
+  .row {
+    gap: 8px;
+    font-size: clamp(1.6rem, 8.4vw, 2.6rem);
+  }
+
+  .thumb {
+    width: 1.1em;
+    height: 0.75em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .row,
+  .thumb,
+  .button,
+  .buttonArrow {
+    transition: none;
+  }
+}
