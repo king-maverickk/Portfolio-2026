@@ -119,3 +119,15 @@ describe('when the browser can animate the sheet', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });
+
+test('the tags say they can be opened: a prompt line, and an arrow that leaves their names alone', () => {
+  render(<HowIllDeliver />);
+  expect(screen.getByText('Which one are you? Pick a tag.')).toBeInTheDocument();
+
+  ['(open to work)', '(freelance/contract)', '(hiring manager)'].forEach((name) => {
+    const tag = screen.getByRole('button', { name });
+    // The arrow is decoration, so a screen reader still hears just the label.
+    expect(tag.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+    expect(tag).toHaveAttribute('data-annotation');
+  });
+});

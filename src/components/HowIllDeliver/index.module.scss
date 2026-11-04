@@ -135,6 +135,11 @@
     color: #fff;
   }
 
+  &:hover .annotationArrow,
+  &:focus-visible .annotationArrow {
+    transform: translate(2px, -2px);
+  }
+
   &::after {
     content: '';
     position: absolute;
@@ -147,6 +152,62 @@
   .annotation {
     --hit-extend: 20px;
   }
+}
+
+// --- Cues that the annotations open something ----------------------------------
+
+// 1. An arrow in each pill, in the pill's own colour. Nudges on hover.
+.annotationArrow {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.35em;
+  vertical-align: -0.08em;
+  fill: none;
+  stroke: var(--annotation-border-color);
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+// 2. Once a pill has flown in, one ring leaves it in its colour. The three are
+//    staggered (--hello-delay, set in index.js) so the eye follows them.
+.annotation::before {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  opacity: 0;
+  content: '';
+  pointer-events: none;
+}
+
+// A halo that grows outward around the pill, keeping its shape, and fades.
+.annotation[data-hello]::before {
+  animation: annotationHello 1200ms cubic-bezier(0.2, 0.8, 0.2, 1) var(--hello-delay, 0ms) 1 both;
+}
+
+@keyframes annotationHello {
+  0% { opacity: 0.85; box-shadow: 0 0 0 0 var(--annotation-border-color); }
+  100% { opacity: 0; box-shadow: 0 0 0 18px var(--annotation-border-color); }
+}
+
+// 3. A small footnote under the headline that says what the tags are for.
+.prompt {
+  grid-area: 7 / 6 / 8 / 9;
+  align-self: center;
+  justify-self: start;
+  color: var(--text-muted);
+  font-family: "Outfit", "Segoe UI", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.promptMark {
+  margin-right: 0.3em;
+  color: var(--text);
 }
 .openToWork {
   --annotation-border-color: #ff0000;
@@ -388,6 +449,12 @@
     grid-area: 8 / 3 / 9 / 7;
     justify-self: center;
   }
+
+  .prompt {
+    grid-area: 6 / 1 / 7 / -1;
+    align-self: end;
+    justify-self: center;
+  }
 }
 
 @media (max-width: 999px) {
@@ -454,6 +521,13 @@
     justify-self: center;
   }
 
+  .prompt {
+    grid-area: 8 / 1 / span 1 / -1;
+    align-self: end;
+    justify-self: center;
+    font-size: 0.9rem;
+  }
+
   .sheetBackdrop {
     padding: 12px;
   }
@@ -492,7 +566,12 @@
   .sheetBackdrop,
   .sheetBackdropClosing,
   .sheet,
-  .sheetClosing {
+  .sheetClosing,
+  .annotation[data-hello]::before {
     animation: none;
+  }
+
+  .annotationArrow {
+    transition: none;
   }
 }

@@ -18,6 +18,12 @@ export const CONTACT = {
   githubLabel: ''
 };
 
+// --- The section itself ---------------------------------------------------------
+
+// The small line under "How I'll deliver for you" that tells visitors the tags
+// open something. Draft.
+export const SECTION_PROMPT = 'Which one are you? Pick a tag.';
+
 // --- (hiring manager) --------------------------------------------------------
 
 export const HIRING = {

@@ -6,7 +6,7 @@ import cn from 'classnames';
 import HiringManagerSheet from './content/HiringManagerSheet';
 import FreelanceSheet from './content/FreelanceSheet';
 import OpenToWorkSheet from './content/OpenToWorkSheet';
-import { FREELANCE, HIRING, OPEN_TO_WORK } from './content/copy';
+import { FREELANCE, HIRING, OPEN_TO_WORK, SECTION_PROMPT } from './content/copy';
 import { startContact } from 'components/ContactSection/contactEvents';
 
 import styles from './index.module.scss';
@@ -32,6 +32,11 @@ const HEADLINE_ITEMS = [
   { id: 'for', text: 'for', className: styles.for, direction: 'right' },
   { id: 'you', text: 'You', className: styles.you, direction: 'right' }
 ];
+
+// The annotation labels are the way into the sheets. Three cues say so:
+// the prompt line under the headline, an arrow in each pill, and a single ring
+// that leaves each pill (in its own colour) once it has flown in.
+const HELLO_STAGGER_MS = 180;
 
 const ANNOTATIONS = [
   { id: 'open-to-work', label: '(open to work)', className: styles.openToWork },
@@ -275,6 +280,15 @@ function HowIllDeliver({ className, onAnnotationClick }) {
           target.style.opacity = '1';
           animations.push(slide);
 
+          // An annotation says hello once it has landed: one ring, in its
+          // colour, staggered across the three. (CSS skips it for reduced motion.)
+          const annotation = target.closest('[data-annotation]');
+          if (annotation && slide.finished) {
+            slide.finished
+              .then(() => { annotation.dataset.hello = ''; })
+              .catch(() => {});
+          }
+
           if (scale) {
             animations.push(scale.animate(
               [{ transform: 'scale(0.15)' }, { transform: 'scale(1)' }],
@@ -324,18 +338,35 @@ function HowIllDeliver({ className, onAnnotationClick }) {
             ))}
           </h2>
 
-          {ANNOTATIONS.map(({ id, label, className: areaClass }) => (
+          <RevealItem className={styles.prompt}>
+            <span aria-hidden="true" className={styles.promptMark}>*</span>
+            {SECTION_PROMPT}
+          </RevealItem>
+
+          {ANNOTATIONS.map(({ id, label, className: areaClass }, index) => (
             <button
               type="button"
               key={id}
               ref={(element) => { annotationRefs.current[id] = element; }}
               className={cn(styles.annotation, areaClass)}
+              data-annotation=""
+              style={{ '--hello-delay': `${index * HELLO_STAGGER_MS}ms` }}
               aria-haspopup="dialog"
               aria-expanded={activeAnnotation === id}
               aria-controls={activeAnnotation === id ? 'delivery-sheet' : undefined}
               onClick={(event) => openSheet(id, event)}
             >
-              <RevealItem>{label}</RevealItem>
+              <RevealItem>
+                {label}
+                <svg
+                  className={styles.annotationArrow}
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M7 17 17 7M9 7h8v8" />
+                </svg>
+              </RevealItem>
             </button>
           ))}
         </div>
