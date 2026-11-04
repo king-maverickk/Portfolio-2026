@@ -8,6 +8,9 @@ $tile-gap: 1rem;
 
 .section {
   position: relative;
+  // Clip keeps the peeking Lab cards from ever causing sideways scrolling
+  // (and, unlike hidden, doesn't break position: sticky).
+  overflow-x: clip;
   padding: 2.5rem 5.5% 4rem;
 }
 
@@ -192,11 +195,31 @@ $tile-gap: 1rem;
   object-fit: cover;
 }
 
-.tileLink {
+.tileCover {
   position: absolute;
-  left: clamp(12px, 2vw, 20px);
-  bottom: clamp(12px, 2vw, 20px);
+  inset: 0;
   z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: clamp(12px, 2vw, 20px);
+  border-radius: inherit;
+  background: rgb(0 0 0 / 0%);
+  color: #fff;
+  text-decoration: none;
+  transition: background-color 250ms ease;
+
+  &:hover {
+    background: rgb(0 0 0 / 22%);
+  }
+
+  &:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: -6px;
+  }
+}
+
+.tilePill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -204,31 +227,112 @@ $tile-gap: 1rem;
   padding: 0 18px;
   border-radius: 999px;
   background: rgb(43 43 43 / 88%);
-  color: #fff;
   font-family: "Outfit", "Segoe UI", sans-serif;
   font-size: 0.95rem;
-  text-decoration: none;
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
   transition: background-color 200ms ease, transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tilePillArrow {
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tileCover:hover .tilePill,
+.tileCover:focus-visible .tilePill,
+.tileWrap:hover .tilePill {
+  background: $blue;
+}
+
+.tileCover:hover .tilePillArrow,
+.tileWrap:hover .tilePillArrow {
+  transform: translateX(3px);
+}
+
+// --- Lab cards peeking out from behind the Motion tile --------------------------
+//
+// They sit behind the tile, hidden. When the stage is active they pop out past
+// its left edge, into the space under the stage card, one after another with a
+// little overshoot, fanned like cards in a hand. Hovering the tile pulls them
+// out a touch further.
+
+.tileWrap {
+  position: relative;
+
+  .tile {
+    z-index: 1;
+  }
+}
+
+.peek {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.peekCard {
+  --peek: 60px;     // how far past the tile's edge it shows
+  --rotate: 0deg;
+  --delay: 0ms;
+  --extra: 0px;     // added on hover
+
+  position: absolute;
+  top: var(--top, 50%);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: clamp(150px, 14vw, 200px);
+  padding: 6px;
+  border-radius: 12px;
+  background: $card-bg;
+  color: #f2f2f4;
+  font-family: "Outfit", "Segoe UI", sans-serif;
+  font-size: 0.8rem;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 35%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(24px, -50%) rotate(0deg) scale(0.92);
+  transform-origin: 100% 50%;
+  // Tucking back in is quick and plain, and all at once.
+  transition:
+    transform 260ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 200ms ease;
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: 8px;
+    object-fit: cover;
+  }
 
   span {
-    transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding: 0 4px 2px;
+    white-space: nowrap;
   }
 
-  &:hover {
-    background: $blue;
-  }
+  &:nth-child(1) { --top: 26%; --peek: 128px; --rotate: 7deg; --delay: 120ms; }
+  &:nth-child(2) { --top: 54%; --peek: 168px; --rotate: -3deg; --delay: 210ms; }
+  &:nth-child(3) { --top: 82%; --peek: 116px; --rotate: -10deg; --delay: 300ms; }
+}
 
-  &:hover span {
-    transform: translateX(3px);
-  }
+.tileWrapActive .peekCard {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(calc(-1 * (var(--peek) + var(--extra))), -50%) rotate(var(--rotate)) scale(1);
+  // Popping out springs a little past its spot and settles, one card at a time.
+  transition:
+    transform 620ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--delay),
+    opacity 180ms ease var(--delay);
+}
 
-  &:focus-visible {
-    outline: 2px solid #fff;
-    outline-offset: 3px;
-  }
+.tileWrapActive:hover .peekCard {
+  --extra: 18px;
+  transition-delay: 0ms, 0ms;
 }
 
 .tileLabel {
@@ -266,12 +370,39 @@ $tile-gap: 1rem;
     aspect-ratio: 1 / 1;
     scroll-margin-top: 125px;
   }
+
+  // No side margin on phones, so the cards peek out below the tile instead.
+  .peekCard {
+    top: auto;
+    bottom: 0;
+    left: var(--x);
+    width: 112px;
+    font-size: 0.72rem;
+    transform: translate(0, -30px) rotate(0deg) scale(0.92);
+    transform-origin: 50% 0%;
+
+    &:nth-child(1) { --x: 8%; --peek: 30px; --rotate: -6deg; }
+    &:nth-child(2) { --x: 36%; --peek: 40px; --rotate: 2deg; }
+    &:nth-child(3) { --x: 64%; --peek: 28px; --rotate: 7deg; }
+  }
+
+  .tileWrapActive .peekCard {
+    transform: translate(0, calc(var(--peek) + var(--extra))) rotate(var(--rotate)) scale(1);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .pillHighlight,
   .description,
-  .tile {
+  .tile,
+  .peekCard,
+  .tileWrapActive .peekCard {
     transition: none;
+  }
+
+  // The video shows its own play button then, so only the pill is the link.
+  .tileCover {
+    inset: auto auto 0 0;
+    padding: clamp(12px, 2vw, 20px);
   }
 }

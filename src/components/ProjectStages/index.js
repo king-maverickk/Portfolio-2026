@@ -173,7 +173,8 @@ function ProjectStages({ project }) {
         </aside>
 
         <div className={styles.tiles}>
-          {stages.map((stage, index) => (
+          {stages.map((stage, index) => {
+            const tile = (
             <div
               key={stage.id}
               ref={(element) => { tileRefs.current[index] = element; }}
@@ -194,14 +195,39 @@ function ProjectStages({ project }) {
               ) : (
                 <span className={styles.tileLabel}>{stage.placeholder}</span>
               )}
+              {/* The whole tile is the link; the pill says where it goes. */}
               {stage.link && (
-                <Link className={styles.tileLink} to={stage.link.href}>
-                  {stage.link.label}
-                  <span aria-hidden="true">→</span>
+                <Link className={styles.tileCover} to={stage.link.href} aria-label={stage.link.label}>
+                  <span className={styles.tilePill} aria-hidden="true">
+                    {stage.link.label}
+                    <span className={styles.tilePillArrow}>→</span>
+                  </span>
                 </Link>
               )}
             </div>
-          ))}
+            );
+
+            if (!stage.peek) return tile;
+
+            // Cards tucked behind the tile's left edge (below it on phones).
+            // They pop out, one after another, while this stage is active.
+            return (
+              <div
+                key={stage.id}
+                className={[styles.tileWrap, index === active ? styles.tileWrapActive : ''].filter(Boolean).join(' ')}
+              >
+                <div className={styles.peek} aria-hidden="true">
+                  {stage.peek.map((card) => (
+                    <Link key={card.title} to={stage.link?.href || '/'} tabIndex={-1} className={styles.peekCard}>
+                      <img src={card.image} alt="" loading="lazy" decoding="async" />
+                      <span>{card.title}</span>
+                    </Link>
+                  ))}
+                </div>
+                {tile}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

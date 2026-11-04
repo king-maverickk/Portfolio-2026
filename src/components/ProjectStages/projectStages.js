@@ -26,7 +26,14 @@ const homeProject = {
       // A preview of the Lab: swap the video for whichever recording you want.
       video: '/assets/Home/demo_GalleryCard.mp4',
       videoLabel: 'Screen recording of a gallery card in use',
-      link: { href: '/lab', label: 'Open the Lab' }
+      link: { href: '/lab', label: 'Open the Lab' },
+      // Lab cards tucked behind the tile's left edge. They pop out when this
+      // stage is active. Any image works; these are real Lab pieces.
+      peek: [
+        { title: 'Floating nav', image: '/assets/Lab/PhotosByAlexNav/home_cover.png' },
+        { title: 'Gallery cards', image: '/assets/Lab/GalleryCard/posters/2026-hamilton-fashion-week.jpg' },
+        { title: 'Live events hover', image: '/assets/Lab/LiveEventsHover/home_guitar_lady.png' }
+      ]
     }
   ]
 };
