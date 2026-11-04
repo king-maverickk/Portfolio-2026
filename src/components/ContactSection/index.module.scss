@@ -1,0 +1,168 @@
+// Contact, after About. The same 12-column grid and 20px gutter as About, on
+// the dark dot-grid page.
+
+$text: #f2f2f4;
+$muted: #a3a3ab;
+$line: rgb(242 242 244 / 16%);
+$font: "Outfit", "Segoe UI", sans-serif;
+
+.section {
+  --columns: 12;
+  --gutter: 20px;
+
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: clamp(40px, 6vw, 72px);
+  width: 100%;
+  margin-bottom: 20vh;
+  padding-top: 8vh;
+  color: $text;
+  font-family: $font;
+  scroll-margin-top: 24px;
+}
+
+.header {
+  grid-column: 2 / 12;
+}
+
+
+.headline {
+  margin: 0;
+  font-size: clamp(4rem, 11vw, 10rem);
+  font-weight: 500;
+  line-height: 0.85;
+  letter-spacing: -0.065em;
+}
+
+// --- Left: how to reach you ----------------------------------------------------------
+
+.aside {
+  grid-column: 2 / 5;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.intro {
+  margin: 0;
+  color: $muted;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  line-height: 1.5;
+}
+
+.ways {
+  display: grid;
+  gap: 28px;
+  margin: 0;
+
+  dt {
+    margin-bottom: 6px;
+    color: $muted;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1.1rem;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgb(242 242 244 / 35%);
+    text-underline-offset: 4px;
+    transition: text-decoration-color 160ms ease;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration-color: currentColor;
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+    }
+  }
+}
+
+// --- Right: the sentence -----------------------------------------------------------
+
+.formColumn {
+  grid-column: 5 / 12;
+  min-width: 0;
+}
+
+.formDraft {
+  margin-bottom: 12px;
+}
+
+.draftTag {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0 7px;
+  border: 1px dashed $muted;
+  border-radius: 999px;
+  color: $muted;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+.formDraft .draftTag {
+  margin-left: 0;
+}
+
+@media (max-width: 1199px) {
+  .section {
+    --columns: 8;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+  }
+
+  .aside {
+    grid-column: 1 / 4;
+  }
+
+  .formColumn {
+    grid-column: 4 / -1;
+  }
+}
+
+@media (max-width: 899px) {
+  .aside,
+  .formColumn {
+    grid-column: 1 / -1;
+  }
+
+  .aside {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px 48px;
+  }
+
+  .ways {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .section {
+    --columns: 4;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 12vh;
+  }
+}

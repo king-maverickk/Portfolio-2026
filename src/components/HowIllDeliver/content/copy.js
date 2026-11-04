@@ -127,12 +127,14 @@ export const FREELANCE = {
     text: 'I research and design everything myself. In development I use AI on components I’ve written and directed.'
   },
 
+  // The form lives in the contact section at the bottom of the page; this
+  // button closes the sheet and takes the visitor there with "after a new
+  // website" already picked.
   form: {
     title: 'Start a project',
-    note: 'Tell me what you do and what the site needs to do. I reply within 24 hours.',
-    submit: 'Send enquiry',
-    messageLabel: 'What do you need?',
-    showCurrentSite: true
+    draft: true,
+    text: 'Tell me about it in one sentence (or a few). It goes straight to my inbox, and I reply within 24 hours.',
+    cta: 'Start a project'
   }
 };
 
@@ -152,11 +154,11 @@ export const OPEN_TO_WORK = {
   start: { label: 'Can start', value: '' },
   workStyle: { label: 'Works', value: '' }, // e.g. 'On-site, hybrid or remote'
 
+  // Same as the freelance sheet, with "hiring for a role" picked.
   form: {
     title: 'Get in touch',
-    note: 'A role you think fits? Send it over. I reply within 24 hours.',
-    submit: 'Send message',
-    messageLabel: 'The role, or what’s on your mind',
-    showCurrentSite: false
+    draft: true,
+    text: 'A role you think fits? Send it over. I reply within 24 hours.',
+    cta: 'Get in touch'
   }
 };

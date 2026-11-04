@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { FREELANCE } from './copy';
-import { ContactForm, DraftTag, Icon, SheetSection } from './Blocks';
+import { ContactCta, DraftTag, Icon, SheetSection } from './Blocks';
 import styles from './index.module.scss';
 
 function RecentWork() {
@@ -25,7 +26,7 @@ function RecentWork() {
 
 // Everything is visible at once, top to bottom: who it's for, the problems,
 // how it runs, proof, price, then the form. No selectors hiding anything.
-function FreelanceSheet() {
+function FreelanceSheet({ onStartContact }) {
   const { lead, whoFor, problems, process, pricing, ai, form } = FREELANCE;
 
   return (
@@ -83,18 +84,13 @@ function FreelanceSheet() {
         <div className={styles.bodyText}>{ai.text}</div>
       </SheetSection>
 
-      <SheetSection title={form.title} className={styles.formSection}>
-        <div className={styles.note}>{form.note}</div>
-        <ContactForm
-          kind="freelance"
-          idPrefix="freelance"
-          submitLabel={form.submit}
-          messageLabel={form.messageLabel}
-          showCurrentSite={form.showCurrentSite}
-        />
-      </SheetSection>
+      <ContactCta form={form} onStart={() => onStartContact('website')} />
     </>
   );
 }
+
+FreelanceSheet.propTypes = {
+  onStartContact: PropTypes.func.isRequired
+};
 
 export default FreelanceSheet;

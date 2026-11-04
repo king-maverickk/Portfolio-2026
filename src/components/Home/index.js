@@ -7,6 +7,7 @@ import ProjectStages from 'components/ProjectStages';
 import homeProject from 'components/ProjectStages/projectStages';
 import HowIllDeliver from 'components/HowIllDeliver';
 import AboutMotheo from 'components/AboutMotheo';
+import ContactSection from 'components/ContactSection';
 import HOME_ASSETS from './heroAssets';
 import useHeroActivity from './useHeroActivity';
 import styles from './index.module.scss';
@@ -235,6 +236,7 @@ function Home(props) {
       <ProjectStages project={homeProject} />
       <HowIllDeliver />
       <AboutMotheo />
+      <ContactSection />
     </>
   );
 }

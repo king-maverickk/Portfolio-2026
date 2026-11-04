@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { CONTACT, OPEN_TO_WORK } from './copy';
-import { ContactForm, FactList, Icon, SheetSection, TodoNote } from './Blocks';
+import { ContactCta, FactList, Icon, TodoNote } from './Blocks';
 import styles from './index.module.scss';
 
 // Deliberately short: this sheet is how to reach you. Your documents live on
 // the (hiring manager) sheet, one click away, so the two never repeat.
-function OpenToWorkSheet({ onShowResume }) {
+function OpenToWorkSheet({ onShowResume, onStartContact }) {
   const { lookingFor, basedIn, start, workStyle, form } = OPEN_TO_WORK;
   const missing = [start, workStyle].filter((item) => !item.value).map((item) => item.label.toLowerCase());
 
@@ -40,22 +40,14 @@ function OpenToWorkSheet({ onShowResume }) {
         </a>
       </div>
 
-      <SheetSection title={form.title} className={styles.formSection}>
-        <div className={styles.note}>{form.note}</div>
-        <ContactForm
-          kind="hiring"
-          idPrefix="open-to-work"
-          submitLabel={form.submit}
-          messageLabel={form.messageLabel}
-          showCurrentSite={form.showCurrentSite}
-        />
-      </SheetSection>
+      <ContactCta form={form} onStart={() => onStartContact('hiring')} />
     </>
   );
 }
 
 OpenToWorkSheet.propTypes = {
-  onShowResume: PropTypes.func.isRequired
+  onShowResume: PropTypes.func.isRequired,
+  onStartContact: PropTypes.func.isRequired
 };
 
 export default OpenToWorkSheet;

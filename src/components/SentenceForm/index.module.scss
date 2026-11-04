@@ -1,0 +1,371 @@
+// The sentence form. Large Outfit text with the blanks written into it.
+// Two themes: `paper` (cream sheets) and `dark` (the home page). Every colour
+// comes from the --sf-* variables below, so a new theme is one block.
+
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$font: "Outfit", "Segoe UI", sans-serif;
+
+.paper {
+  --sf-ink: #2b2b2b;
+  --sf-muted: #5b5851;
+  --sf-faint: #8a867d;
+  --sf-line: rgb(43 43 43 / 30%);
+  --sf-chip-on-bg: #2b2b2b;
+  --sf-chip-on-text: #f6f2ea;
+  --sf-accent: var(--sheet-accent-color, #2b2b2b);
+  --sf-button-bg: #2b2b2b;
+  --sf-button-text: #f7f7f7;
+  --sf-card: rgb(255 255 255 / 55%);
+  --sf-size: clamp(1.45rem, 3.3vw, 2rem);
+}
+
+.dark {
+  --sf-ink: #f2f2f4;
+  --sf-muted: #a3a3ab;
+  --sf-faint: #8b8b94;
+  --sf-line: rgb(242 242 244 / 28%);
+  --sf-chip-on-bg: #f7f7f7;
+  --sf-chip-on-text: #16161a;
+  --sf-accent: #2864e8;
+  --sf-button-bg: #2864e8;
+  --sf-button-text: #fff;
+  --sf-card: #2b2b2b;
+  --sf-size: clamp(1.6rem, 3.2vw, 2.75rem);
+}
+
+.form {
+  display: grid;
+  gap: 36px;
+}
+
+.sentence {
+  display: grid;
+  gap: 12px;
+  color: var(--sf-ink);
+  font-family: $font;
+  font-size: var(--sf-size);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+
+.line {
+  min-width: 0;
+}
+
+// A line that depends on an earlier answer slides in when it appears.
+.lineAppears {
+  animation: lineIn 380ms $ease both;
+}
+
+@keyframes lineIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.missing {
+  display: block;
+  margin-top: 4px;
+  color: var(--sf-accent);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+// --- Blanks --------------------------------------------------------------------
+//
+// An inline grid with two things in one cell: the input, and an invisible copy
+// of what's typed (data-value). The copy sets the width, so the blank grows as
+// you type and the sentence reflows around it.
+
+.blank {
+  display: inline-grid;
+  min-width: var(--min);
+  max-width: 100%;
+  vertical-align: baseline;
+
+  &::after {
+    grid-area: 1 / 1;
+    padding: 0 0.15em;
+    visibility: hidden;
+    white-space: pre;
+    content: attr(data-value) " ";
+    overflow: hidden;
+  }
+}
+
+.blankInput {
+  grid-area: 1 / 1;
+  width: 100%;
+  min-width: 0;
+  padding: 0 0.15em;
+  border: 0;
+  border-bottom: 1px solid var(--sf-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--sf-ink);
+  font: inherit;
+  font-weight: 500;
+  letter-spacing: inherit;
+  transition: border-color 160ms ease;
+
+  // The prompt is small and quiet, like a note on the line.
+  &::placeholder {
+    color: var(--sf-faint);
+    font-size: 0.42em;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  &:hover {
+    border-bottom-color: var(--sf-ink);
+  }
+
+  &:focus {
+    border-bottom: 2px solid var(--sf-accent);
+    outline: none;
+  }
+}
+
+// --- Chips -----------------------------------------------------------------------
+
+.chips {
+  display: inline;
+
+  &[data-invalid='true'] .chip {
+    border-color: var(--sf-accent);
+  }
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  margin: 3px 6px 3px 0;
+  padding: 0 14px 0 11px;
+  border: 1px solid var(--sf-line);
+  border-radius: 999px;
+  color: var(--sf-ink);
+  font-family: $font;
+  font-size: 0.92rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms $ease;
+
+  &:hover {
+    border-color: var(--sf-ink);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  // Keyboard focus shows on the chip itself.
+  &:has(.chipInput:focus-visible) {
+    outline: 2px solid var(--sf-ink);
+    outline-offset: 2px;
+  }
+}
+
+.dark .chip {
+  height: 40px;
+  padding: 0 16px 0 13px;
+  font-size: 1rem;
+}
+
+.chipInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chipDot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms $ease;
+}
+
+.chipOn {
+  border-color: var(--sf-chip-on-bg);
+  background: var(--sf-chip-on-bg);
+  color: var(--sf-chip-on-text);
+
+  .chipDot {
+    border-color: var(--sf-accent);
+    background: var(--sf-accent);
+    transform: scale(1.1);
+  }
+}
+
+// --- The longer note ---------------------------------------------------------------
+
+.textarea {
+  display: block;
+  width: 100%;
+  min-height: 110px;
+  margin-top: 8px;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--sf-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--sf-ink);
+  font-family: $font;
+  font-size: 1.1rem;
+  letter-spacing: 0;
+  line-height: 1.55;
+  resize: vertical;
+  transition: border-color 160ms ease;
+
+  &::placeholder {
+    color: var(--sf-faint);
+    font-size: 0.9rem;
+  }
+
+  &:hover {
+    border-bottom-color: var(--sf-ink);
+  }
+
+  &:focus {
+    border-bottom: 2px solid var(--sf-accent);
+    outline: none;
+  }
+}
+
+// --- Footer: note + send ------------------------------------------------------------
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+}
+
+.footnote {
+  color: var(--sf-muted);
+  font-family: $font;
+  font-size: 0.95rem;
+}
+
+.submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  margin-left: auto;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--sf-button-bg);
+  color: var(--sf-button-text);
+  font-family: $font;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 200ms $ease, box-shadow 200ms ease;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 18px rgb(0 0 0 / 25%);
+    transform: translateY(-2px);
+  }
+
+  &:hover:not(:disabled) .submitArrow {
+    transform: translateX(3px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sf-ink);
+    outline-offset: 3px;
+  }
+}
+
+.submitArrow {
+  transition: transform 200ms $ease;
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.error {
+  color: var(--sf-ink);
+  font-family: $font;
+  font-size: 0.95rem;
+  line-height: 1.45;
+
+  a {
+    color: inherit;
+    font-weight: 600;
+    text-underline-offset: 3px;
+  }
+}
+
+.done {
+  display: grid;
+  gap: 6px;
+  padding: 24px 26px;
+  border-left: 3px solid var(--sf-accent);
+  border-radius: 12px;
+  background: var(--sf-card);
+  color: var(--sf-ink);
+  font-family: $font;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.doneTitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+@media (max-width: 767px) {
+  .sentence {
+    gap: 16px;
+    line-height: 1.5;
+  }
+
+  .chip {
+    height: 38px;
+  }
+
+  .submit {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip,
+  .chipDot,
+  .submit,
+  .submitArrow,
+  .blankInput,
+  .textarea {
+    transition: none;
+  }
+
+  .lineAppears {
+    animation: none;
+  }
+}

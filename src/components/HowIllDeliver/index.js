@@ -7,6 +7,7 @@ import HiringManagerSheet from './content/HiringManagerSheet';
 import FreelanceSheet from './content/FreelanceSheet';
 import OpenToWorkSheet from './content/OpenToWorkSheet';
 import { FREELANCE, HIRING, OPEN_TO_WORK } from './content/copy';
+import { startContact } from 'components/ContactSection/contactEvents';
 
 import styles from './index.module.scss';
 
@@ -114,6 +115,9 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   const [sheetAccentColor, setSheetAccentColor] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
   const closingRef = useRef(false);
+  // Set by a sheet's "Start a project" button: once the sheet is gone, the
+  // contact section takes over (it scrolls into view with the answer picked).
+  const pendingContactRef = useRef(null);
   const closeTimerRef = useRef(null);
   const isSheetOpen = activeAnnotation !== null;
 
@@ -141,6 +145,20 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   }, [finishClose]);
 
   useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
+
+  const startContactFromSheet = useCallback((reason) => {
+    pendingContactRef.current = reason;
+    requestClose();
+  }, [requestClose]);
+
+  // Runs after the sheet has left and focus has gone back to its label, so the
+  // contact section's scroll and focus win.
+  useEffect(() => {
+    if (isSheetOpen || !pendingContactRef.current) return;
+    const reason = pendingContactRef.current;
+    pendingContactRef.current = null;
+    startContact(reason);
+  }, [isSheetOpen]);
 
   useEffect(() => {
     if (!isSheetOpen) return undefined;
@@ -363,6 +381,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
               <sheet.Body
                 key={activeAnnotation}
                 onShowResume={() => switchSheet('hiring-manager')}
+                onStartContact={startContactFromSheet}
               />
             </div>
           </aside>

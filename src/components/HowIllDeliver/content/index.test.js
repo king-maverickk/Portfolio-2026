@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import HowIllDeliver from '../index';
 import HiringManagerSheet from './HiringManagerSheet';
@@ -10,16 +10,6 @@ import { CONTACT } from './copy';
 beforeEach(() => {
   window.matchMedia = jest.fn().mockReturnValue({ matches: false });
 });
-
-afterEach(() => {
-  delete global.fetch;
-});
-
-function fillForm(prefix = 'freelance') {
-  fireEvent.change(document.getElementById(`${prefix}-name`), { target: { value: 'Ada Lovelace' } });
-  fireEvent.change(document.getElementById(`${prefix}-email`), { target: { value: 'ada@example.com' } });
-  fireEvent.change(document.getElementById(`${prefix}-message`), { target: { value: 'A site for my studio.' } });
-}
 
 test('hiring manager sheet: resume first, cover letter one tab away', () => {
   render(<HiringManagerSheet />);
@@ -45,57 +35,35 @@ test('hiring manager sheet links to LinkedIn and email, and hides GitHub until i
 });
 
 test('draft copy is tagged outside production', () => {
-  render(<FreelanceSheet />);
+  render(<FreelanceSheet onStartContact={() => {}} />);
   expect(document.querySelectorAll('[data-draft]').length).toBeGreaterThan(0);
 });
 
-test('freelance form posts the enquiry to /api/contact and thanks the sender', async () => {
-  global.fetch = jest.fn().mockResolvedValue({ ok: true });
-  render(<FreelanceSheet />);
+test('the sheets point to the contact section instead of holding a form', () => {
+  const onStart = jest.fn();
+  const { unmount } = render(<FreelanceSheet onStartContact={onStart} />);
+  expect(document.querySelector('form')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: /Start a project/ }));
+  expect(onStart).toHaveBeenCalledWith('website');
+  unmount();
 
-  fillForm();
-  fireEvent.change(document.getElementById('freelance-site'), { target: { value: 'https://old.example.com' } });
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Send enquiry' }));
-  });
-
-  expect(global.fetch).toHaveBeenCalledWith('/api/contact', expect.objectContaining({ method: 'POST' }));
-  const body = JSON.parse(global.fetch.mock.calls[0][1].body);
-  expect(body).toEqual({
-    name: 'Ada Lovelace',
-    email: 'ada@example.com',
-    currentSite: 'https://old.example.com',
-    message: 'A site for my studio.',
-    company: '',
-    kind: 'freelance'
-  });
-  expect(screen.getByRole('status')).toHaveTextContent('Thanks, Ada.');
+  render(<OpenToWorkSheet onShowResume={() => {}} onStartContact={onStart} />);
+  fireEvent.click(screen.getByRole('button', { name: /Get in touch/ }));
+  expect(onStart).toHaveBeenLastCalledWith('hiring');
 });
 
-test('when sending fails the visitor gets a ready-written email instead', async () => {
-  global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 404 });
-  render(<FreelanceSheet />);
+test('“Start a project” closes the sheet, then hands over to the contact section', () => {
+  const heard = jest.fn();
+  window.addEventListener('contact:start', heard);
+  render(<HowIllDeliver />);
 
-  fillForm();
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Send enquiry' }));
-  });
+  fireEvent.click(screen.getByRole('button', { name: '(freelance/contract)' }));
+  fireEvent.click(screen.getByRole('button', { name: /Start a project/ }));
 
-  const alert = screen.getByRole('alert');
-  const fallback = within(alert).getByRole('link', { name: /Send it as an email instead/ });
-  expect(fallback.getAttribute('href')).toMatch(`mailto:${CONTACT.email}?subject=Project%20enquiry%20from%20Ada%20Lovelace`);
-  expect(fallback.getAttribute('href')).toContain(encodeURIComponent('A site for my studio.'));
-});
-
-test('open to work: the form is sent as a hiring message', async () => {
-  global.fetch = jest.fn().mockResolvedValue({ ok: true });
-  render(<OpenToWorkSheet onShowResume={() => {}} />);
-
-  fillForm('open-to-work');
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Send message' }));
-  });
-  expect(JSON.parse(global.fetch.mock.calls[0][1].body).kind).toBe('hiring');
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(heard).toHaveBeenCalledTimes(1);
+  expect(heard.mock.calls[0][0].detail).toEqual({ reason: 'after a new website' });
+  window.removeEventListener('contact:start', heard);
 });
 
 test('“Read my resume” turns the open to work sheet into the hiring manager sheet', () => {

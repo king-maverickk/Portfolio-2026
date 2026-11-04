@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
@@ -136,160 +136,28 @@ export function LinkCards() {
   );
 }
 
-// --- Contact form --------------------------------------------------------------
-//
-// Posts to the Azure Function at /api/contact:
-//   { name, email, kind, currentSite, message, company }
-// `company` is the honeypot: a hidden field people never see, so anything in it
-// came from a bot.
-//
-// If the request fails (the API isn't deployed yet, say), the visitor gets a
-// ready-written email to send instead, so no enquiry is ever lost.
-
-const MAX_MESSAGE = 4000;
-
-function buildMailto({ name, message, currentSite }, kind) {
-  const subject = kind === 'freelance' ? `Project enquiry from ${name}` : `Message from ${name}`;
-  const body = [message, currentSite ? `\nCurrent site: ${currentSite}` : ''].join('');
-  return `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
-
-export function ContactForm({ kind, submitLabel, messageLabel, showCurrentSite, idPrefix }) {
-  const [values, setValues] = useState({ name: '', email: '', currentSite: '', message: '', company: '' });
-  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
-
-  const update = (field) => (event) => {
-    setValues((current) => ({ ...current, [field]: event.target.value }));
-    if (status === 'error') setStatus('idle');
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (status === 'sending') return;
-    setStatus('sending');
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...values, kind })
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      setStatus('sent');
-    } catch (error) {
-      setStatus('error');
-    }
-  };
-
-  if (status === 'sent') {
-    return (
-      <div className={styles.formDone} role="status">
-        <span className={styles.formDoneTitle}>Thanks, {values.name.split(' ')[0] || 'got it'}.</span>
-        <span>Your message is in my inbox. I’ll reply to {values.email} within 24 hours.</span>
-      </div>
-    );
-  }
-
-  const id = (field) => `${idPrefix}-${field}`;
-
+// "Start a project →": closes the sheet and takes the visitor to the contact
+// form at the bottom of the page (see HowIllDeliver/index.js).
+export function ContactCta({ form, onStart }) {
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.formRow}>
-        <label className={styles.field} htmlFor={id('name')}>
-          <span className={styles.fieldLabel}>Name</span>
-          <input
-            id={id('name')}
-            className={styles.input}
-            name="name"
-            autoComplete="name"
-            required
-            maxLength={120}
-            value={values.name}
-            onChange={update('name')}
-          />
-        </label>
-        <label className={styles.field} htmlFor={id('email')}>
-          <span className={styles.fieldLabel}>Email</span>
-          <input
-            id={id('email')}
-            className={styles.input}
-            type="email"
-            name="email"
-            autoComplete="email"
-            required
-            maxLength={200}
-            value={values.email}
-            onChange={update('email')}
-          />
-        </label>
-      </div>
-
-      {showCurrentSite && (
-        <label className={styles.field} htmlFor={id('site')}>
-          <span className={styles.fieldLabel}>
-            Current website <span className={styles.optional}>(optional)</span>
-          </span>
-          <input
-            id={id('site')}
-            className={styles.input}
-            type="url"
-            name="currentSite"
-            inputMode="url"
-            placeholder="https://"
-            maxLength={300}
-            value={values.currentSite}
-            onChange={update('currentSite')}
-          />
-        </label>
-      )}
-
-      <label className={styles.field} htmlFor={id('message')}>
-        <span className={styles.fieldLabel}>{messageLabel}</span>
-        <textarea
-          id={id('message')}
-          className={cn(styles.input, styles.textarea)}
-          name="message"
-          required
-          rows={5}
-          maxLength={MAX_MESSAGE}
-          value={values.message}
-          onChange={update('message')}
-        />
-      </label>
-
-      {/* Honeypot: hidden from people and screen readers, filled in by bots. */}
-      <div className={styles.honeypot} aria-hidden="true">
-        <label htmlFor={id('company')}>Company</label>
-        <input
-          id={id('company')}
-          name="company"
-          tabIndex={-1}
-          autoComplete="off"
-          value={values.company}
-          onChange={update('company')}
-        />
-      </div>
-
-      <div className={styles.formFooter}>
-        <button type="submit" className={styles.submit} disabled={status === 'sending'}>
-          {status === 'sending' ? 'Sending…' : submitLabel}
+    <SheetSection title={form.title} draft={form.draft} className={styles.formSection}>
+      <div className={styles.ctaRow}>
+        <p className={styles.ctaText}>{form.text}</p>
+        <button type="button" className={styles.primaryAction} onClick={onStart}>
+          {form.cta}
+          <span className={styles.ctaArrow} aria-hidden="true">→</span>
         </button>
-        {status === 'error' && (
-          <div className={styles.formError} role="alert">
-            That didn’t send.{' '}
-            <a href={buildMailto(values, kind)}>Send it as an email instead</a>
-            {' '}and your message comes with it.
-          </div>
-        )}
       </div>
-    </form>
+    </SheetSection>
   );
 }
 
-ContactForm.propTypes = {
-  kind: PropTypes.oneOf(['hiring', 'freelance']).isRequired,
-  submitLabel: PropTypes.string.isRequired,
-  messageLabel: PropTypes.string.isRequired,
-  showCurrentSite: PropTypes.bool,
-  idPrefix: PropTypes.string.isRequired
+ContactCta.propTypes = {
+  form: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    draft: PropTypes.bool,
+    text: PropTypes.string.isRequired,
+    cta: PropTypes.string.isRequired
+  }).isRequired,
+  onStart: PropTypes.func.isRequired
 };

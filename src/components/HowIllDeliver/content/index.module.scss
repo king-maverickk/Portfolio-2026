@@ -493,8 +493,7 @@ a.workCard {
 }
 
 .primaryAction,
-.secondaryAction,
-.submit {
+.secondaryAction {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -518,8 +517,7 @@ a.workCard {
   }
 }
 
-.primaryAction,
-.submit {
+.primaryAction {
   background: $ink;
   color: #f7f7f7;
 
@@ -543,125 +541,32 @@ a.workCard {
   height: 18px;
 }
 
-// --- Contact form --------------------------------------------------------------
+// --- "Start a project": the way to the contact form ----------------------------
 
 .formSection {
   padding-top: 28px;
   border-top: 1px solid $rule;
 }
 
-.form {
-  display: grid;
-  gap: 14px;
-}
-
-.formRow {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.field {
-  display: grid;
-  gap: 6px;
-  min-width: 0;
-}
-
-.fieldLabel {
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.optional {
-  color: $faint;
-  font-weight: 400;
-}
-
-.input {
-  width: 100%;
-  min-width: 0;
-  padding: 11px 13px;
-  border: 1px solid rgb(43 43 43 / 18%);
-  border-radius: 10px;
-  background: #fffdf9;
-  color: $ink;
-  font: inherit;
-  font-size: 1rem; // 16px stops iOS zooming in on focus
-  line-height: 1.4;
-  color-scheme: light;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-
-  &::placeholder {
-    color: #b3aea3;
-  }
-
-  &:hover {
-    border-color: rgb(43 43 43 / 32%);
-  }
-
-  &:focus {
-    border-color: $ink;
-    outline: none;
-    box-shadow: 0 0 0 3px rgb(43 43 43 / 10%);
-  }
-}
-
-.textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.honeypot {
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.formFooter {
+.ctaRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 12px 16px;
+  justify-content: space-between;
+  gap: 16px 24px;
 }
 
-.submit {
-  border: 0;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: progress;
-  }
+.ctaText {
+  flex: 1 1 18rem;
+  margin: 0 !important;
 }
 
-.formError {
-  color: $ink;
-  font-size: 0.92rem;
-  line-height: 1.45;
-
-  a {
-    color: inherit;
-    font-weight: 600;
-    text-underline-offset: 3px;
-  }
+.ctaArrow {
+  transition: transform 200ms $ease;
 }
 
-.formDone {
-  display: grid;
-  gap: 4px;
-  padding: 18px 20px;
-  border: 1px solid $rule;
-  border-left: 3px solid $accent;
-  border-radius: 10px;
-  background: $card;
-  line-height: 1.5;
-}
-
-.formDoneTitle {
-  font-family: $font;
-  font-size: 1.15rem;
-  font-weight: 500;
+.primaryAction:hover .ctaArrow {
+  transform: translateX(3px);
 }
 
 // --- Small screens -------------------------------------------------------------
@@ -671,8 +576,7 @@ a.workCard {
     margin-top: 30px;
   }
 
-  .audienceGrid,
-  .formRow {
+  .audienceGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -700,7 +604,6 @@ a.workCard {
   .linkArrow,
   .primaryAction,
   .secondaryAction,
-  .submit,
   a.workCard {
     transition: none;
   }
