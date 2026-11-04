@@ -92,7 +92,7 @@ export const CONTACT_SECTION = {
       ],
       [
         'A little more:',
-        { textarea: 'message', label: 'Your message', placeholder: 'The role or the project, business goals, dates, anything useful', required: true }
+        { textarea: 'message', label: 'Your message', placeholder: 'The role or the project, business goals, dates, if we\'ve met anything useful', required: true }
       ]
     ]
   }
