@@ -82,24 +82,38 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-// Hovering a row (or, on touch screens, the row in the middle of the screen):
-// its pictures tilt out; every other row steps back.
-.row:hover .thumbLeft,
+// The highlighted row: its pictures tilt out; every other row steps back.
+// Mouse and trackpad: the row you hover. Touch screens: the row in the middle
+// of the screen (set in index.js). Keyboard: the focused row.
 .row:focus-visible .thumbLeft,
 .rowCentred .thumbLeft {
   transform: rotate(-8deg) scale(1.18) translateX(-0.06em);
 }
 
-.row:hover .thumbRight,
 .row:focus-visible .thumbRight,
 .rowCentred .thumbRight {
   transform: rotate(8deg) scale(1.18) translateX(0.06em);
 }
 
-.list:hover .row:not(:hover),
 .list:has(.row:focus-visible) .row:not(:focus-visible),
 .listHasCentred .row:not(.rowCentred) {
   opacity: 0.35;
+}
+
+// Hover only where there's a real pointer. On phones a finger sliding over the
+// list would otherwise "hover" and highlight whatever it touched.
+@media (hover: hover) and (pointer: fine) {
+  .row:hover .thumbLeft {
+    transform: rotate(-8deg) scale(1.18) translateX(-0.06em);
+  }
+
+  .row:hover .thumbRight {
+    transform: rotate(8deg) scale(1.18) translateX(0.06em);
+  }
+
+  .list:hover .row:not(:hover) {
+    opacity: 0.35;
+  }
 }
 
 .button {
@@ -116,13 +130,15 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   text-decoration: none;
   transition: transform 200ms $ease, box-shadow 200ms ease;
 
-  &:hover {
-    box-shadow: 0 8px 22px rgb(40 100 232 / 35%);
-    transform: translateY(-2px);
-  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: 0 8px 22px rgb(40 100 232 / 35%);
+      transform: translateY(-2px);
+    }
 
-  &:hover .buttonArrow {
-    transform: translateX(3px);
+    &:hover .buttonArrow {
+      transform: translateX(3px);
+    }
   }
 
   &:focus-visible {

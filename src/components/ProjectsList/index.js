@@ -79,7 +79,24 @@ function ProjectsList({ className, limit = 5 }) {
     }, { rootMargin: '-42% 0px -42% 0px' });
 
     rows.forEach((row) => observer.observe(row));
-    return () => observer.disconnect();
+
+    // Two rows can share the strip, so keep re-picking the closer one while
+    // scrolling (once per frame), not just when a row enters or leaves.
+    let frame = 0;
+    const onScroll = () => {
+      if (!inBand.size || frame) return;
+      frame = window.requestAnimationFrame(() => {
+        frame = 0;
+        pickClosest();
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.cancelAnimationFrame(frame);
+    };
   }, [limit]);
 
   const projects = PROJECTS.slice(0, limit);
