@@ -10,7 +10,9 @@ import styles from './index.module.scss';
 // picture on either side, then a button to the /projects page.
 //
 // - Rows rise in one after another the first time the list scrolls into view.
-// - Hovering a row tilts its pictures out and dims the other rows.
+// - Hovering a row tilts its pictures out and dims the other rows. On touch
+//   screens (no hover) the row crossing the middle of the screen gets the same
+//   treatment as you scroll.
 // - Each row links to that project on /projects.
 
 function ProjectsList({ className, limit = 5 }) {
@@ -18,6 +20,8 @@ function ProjectsList({ className, limit = 5 }) {
   // Starts "shown" so the list is visible without JS; the effect hides it
   // just before it can animate in.
   const [state, setState] = useState('shown'); // 'waiting' | 'shown'
+  // Touch screens: the row nearest the middle of the screen, or null.
+  const [centred, setCentred] = useState(null);
 
   useEffect(() => {
     const list = listRef.current;
@@ -36,16 +40,69 @@ function ProjectsList({ className, limit = 5 }) {
     return () => observer.disconnect();
   }, []);
 
+  // Touch screens only: watch a thin band across the middle of the screen and
+  // highlight whichever row is in it (the closest one if two overlap it).
+  useEffect(() => {
+    const list = listRef.current;
+    const canHover = typeof window.matchMedia === 'function'
+      && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!list || canHover || !('IntersectionObserver' in window)) return undefined;
+
+    const rows = Array.from(list.querySelectorAll('[data-row]'));
+    const inBand = new Set();
+
+    const pickClosest = () => {
+      if (!inBand.size) {
+        setCentred(null);
+        return;
+      }
+      const middle = window.innerHeight / 2;
+      let best = null;
+      let bestDistance = Infinity;
+      inBand.forEach((row) => {
+        const rect = row.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height / 2 - middle);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          best = Number(row.dataset.row);
+        }
+      });
+      setCentred(best);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) inBand.add(entry.target);
+        else inBand.delete(entry.target);
+      });
+      pickClosest();
+    }, { rootMargin: '-42% 0px -42% 0px' });
+
+    rows.forEach((row) => observer.observe(row));
+    return () => observer.disconnect();
+  }, [limit]);
+
   const projects = PROJECTS.slice(0, limit);
 
   return (
     <section className={cn(styles.section, className)} aria-labelledby="projects-list-label">
       <p id="projects-list-label" className={styles.label}>projects</p>
 
-      <ul ref={listRef} className={cn(styles.list, state === 'waiting' && styles.listWaiting)}>
+      <ul
+        ref={listRef}
+        className={cn(
+          styles.list,
+          state === 'waiting' && styles.listWaiting,
+          centred !== null && styles.listHasCentred
+        )}
+      >
         {projects.map((project, index) => (
           <li key={project.id} className={styles.item} style={{ '--i': index }}>
-            <Link className={styles.row} to={`/projects#${project.id}`}>
+            <Link
+              className={cn(styles.row, centred === index && styles.rowCentred)}
+              to={`/projects#${project.id}`}
+              data-row={index}
+            >
               <img className={cn(styles.thumb, styles.thumbLeft)} src={project.images[0]} alt="" loading="lazy" decoding="async" />
               <span className={styles.name}>{project.name}</span>
               <img className={cn(styles.thumb, styles.thumbRight)} src={project.images[1] || project.images[0]} alt="" loading="lazy" decoding="async" />
