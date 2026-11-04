@@ -59,6 +59,37 @@ $font: "Outfit", "Segoe UI", sans-serif;
   }
 }
 
+// --- Scaled frame (Photos by Alex components) ---------------------------------
+
+.frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.frameInner {
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform-origin: 0 0;
+  color: #1e1e1e;
+}
+
+// Page padding, so sections don't sit on the frame's edge.
+.pageSection {
+  padding: 48px 40px;
+
+  @media (max-width: 767px) {
+    padding: 24px 16px;
+  }
+}
+
+// The nav's preview mode centres itself in its parent.
+.navStage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 // --- Stage pills (same look as ProjectStages) --------------------------------
 
 .pillCard {

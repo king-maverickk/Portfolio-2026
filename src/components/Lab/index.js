@@ -82,8 +82,14 @@ function LabCard({ item }) {
   const Demo = item.kind === 'live' ? DEMOS[item.demo] : null;
 
   return (
-    <li className={styles.card}>
-      <div className={cn(styles.stage, item.kind === 'live' && styles.stageLive)}>
+    <li className={cn(styles.card, item.wide && styles.cardWide)}>
+      <div
+        className={cn(
+          styles.stage,
+          item.kind === 'live' && !item.wide && styles.stageLive,
+          item.wide && styles.stageWide
+        )}
+      >
         {Demo ? <Demo /> : <Recording src={item.video} title={item.title} />}
       </div>
       <div className={styles.cardBody}>
@@ -116,6 +122,7 @@ LabCard.propTypes = {
     demo: PropTypes.string,
     video: PropTypes.string,
     where: PropTypes.string,
+    wide: PropTypes.bool,
     draft: PropTypes.bool
   }).isRequired
 };

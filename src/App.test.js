@@ -12,9 +12,9 @@ beforeEach(() => {
   window.scrollTo = jest.fn();
 });
 
-test('/lab opens the Lab page', () => {
+test('/lab opens the Lab page', async () => {
   window.history.pushState({}, '', '/lab');
   render(<App />);
-  expect(screen.getByRole('heading', { level: 1, name: 'Lab' })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { level: 1, name: 'Lab' })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
 });

@@ -1,0 +1,75 @@
+@use "../utils" as *;
+@use "../global" as *;
+
+.gallery_item_container {
+  position: relative;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  background-color: transparent;
+  overflow: visible;
+  z-index: 1;
+}
+
+.content_wrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding-left: 32px;
+
+  @include md {
+    padding-left: 24px;
+  }
+
+  @include xs {
+    padding-left: 16px;
+  }
+}
+
+.title {
+  font: 16px/1.25 Outfit, Helvetica, Arial, serif;
+  color: rgb(255, 255, 255);
+  text-align: left;
+  margin: 0;
+  pointer-events: none;
+  
+  @include md {
+    font-size: 15px;
+  }
+  
+  @include xs {
+    font-size: 14px;
+  }
+}
+
+.hover_image {
+  position: absolute;
+  top: 50%;
+  right: 5%; 
+  // Removed transform from CSS to let GSAP handle it cleanly
+  width: 220px;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+
+  @include md {
+    width: 180px;
+    right: 4%;
+  }
+
+  @include xs {
+    width: 150px;
+    right: 3%;
+  }
+}

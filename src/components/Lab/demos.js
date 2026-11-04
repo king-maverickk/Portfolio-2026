@@ -4,6 +4,12 @@ import cn from 'classnames';
 import HoverWords from 'components/HoverWords';
 import InlineImg from 'components/InlineImg';
 import { STAGE_ICONS } from 'components/ProjectStages/StageIcons';
+import GalleryCard from 'components/GalleryCard';
+import LandingSlideUpText from 'components/LandingSlideUpText';
+import LiveEventsHover from 'components/LiveEventsHover';
+import FloatingNav from 'components/FloatingNav';
+
+import ScaledFrame from './ScaledFrame';
 
 import styles from './demos.module.scss';
 
@@ -203,7 +209,54 @@ function HeadlineRevealDemo() {
   );
 }
 
+// --- Photos by Alex components ---------------------------------------------------
+//
+// Built as full-width page sections, so each runs in a ScaledFrame (a small
+// browser window) on the background it had on the client's site.
+
+function GalleryCardDemo() {
+  return (
+    <ScaledFrame background="#ffffff">
+      <div className={styles.pageSection}>
+        <GalleryCard />
+      </div>
+    </ScaledFrame>
+  );
+}
+
+function SlideUpTextDemo() {
+  return (
+    <ScaledFrame background="#ecebe7">
+      <LandingSlideUpText />
+    </ScaledFrame>
+  );
+}
+
+function LiveEventsDemo() {
+  return (
+    <ScaledFrame background="#1e1e1e">
+      <div className={styles.pageSection}>
+        <LiveEventsHover />
+      </div>
+    </ScaledFrame>
+  );
+}
+
+function FloatingNavDemo() {
+  return (
+    <ScaledFrame background="#ecebe7">
+      <div className={styles.navStage}>
+        <FloatingNav preview />
+      </div>
+    </ScaledFrame>
+  );
+}
+
 const DEMOS = {
+  galleryCard: GalleryCardDemo,
+  slideUpText: SlideUpTextDemo,
+  liveEvents: LiveEventsDemo,
+  floatingNav: FloatingNavDemo,
   hoverWords: HoverWordsDemo,
   inlineImages: InlineImagesDemo,
   stagePills: StagePillsDemo,

@@ -1,0 +1,81 @@
+@use "../utils" as *;
+@use "../global" as *;
+
+.event_item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 48px;
+  width: 100%;
+}
+
+.event_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 32px;
+  width: 100%;
+
+  @include xs {
+    flex-direction: column;
+    gap: 32px 16px;
+  }
+}
+
+.event_info_title {
+  // Instrument Serif isn't loaded on this site, so Georgia stands in.
+  font: 40px/1.3 "Instrument Serif", Georgia, "Times New Roman", serif;
+  color: rgb(255 255 255);
+  opacity: 0.8;
+
+  @include md {
+    align-items: flex-start;
+    font-size: 36px;
+  }
+
+  @include xs {
+    position: relative;
+    width: 100%;
+  }
+
+  @include xxs {
+    font-size: 32px;
+  }
+}
+
+.event_desc {
+  display: flex;
+  justify-content: flex-end;
+  margin: 6px 0;
+  width: fit-content;
+  max-width: 30%;
+  font: 14px/1.25 Outfit, Helvetica, Arial, serif;
+  color: rgb(255 255 255);
+  text-align: right;
+
+  @include md {
+    position: relative;
+    max-width: 45%;
+  }
+
+  @include xs {
+    margin: 0;
+    width: 100%;
+  }
+
+  @include xxs {
+    justify-content: flex-start;
+    align-items: flex-start;
+    max-width: unset;
+    text-align: left;
+  }
+}
+
+.event_gallery {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0;
+  width: 100%;
+  height: auto;
+}

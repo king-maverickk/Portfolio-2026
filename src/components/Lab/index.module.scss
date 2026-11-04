@@ -176,6 +176,7 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 .grid {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: dense; // small cards fill the gaps the wide ones leave
   gap: clamp(14px, 1.6vw, 24px);
   max-width: 1400px;
   margin: 0 auto;
@@ -197,12 +198,21 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   to { opacity: 1; transform: none; }
 }
 
+.cardWide {
+  grid-column: 1 / -1;
+}
+
 .stage {
   position: relative;
   overflow: hidden;
   aspect-ratio: 16 / 10;
   border-radius: 10px;
   background: $stage;
+}
+
+// Whole page sections, shown in a scaled browser-sized frame.
+.stageWide {
+  aspect-ratio: 2 / 1;
 }
 
 // Live demos get a faint grid so they read as a workbench.
@@ -282,6 +292,10 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 @media (max-width: 767px) {
   .stage {
     aspect-ratio: 1 / 1;
+  }
+
+  .stageWide {
+    aspect-ratio: 3 / 4;
   }
 
   .filters {
