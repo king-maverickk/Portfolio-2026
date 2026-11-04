@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from './components/Home';
+import Lab from './components/Lab';
 import AOS from 'aos';
 import { isMobile } from 'react-device-detect';
 
@@ -21,6 +22,7 @@ function App() {
     <Router basename={process.env.BASE_PATH}>
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route exact path="/lab" component={Lab} />
       </Switch>
     </Router>
   );

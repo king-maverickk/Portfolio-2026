@@ -3,7 +3,10 @@ import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
-import Resume from './Resume';
+import HiringManagerSheet from './content/HiringManagerSheet';
+import FreelanceSheet from './content/FreelanceSheet';
+import OpenToWorkSheet from './content/OpenToWorkSheet';
+import { FREELANCE, HIRING, OPEN_TO_WORK } from './content/copy';
 
 import styles from './index.module.scss';
 
@@ -49,34 +52,35 @@ function canAnimateSheet() {
   return supportsMotion && !prefersReducedMotion;
 }
 
+// Titles and words live in content/copy.js; each sheet's layout is its own
+// component in content/.
 const SHEET_CONTENT = {
   'open-to-work': {
-    title: 'Open to work',
-    description: 'I’m looking for my next opportunity.',
-    paragraphs: [
-      'I’m open to joining a team where thoughtful design and hands-on development come together to make useful, memorable digital experiences.',
-      'If you’re building something that could use a designer who can also bring ideas to life in code, I’d love to hear about it.'
-    ]
+    title: OPEN_TO_WORK.title,
+    description: OPEN_TO_WORK.description,
+    Body: OpenToWorkSheet
   },
   freelance: {
-    title: 'Freelance / contract',
-    description: 'Let’s make something great together.',
-    paragraphs: [
-      'I partner with teams and individuals to shape ideas into polished digital experiences, from early concepts and visual design through to a working build.',
-      'Whether you need a focused design engagement or extra hands to move a project forward, tell me what you’re working on and where you need support.'
-    ]
+    title: FREELANCE.title,
+    description: FREELANCE.description,
+    Body: FreelanceSheet
   },
   'hiring-manager': {
-    title: 'Hiring managers',
-    description: 'Looking for a designer-developer?',
-    // After the two lines, the resume itself, read in the page.
-    resume: true,
-    paragraphs: [
-      'My work sits across the design and development process: I can help explore a direction, refine the details, and build the experience for the screen.',
-      'If that mix could be a fit for your team, I’d be happy to learn more about the role and what you’re creating.'
-    ]
+    title: HIRING.title,
+    description: HIRING.description,
+    Body: HiringManagerSheet
   }
 };
+
+// Everything Tab can land on inside the sheet, form fields included.
+const FOCUSABLE = [
+  'button:not([disabled])',
+  '[href]',
+  'input:not([disabled]):not([tabindex="-1"])',
+  'textarea:not([disabled])',
+  'select:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])'
+].map((selector) => `[data-sheet-dialog] ${selector}`).join(', ');
 
 function RevealItem({ children, className, direction = 'left', as: Element = 'span', ...props }) {
   return (
@@ -104,6 +108,8 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   const sectionRef = useRef(null);
   const closeButtonRef = useRef(null);
   const triggerRef = useRef(null);
+  const annotationRefs = useRef({});
+  const sheetBodyRef = useRef(null);
   const [activeAnnotation, setActiveAnnotation] = useState(null);
   const [sheetAccentColor, setSheetAccentColor] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -152,9 +158,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
 
       if (event.key !== 'Tab') return;
 
-      const focusableElements = Array.from(
-        document.querySelectorAll('[data-sheet-dialog] button:not([disabled]), [data-sheet-dialog] [href], [data-sheet-dialog] [tabindex]:not([tabindex="-1"])')
-      );
+      const focusableElements = Array.from(document.querySelectorAll(FOCUSABLE));
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -177,14 +181,30 @@ function HowIllDeliver({ className, onAnnotationClick }) {
     };
   }, [isSheetOpen, requestClose]);
 
+  const accentOf = (element) => (
+    window.getComputedStyle(element).getPropertyValue('--annotation-border-color').trim()
+  );
+
   const openSheet = (id, event) => {
     triggerRef.current = event.currentTarget;
-    setSheetAccentColor(
-      window.getComputedStyle(event.currentTarget).getPropertyValue('--annotation-border-color').trim()
-    );
+    setSheetAccentColor(accentOf(event.currentTarget));
     setActiveAnnotation(id);
     onAnnotationClick?.(id);
   };
+
+  // Moves an open sheet over to another one (e.g. "Read my resume" on the open
+  // to work sheet). The new sheet takes its own colour, starts at the top, and
+  // closing it returns focus to its own label.
+  const switchSheet = useCallback((id) => {
+    const trigger = annotationRefs.current[id];
+    if (trigger) {
+      triggerRef.current = trigger;
+      setSheetAccentColor(accentOf(trigger));
+    }
+    setActiveAnnotation(id);
+    if (sheetBodyRef.current) sheetBodyRef.current.scrollTop = 0;
+    closeButtonRef.current?.focus({ preventScroll: true });
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -290,6 +310,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
             <button
               type="button"
               key={id}
+              ref={(element) => { annotationRefs.current[id] = element; }}
               className={cn(styles.annotation, areaClass)}
               aria-haspopup="dialog"
               aria-expanded={activeAnnotation === id}
@@ -338,11 +359,11 @@ function HowIllDeliver({ className, onAnnotationClick }) {
                 {sheet.description}
               </p>
             </header>
-            <div className={styles.sheetBody}>
-              {sheet.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-              {sheet.resume && <Resume />}
+            <div ref={sheetBodyRef} className={styles.sheetBody}>
+              <sheet.Body
+                key={activeAnnotation}
+                onShowResume={() => switchSheet('hiring-manager')}
+              />
             </div>
           </aside>
         </div>,

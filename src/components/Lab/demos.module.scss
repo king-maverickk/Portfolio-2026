@@ -1,0 +1,260 @@
+// The live demos inside Lab cards. Each sits on the #383838 stage.
+
+$blue: #2864e8;
+$font: "Outfit", "Segoe UI", sans-serif;
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  height: 100%;
+  padding: clamp(16px, 4%, 40px);
+  text-align: center;
+}
+
+.bigText {
+  max-width: 22ch;
+  margin: 0;
+  color: #f7f7f7;
+  font-family: $font;
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+
+.inlineText {
+  --inline-img-size: 1.1;
+  --inline-img-radius: 0.35em;
+}
+
+.hint {
+  color: #a3a3ab;
+  font-family: $font;
+  font-size: 0.85rem;
+}
+
+.demoButton {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 999px;
+  color: #f7f7f7;
+  font-family: $font;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 200ms ease, transform 200ms ease;
+
+  &:hover {
+    background: rgb(255 255 255 / 8%);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #f7f7f7;
+    outline-offset: 2px;
+  }
+}
+
+// --- Stage pills (same look as ProjectStages) --------------------------------
+
+.pillCard {
+  width: min(360px, 100%);
+  padding: 10px;
+  border-radius: 14px;
+  background: #2b2b2b;
+  color: #fff;
+  text-align: left;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+}
+
+.pills {
+  position: relative;
+  display: flex;
+  gap: 4px;
+}
+
+.pillHighlight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--w, 0px);
+  border-radius: 8px;
+  background: $blue;
+  transform: translateX(var(--x, 0px));
+  transition:
+    transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pill {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: inherit;
+  font-family: $font;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
+.pillIcon {
+  width: 18px;
+  height: 18px;
+  filter: invert(1);
+}
+
+.pillDivider {
+  height: 1px;
+  margin: 9px 0 10px;
+  background: rgb(255 255 255 / 18%);
+}
+
+.pillText {
+  min-height: 2.9em;
+  margin: 0;
+  font-family: $font;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  animation: textIn 250ms ease both;
+}
+
+@keyframes textIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+
+// --- Paper sheet -----------------------------------------------------------------
+
+.desk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+.paper {
+  --ease: cubic-bezier(0.5, 0.6, 0, 1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: min(240px, 58%);
+  aspect-ratio: 4 / 3;
+  padding: 16px 18px;
+  border-top: 4px solid var(--paper-accent);
+  border-radius: 5px;
+  background: #f6f2ea;
+  box-shadow:
+    0 2px 4px rgb(0 0 0 / 18%),
+    0 18px 40px rgb(0 0 0 / 40%);
+  transform-origin: 0 50%;
+  animation:
+    paperSlideIn 750ms var(--ease) 50ms both,
+    paperSwingIn 500ms var(--ease) 50ms both;
+}
+
+.paperLeaving {
+  animation:
+    paperSlideOut 600ms var(--ease) both,
+    paperSwingOut 500ms var(--ease) 100ms both;
+}
+
+.paperTitle {
+  margin-bottom: 4px;
+  color: #2b2b2b;
+  font-family: $font;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.paperLine {
+  height: 6px;
+  border-radius: 3px;
+  background: rgb(43 43 43 / 12%);
+}
+
+.paperLineShort {
+  width: 62%;
+}
+
+@keyframes paperSlideIn {
+  from { translate: 160% 0 100px; }
+  to { translate: 0 0 0; }
+}
+
+@keyframes paperSwingIn {
+  from { rotate: 0 1 0 -35deg; }
+  to { rotate: 0 1 0 0deg; }
+}
+
+@keyframes paperSlideOut {
+  from { translate: 0 0 0; }
+  to { translate: 160% 0 0; }
+}
+
+@keyframes paperSwingOut {
+  from { rotate: 0 1 0 0deg; }
+  to { rotate: 0 1 0 -10deg; }
+}
+
+// --- Headline reveal -----------------------------------------------------------
+
+.revealLine {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.28em;
+  margin: 0;
+  color: #f2f2f4;
+  font-family: $font;
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.065em;
+}
+
+.revealWord {
+  display: inline-block;
+  transform-origin: top left;
+
+  &[data-from='right'] {
+    transform-origin: top right;
+  }
+}
+
+.revealScale {
+  display: inline-block;
+  transform-origin: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper,
+  .paperLeaving,
+  .pillText {
+    animation: none;
+  }
+
+  .pillHighlight {
+    transition: none;
+  }
+}

@@ -22,7 +22,11 @@ const homeProject = {
       label: 'Motion',
       icon: 'motion',
       description: 'Interaction and motion bring the finished experience to life.',
-      placeholder: 'Motion or interactive work goes here'
+      placeholder: 'Motion or interactive work goes here',
+      // A preview of the Lab: swap the video for whichever recording you want.
+      video: '/assets/Home/demo_GalleryCard.mp4',
+      videoLabel: 'Screen recording of a gallery card in use',
+      link: { href: '/lab', label: 'Open the Lab' }
     }
   ]
 };

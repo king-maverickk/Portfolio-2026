@@ -1,0 +1,308 @@
+// The Lab page: the site's dark dot-grid page, with #2b2b2b cards and the blue
+// sliding pill highlight from the project stages.
+
+$card: #2b2b2b;
+$stage: #383838;
+$blue: #2864e8;
+$text: #f2f2f4;
+$muted: #a3a3ab;
+$line: rgb(255 255 255 / 14%);
+$font: "Outfit", "Segoe UI", sans-serif;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+.page {
+  position: relative;
+  min-height: 100svh;
+  padding: 0 clamp(16px, 5.5%, 80px) 120px;
+  color: $text;
+  font-family: $font;
+
+  // Everything sits above the fixed dot grid.
+  > *:not(canvas) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// --- Top bar ---------------------------------------------------------------------
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px 0;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px 0 10px;
+  border-radius: 999px;
+  background: rgb(43 43 43 / 85%);
+  color: $text;
+  font-size: 0.95rem;
+  text-decoration: none;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background-color 200ms ease, transform 200ms $ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 200ms $ease;
+  }
+
+  &:hover {
+    background: $card;
+  }
+
+  &:hover svg {
+    transform: translateX(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 2px;
+  }
+}
+
+.byline {
+  color: $text;
+  font-size: 1.5rem;
+}
+
+// --- Header ----------------------------------------------------------------------
+
+.header {
+  display: grid;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(48px, 10vh, 120px) 0 clamp(32px, 6vh, 56px);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(5rem, 16vw, 12rem);
+  font-weight: 500;
+  line-height: 0.82;
+  letter-spacing: -0.065em;
+}
+
+.intro {
+  max-width: 34rem;
+  margin: 0;
+  color: $muted;
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+}
+
+.draftTag {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0 7px;
+  border: 1px dashed $muted;
+  border-radius: 999px;
+  color: $muted;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+// --- Filters -----------------------------------------------------------------------
+
+.filters {
+  position: relative;
+  display: flex;
+  width: fit-content;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 14px;
+  background: $stage;
+}
+
+.filterHighlight {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: var(--w, 0px);
+  border-radius: 9px;
+  background: $blue;
+  transform: translateX(var(--x, 0px));
+  transition: transform 300ms $ease, width 300ms $ease;
+  pointer-events: none;
+}
+
+.filter {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 9px;
+  color: $text;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 2px;
+  }
+}
+
+.filterCount {
+  color: rgb(255 255 255 / 60%);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+// --- Grid of cards -----------------------------------------------------------------
+
+.grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 24px);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.card {
+  display: flex !important;
+  flex-direction: column;
+  min-width: 0;
+  padding: 10px;
+  border-radius: 16px;
+  background: $card;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+  animation: cardIn 420ms $ease both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+  background: $stage;
+}
+
+// Live demos get a faint grid so they read as a workbench.
+.stageLive {
+  background-color: $stage;
+  background-image: radial-gradient(rgb(255 255 255 / 9%) 1px, transparent 1.5px);
+  background-size: 18px 18px;
+  background-position: 9px 9px;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardBody {
+  display: grid;
+  gap: 6px;
+  padding: 14px 8px 8px;
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 3px 10px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 999px;
+  color: $muted;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.tagLive {
+  border-color: rgb(40 100 232 / 70%);
+  color: #cfdcff;
+}
+
+.caption {
+  max-width: 40rem;
+  margin: 0;
+  color: $muted;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+// --- Small screens -----------------------------------------------------------------
+
+@media (max-width: 899px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .stage {
+    aspect-ratio: 1 / 1;
+  }
+
+  .filters {
+    width: 100%;
+  }
+
+  .filter {
+    flex: 1;
+    justify-content: center;
+    padding: 0 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+
+  .filterHighlight,
+  .back,
+  .back svg {
+    transition: none;
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { STAGE_ICONS } from './StageIcons';
 import { useActiveStage } from './useActiveStage';
 import styles from './index.module.scss';
@@ -192,6 +193,12 @@ function ProjectStages({ project }) {
                 />
               ) : (
                 <span className={styles.tileLabel}>{stage.placeholder}</span>
+              )}
+              {stage.link && (
+                <Link className={styles.tileLink} to={stage.link.href}>
+                  {stage.link.label}
+                  <span aria-hidden="true">→</span>
+                </Link>
               )}
             </div>
           ))}

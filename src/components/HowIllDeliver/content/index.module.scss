@@ -1,0 +1,712 @@
+// Content blocks for the three sheets. They sit on the cream paper, so the
+// palette is the paper's: ink #2b2b2b, muted #5b5851, hairlines at 14% ink,
+// and the audience colour (--sheet-accent-color) used sparingly as an accent.
+
+$ink: #2b2b2b;
+$muted: #5b5851;
+$faint: #8a867d;
+$rule: rgb(43 43 43 / 14%);
+$card: rgb(255 255 255 / 55%);
+$card-hover: rgb(255 255 255 / 85%);
+$accent: var(--sheet-accent-color, #{$ink});
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$font: "Outfit", "Segoe UI", sans-serif;
+
+// --- Draft markers (development only) ----------------------------------------
+
+.draftTag {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  margin-left: 8px;
+  padding: 0 7px;
+  border: 1px dashed $faint;
+  border-radius: 999px;
+  color: $faint;
+  font-family: $font;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  vertical-align: middle;
+  cursor: help;
+}
+
+.todoNote {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border: 1px dashed $faint;
+  border-radius: 8px;
+  color: $muted;
+  font-size: 0.85rem;
+}
+
+// --- Sections ----------------------------------------------------------------
+
+.section {
+  margin-top: 36px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  margin: 0 0 14px;
+  font-family: $font;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  // The same small accent bar the resume headings use, but beside the title so
+  // the draft tag can sit on the same line.
+  &::before {
+    display: block;
+    width: 18px;
+    height: 2px;
+    margin-right: 10px;
+    background: $accent;
+    content: "";
+  }
+}
+
+.intro {
+  position: relative;
+
+  .draftTag {
+    margin: 0 0 10px;
+  }
+}
+
+.leadText {
+  font-family: $font;
+  font-size: clamp(1.2rem, 2.4vw, 1.45rem) !important;
+  font-weight: 500;
+  line-height: 1.4 !important;
+  letter-spacing: -0.01em;
+}
+
+.bodyText {
+  max-width: 38rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.note {
+  margin: 0 0 14px;
+  color: $muted;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+// --- Facts: "Based in   Hamilton, Ontario" ----------------------------------
+
+.facts {
+  display: grid;
+  margin: 0;
+  border-top: 1px solid $rule;
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 16px;
+  padding: 11px 0;
+  border-bottom: 1px solid $rule;
+  font-size: 0.98rem;
+  line-height: 1.45;
+
+  dt {
+    color: $muted;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+// --- Documents: tabs + paper -------------------------------------------------
+
+.tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--tab-count), minmax(0, 1fr));
+  width: min(320px, 100%);
+  padding: 4px;
+  border-radius: 10px;
+  background: rgb(43 43 43 / 7%);
+}
+
+.tabHighlight {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / var(--tab-count));
+  border-radius: 7px;
+  background: $ink;
+  transform: translateX(calc(100% * var(--tab-index)));
+  transition: transform 300ms $ease;
+  pointer-events: none;
+}
+
+.tab {
+  position: relative;
+  z-index: 1;
+  height: 34px;
+  border-radius: 7px;
+  color: $muted;
+  font-family: $font;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 200ms ease;
+
+  &:hover {
+    color: $ink;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 2px;
+  }
+}
+
+.tabActive,
+.tabActive:hover {
+  color: #f7f7f7;
+}
+
+// The document itself: a whiter sheet lying on the cream one.
+.paper {
+  margin-top: 12px;
+  padding: clamp(20px, 4vw, 36px);
+  border-radius: 8px;
+  background: #fffdf9;
+  box-shadow:
+    0 1px 2px rgb(43 43 43 / 8%),
+    0 8px 24px rgb(43 43 43 / 8%);
+  animation: paperIn 280ms $ease both;
+
+  // The resume brings its own top rule for when it sat on the sheet directly.
+  > article {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+@keyframes paperIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.letter {
+  font-size: 1rem;
+  line-height: 1.65;
+
+  .draftTag {
+    margin: 0 0 14px;
+  }
+}
+
+.letterText {
+  display: grid;
+  gap: 14px;
+  max-width: 36rem;
+}
+
+.signOff {
+  display: grid;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.signature {
+  font-family: $font;
+  font-size: 1.35rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+// --- Link cards ----------------------------------------------------------------
+
+.linkCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+
+  li {
+    display: block;
+    min-width: 0;
+  }
+}
+
+.linkCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  padding: 12px 14px;
+  border: 1px solid $rule;
+  border-radius: 12px;
+  background: $card;
+  color: $ink;
+  text-decoration: none;
+  transition: background-color 200ms ease, transform 200ms $ease, border-color 200ms ease;
+
+  &:hover {
+    border-color: rgb(43 43 43 / 24%);
+    background: $card-hover;
+    transform: translateY(-2px);
+  }
+
+  &:hover .linkArrow {
+    transform: translate(2px, -2px);
+    color: $ink;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 2px;
+  }
+}
+
+.linkIcon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+}
+
+.linkText {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+}
+
+.linkTitle {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.linkDetail {
+  overflow: hidden;
+  color: $muted;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linkArrow {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: $faint;
+  transition: transform 200ms $ease, color 200ms ease;
+}
+
+// --- Freelance: audiences, problems, steps, work -----------------------------
+
+.audienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.audience {
+  display: grid !important;
+  align-content: start;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid $rule;
+  border-radius: 12px;
+  background: $card;
+}
+
+.audienceTitle {
+  font-weight: 600;
+}
+
+.audienceText {
+  color: $muted;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.checkList {
+  display: grid;
+  gap: 8px;
+
+  li {
+    position: relative;
+    max-width: 38rem;
+    padding-left: 26px;
+    line-height: 1.5;
+
+    // A small ring in the audience colour.
+    &::before {
+      position: absolute;
+      top: 0.42em;
+      left: 2px;
+      width: 10px;
+      height: 10px;
+      border: 2px solid $accent;
+      border-radius: 50%;
+      content: "";
+    }
+  }
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+
+.step {
+  display: grid !important;
+  align-content: start;
+  gap: 6px;
+  padding: 14px 14px 16px;
+  border-top: 2px solid $accent;
+  border-radius: 2px 2px 10px 10px;
+  background: $card;
+}
+
+.stepNumber {
+  color: $faint;
+  font-family: $font;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stepLabel {
+  font-family: $font;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.stepText {
+  color: $muted;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.workCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 16px 6px 6px;
+  border: 1px solid $rule;
+  border-radius: 14px;
+  background: $card;
+  color: $ink;
+  text-decoration: none;
+}
+
+a.workCard {
+  transition: transform 200ms $ease, background-color 200ms ease;
+
+  &:hover {
+    background: $card-hover;
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 2px;
+  }
+}
+
+.workThumb {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #ddd8cd;
+}
+
+.workBody {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.workTitle {
+  font-weight: 600;
+}
+
+.workMeta {
+  color: $muted;
+  font-size: 0.88rem;
+}
+
+// --- Open to work --------------------------------------------------------------
+
+.availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 8px 14px 8px 12px;
+  border: 1px solid $rule;
+  border-radius: 999px;
+  background: $card;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.statusDot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: $accent;
+
+  // A slow ping, so it reads as "live".
+  &::after {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: $accent;
+    content: "";
+    animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+}
+
+@keyframes ping {
+  70%,
+  100% { opacity: 0; transform: scale(2.6); }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.primaryAction,
+.secondaryAction,
+.submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-family: $font;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 200ms $ease, background-color 200ms ease, box-shadow 200ms ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 3px;
+  }
+}
+
+.primaryAction,
+.submit {
+  background: $ink;
+  color: #f7f7f7;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 6px 16px rgb(43 43 43 / 22%);
+  }
+}
+
+.secondaryAction {
+  border: 1px solid rgb(43 43 43 / 22%);
+  background: transparent;
+  color: $ink;
+
+  &:hover {
+    background: $card-hover;
+  }
+}
+
+.actionIcon {
+  width: 18px;
+  height: 18px;
+}
+
+// --- Contact form --------------------------------------------------------------
+
+.formSection {
+  padding-top: 28px;
+  border-top: 1px solid $rule;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.optional {
+  color: $faint;
+  font-weight: 400;
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid rgb(43 43 43 / 18%);
+  border-radius: 10px;
+  background: #fffdf9;
+  color: $ink;
+  font: inherit;
+  font-size: 1rem; // 16px stops iOS zooming in on focus
+  line-height: 1.4;
+  color-scheme: light;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+
+  &::placeholder {
+    color: #b3aea3;
+  }
+
+  &:hover {
+    border-color: rgb(43 43 43 / 32%);
+  }
+
+  &:focus {
+    border-color: $ink;
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(43 43 43 / 10%);
+  }
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.formFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.submit {
+  border: 0;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: progress;
+  }
+}
+
+.formError {
+  color: $ink;
+  font-size: 0.92rem;
+  line-height: 1.45;
+
+  a {
+    color: inherit;
+    font-weight: 600;
+    text-underline-offset: 3px;
+  }
+}
+
+.formDone {
+  display: grid;
+  gap: 4px;
+  padding: 18px 20px;
+  border: 1px solid $rule;
+  border-left: 3px solid $accent;
+  border-radius: 10px;
+  background: $card;
+  line-height: 1.5;
+}
+
+.formDoneTitle {
+  font-family: $font;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+// --- Small screens -------------------------------------------------------------
+
+@media (max-width: 767px) {
+  .section {
+    margin-top: 30px;
+  }
+
+  .audienceGrid,
+  .formRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fact {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .tabs {
+    width: 100%;
+  }
+
+  .paper {
+    padding: 18px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabHighlight,
+  .linkCard,
+  .linkArrow,
+  .primaryAction,
+  .secondaryAction,
+  .submit,
+  a.workCard {
+    transition: none;
+  }
+
+  .paper,
+  .statusDot::after {
+    animation: none;
+  }
+}
