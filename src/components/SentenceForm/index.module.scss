@@ -10,6 +10,8 @@ $font: "Outfit", "Segoe UI", sans-serif;
   --sf-muted: #5b5851;
   --sf-faint: #8a867d;
   --sf-line: rgb(43 43 43 / 30%);
+  --sf-chip-bg: transparent;
+  --sf-chip-hover-bg: transparent;
   --sf-chip-on-bg: #2b2b2b;
   --sf-chip-on-text: #f6f2ea;
   --sf-accent: var(--sheet-accent-color, #2b2b2b);
@@ -24,6 +26,9 @@ $font: "Outfit", "Segoe UI", sans-serif;
   --sf-muted: #a3a3ab;
   --sf-faint: #8b8b94;
   --sf-line: rgb(242 242 244 / 28%);
+  // Solid chips, so the moving dot grid behind them can't show through.
+  --sf-chip-bg: #2b2b2b;
+  --sf-chip-hover-bg: #383838;
   --sf-chip-on-bg: #f7f7f7;
   --sf-chip-on-text: #16161a;
   --sf-accent: #2864e8;
@@ -146,6 +151,7 @@ $font: "Outfit", "Segoe UI", sans-serif;
   padding: 0 14px 0 11px;
   border: 1px solid var(--sf-line);
   border-radius: 999px;
+  background: var(--sf-chip-bg);
   color: var(--sf-ink);
   font-family: $font;
   font-size: 0.92rem;
@@ -160,6 +166,7 @@ $font: "Outfit", "Segoe UI", sans-serif;
 
   &:hover {
     border-color: var(--sf-ink);
+    background: var(--sf-chip-hover-bg);
   }
 
   &:active {
@@ -197,7 +204,9 @@ $font: "Outfit", "Segoe UI", sans-serif;
   transition: background-color 180ms ease, border-color 180ms ease, transform 180ms $ease;
 }
 
-.chipOn {
+// (:hover listed too, so hovering a picked chip keeps it picked-looking.)
+.chipOn,
+.chipOn:hover {
   border-color: var(--sf-chip-on-bg);
   background: var(--sf-chip-on-bg);
   color: var(--sf-chip-on-text);
