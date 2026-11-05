@@ -13,11 +13,11 @@ function renderList(props) {
   );
 }
 
-test('each project is a link to its card on /projects, named by the project alone', () => {
+test('each project links to its own page, named by the project alone', () => {
   renderList();
   PROJECTS.slice(0, 5).forEach((project) => {
     // The pictures are decoration, so the link reads as just the name.
-    expect(screen.getByRole('link', { name: project.name })).toHaveAttribute('href', `/projects#${project.id}`);
+    expect(screen.getByRole('link', { name: project.name })).toHaveAttribute('href', `/projects/${project.id}`);
   });
 });
 

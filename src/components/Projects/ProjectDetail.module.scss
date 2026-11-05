@@ -1,0 +1,727 @@
+// One project's page. See ProjectDetail.js for what goes where.
+
+$bg: #16161a;
+$card: #2b2b2b;
+$stage: #383838;
+$blue: #2864e8;
+$text: #f2f2f4;
+$body: #d4d4da;
+$muted: #a3a3ab;
+$font: "Outfit", "Segoe UI", sans-serif;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$bar-h: 64px; // keep in step with BAR_H in ProjectDetail.js
+$radius: 12px;
+
+// The sweep: a soft edge that travels down the screen, revealing the columns.
+@property --sweep {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.page {
+  position: relative;
+  min-height: 100svh;
+  padding: 0 clamp(16px, 5.5%, 80px) 120px;
+  color: $text;
+  font-family: $font;
+
+  // Everything sits above the fixed dot grid.
+  > .topBar,
+  > .heading,
+  > .columns {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// --- Top bar (same as /projects and the Lab) ------------------------------------
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 18px 0;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px 0 10px;
+  border-radius: 999px;
+  background: rgb(43 43 43 / 85%);
+  color: $text;
+  font-size: 0.95rem;
+  text-decoration: none;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  transition: background-color 200ms ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 200ms $ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background: $card;
+    }
+
+    &:hover svg {
+      transform: translateX(-2px);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 2px;
+  }
+}
+
+.byline {
+  color: $muted;
+  font-size: 0.95rem;
+}
+
+// --- Heading (same size as the list rows, so the glide is a clean move) ---------
+
+.heading {
+  padding: clamp(16px, 4vh, 48px) 0 clamp(28px, 5vh, 48px);
+  text-align: center;
+}
+
+.headingTitle {
+  margin: 0;
+  font-size: clamp(2.2rem, 6.2vw, 5.75rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.headingRow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.3vw, 22px);
+  padding: 0.04em 0.1em;
+  border-radius: $radius;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 6px;
+  }
+}
+
+.headingName {
+  text-wrap: balance;
+}
+
+.thumb {
+  flex: none;
+  width: 1.2em;
+  height: 0.8em;
+  border-radius: 0.1em;
+  object-fit: cover;
+  background: $card;
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+// Hovering the heading hints that it goes back: the pictures tuck in.
+@media (hover: hover) and (pointer: fine) {
+  .headingRow:hover .thumbLeft {
+    transform: rotate(-6deg) translateX(0.12em) scale(0.9);
+  }
+
+  .headingRow:hover .thumbRight {
+    transform: rotate(6deg) translateX(-0.12em) scale(0.9);
+  }
+}
+
+// --- The slim bar that follows you down -----------------------------------------
+
+.bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $bar-h;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+  background: rgb(22 22 26 / 82%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-100%);
+  transition: transform 320ms $ease, opacity 200ms ease;
+}
+
+.barShown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+.barRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  color: $text;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 2px;
+  }
+}
+
+.barThumb {
+  width: 1.2em;
+  height: 0.8em;
+  border-radius: 0.12em;
+  object-fit: cover;
+  background: $card;
+}
+
+// --- Columns -----------------------------------------------------------------------
+//
+// Same widths in both views, so nothing shifts when you swap:
+// left (context in A, media in B) is wide; right (video in A, card in B) is
+// narrow and sticky.
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.right {
+  position: sticky;
+  top: $bar-h + 16px;
+}
+
+.left,
+.right {
+  transition: opacity 180ms ease;
+}
+
+// Fade style: the old view fades out, the new one fades in.
+.swapping .left,
+.swapping .right {
+  opacity: 0;
+}
+
+.leftA,
+.leftB,
+.videoBox,
+.card {
+  animation: swapIn 320ms $ease both;
+}
+
+@keyframes swapIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+// Instant style: no fades at all.
+.instant {
+  .left,
+  .right {
+    transition: none;
+  }
+
+  .leftA,
+  .leftB,
+  .videoBox {
+    animation: none;
+  }
+}
+
+.leftA[hidden],
+.leftB[hidden],
+.videoBox[hidden] {
+  display: none !important;
+}
+
+// Arriving: the columns are revealed by an edge sweeping down the screen.
+.sweep,
+.sweepLate {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--sweep) - 180px), transparent var(--sweep));
+  mask-image: linear-gradient(to bottom, #000 calc(var(--sweep) - 180px), transparent var(--sweep));
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: sweep 1100ms cubic-bezier(0.33, 0, 0.2, 1) both;
+}
+
+// Coming from a list: wait for the other rows to clear and the heading to
+// start its glide.
+.sweepLate {
+  animation-delay: 280ms;
+}
+
+@keyframes sweep {
+  from { --sweep: 0px; }
+  to { --sweep: calc(100vh + 200px); }
+}
+
+// --- Left, view A: the context -------------------------------------------------------
+
+.context {
+  max-width: 34rem;
+}
+
+.eyebrow,
+.sectionTitle {
+  margin: 0 0 10px;
+  color: $muted;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.meta {
+  margin: 0;
+  color: $muted;
+  font-size: 12px;
+}
+
+.role {
+  margin: 4px 0 0;
+  color: $text;
+  font-size: 14px;
+}
+
+.sentence {
+  margin: 24px 0 0;
+  color: $text;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.sentencePic {
+  display: inline-block;
+  width: 1.9em;
+  height: 1.3em;
+  margin: 0 0.1em;
+  border-radius: 0.25em;
+  object-fit: cover;
+  vertical-align: -0.3em;
+  background: $stage;
+}
+
+.body {
+  margin: 16px 0 0;
+  color: $body;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.intention {
+  margin: 16px 0 0;
+  padding-left: 14px;
+  border-left: 2px solid $blue;
+  color: $text;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.talkingPoint {
+  margin-top: 48px;
+
+  .body {
+    margin-top: 0;
+  }
+}
+
+.sectionPic {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  aspect-ratio: 16 / 10;
+  margin-top: 16px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: $stage;
+}
+
+// The whitespace before the facts.
+.space {
+  height: clamp(56px, 10vh, 96px);
+}
+
+.stackBlock {
+  margin-bottom: 40px;
+}
+
+.stack {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tool {
+  display: grid !important;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: $card;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: $text;
+    transition: fill 200ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover svg {
+      fill: var(--brand-shown, #{$text});
+    }
+  }
+}
+
+// Tools with no logo we can use: just the name.
+.toolText {
+  width: auto;
+  padding: 0 12px;
+  color: $text;
+  font-size: 12px;
+}
+
+.styleRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: flex-end;
+}
+
+.swatches,
+.fonts {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.swatch,
+.font {
+  display: grid !important;
+  gap: 6px;
+  justify-items: start;
+}
+
+.swatchChip {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+
+.swatchHex,
+.fontName {
+  color: $muted;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.fonts {
+  gap: 24px;
+}
+
+.fontSample {
+  font-size: clamp(3rem, 5vw, 4.25rem);
+  line-height: 0.9;
+}
+
+.draftNote {
+  margin: 40px 0 0;
+  color: $muted;
+  font-size: 12px;
+}
+
+.draftTag {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  margin-right: 6px;
+  padding: 0 7px;
+  border: 1px dashed $muted;
+  border-radius: 999px;
+  color: $muted;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+// --- Media grid (view B, and under the context on phones) ---------------------------
+
+.media {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 40px;
+  padding: 0;
+  list-style: none;
+}
+
+.mediaItem {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  background: $card;
+}
+
+// The first one is shown large.
+.mediaLead {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 10;
+  border-radius: $radius;
+}
+
+.mediaFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  // Most media are screens, where the top matters most.
+  object-position: center top;
+}
+
+.phoneOnly {
+  display: none !important;
+}
+
+// --- Right: the video box and the context card ------------------------------------
+
+.videoBox,
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: $radius;
+  color: $text;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 3px;
+  }
+}
+
+.videoBox {
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: $card;
+}
+
+.card {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+  background: $card;
+}
+
+.cardEyebrow {
+  display: block;
+  color: $muted;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cardMeta {
+  display: block;
+  color: $muted;
+  font-size: 12px;
+}
+
+.cardSentence {
+  display: block;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+// "See the media ↗": always there, so it's clear the box does something.
+.boxHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgb(22 22 26 / 78%);
+  color: $text;
+  font-size: 12px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background-color 200ms ease;
+}
+
+.videoBox .boxHint {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+}
+
+.card .boxHint {
+  justify-self: start;
+  margin-top: 8px;
+  background: $stage;
+}
+
+.boxHintArrow {
+  transition: transform 200ms $ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .videoBox:hover .boxHint,
+  .card:hover .boxHint {
+    background: $blue;
+  }
+
+  .videoBox:hover .boxHintArrow,
+  .card:hover .boxHintArrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+// --- Only while building: try the fade and the instant swap ------------------------
+
+.devSwitch {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 4px 4px 12px;
+  border: 1px dashed $muted;
+  border-radius: 999px;
+  background: rgb(22 22 26 / 88%);
+  color: $muted;
+  font-family: $font;
+  font-size: 12px;
+
+  button {
+    height: 26px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: $text;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  button[aria-pressed="true"] {
+    background: $blue;
+  }
+}
+
+// --- Tablets and phones: one column, the box first --------------------------------
+
+@media (max-width: 899px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .right {
+    position: static;
+    order: -1;
+  }
+
+  .context {
+    max-width: none;
+  }
+
+  .phoneOnly {
+    display: grid !important;
+    margin-top: 48px;
+  }
+
+}
+
+// Same breakpoint as the list, so the heading matches its row exactly.
+@media (max-width: 767px) {
+  .page {
+    padding: 0 16px 96px;
+  }
+
+  .headingTitle {
+    font-size: clamp(1.6rem, 8.4vw, 2.6rem);
+  }
+
+  .headingRow {
+    gap: 8px;
+  }
+
+  .thumb {
+    width: 1.1em;
+    height: 0.75em;
+  }
+
+  .media {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sweep,
+  .sweepLate,
+  .leftA,
+  .leftB,
+  .videoBox,
+  .card {
+    animation: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .bar,
+  .left,
+  .right,
+  .thumb,
+  .back svg,
+  .boxHintArrow {
+    transition: none;
+  }
+}

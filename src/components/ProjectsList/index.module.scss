@@ -176,3 +176,8 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
     transition: none;
   }
 }
+
+// On /projects the page header sits right above, so less room on top.
+.sectionPage {
+  padding-top: clamp(8px, 2vh, 24px);
+}

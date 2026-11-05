@@ -1,5 +1,5 @@
 // /projects: the same opening as the Lab (dark dot-grid page, huge title,
-// muted subtitle), then the projects as cards.
+// muted subtitle), then the projects in the home-list style.
 
 $card: #2b2b2b;
 $stage: #383838;
@@ -120,121 +120,7 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   vertical-align: middle;
 }
 
-// --- Cards -------------------------------------------------------------------------
-
-.grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(14px, 1.6vw, 24px);
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.card {
-  display: flex !important;
-  flex-direction: column;
-  min-width: 0;
-  padding: 10px;
-  border-radius: 16px;
-  background: $card;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
-  scroll-margin: 24px;
-  transition: box-shadow 400ms ease;
-
-  // Arriving from a name on the home page: a brief blue glow.
-  &[data-arrived] {
-    box-shadow: 0 0 0 2px $blue, 0 0 40px rgb(40 100 232 / 45%);
-  }
-}
-
-.media {
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
-  border-radius: 10px;
-  background: $stage;
-
-  img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 600ms $ease;
-  }
-}
-
-.card:hover .media img {
-  transform: scale(1.03);
-}
-
-.body {
-  display: grid;
-  gap: 8px;
-  padding: 16px 8px 8px;
-}
-
-.head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 12px;
-}
-
-.name {
-  margin: 0;
-  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-
-.meta {
-  color: $muted;
-  font-size: 0.9rem;
-}
-
-.role {
-  margin: 0;
-  font-size: 0.98rem;
-}
-
-.summary {
-  max-width: 40rem;
-  margin: 0;
-  color: $muted;
-  font-size: 0.98rem;
-  line-height: 1.5;
-}
-
-.tags {
-  display: flex !important;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 4px 0 0;
-  padding: 0;
-
-  li {
-    display: block;
-  }
-}
-
-.tag {
-  padding: 3px 10px;
-  border: 1px solid rgb(255 255 255 / 22%);
-  border-radius: 999px;
-  color: $muted;
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-@media (max-width: 899px) {
-  .grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .card,
-  .media img,
   .back,
   .back svg {
     transition: none;

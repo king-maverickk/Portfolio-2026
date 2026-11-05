@@ -1,0 +1,45 @@
+// Each word (or picture) sits in a clipping box and drops in from above. All
+// the words on a line share a --line number, so a line moves as one.
+
+.root {
+  margin: 0;
+}
+
+.unit {
+  display: inline-block;
+  overflow: hidden;
+  // A little room so descenders and the pictures aren't clipped.
+  padding: 0.08em 0;
+  margin: -0.08em 0;
+  vertical-align: bottom;
+}
+
+.inner {
+  display: inline-block;
+}
+
+.play .inner {
+  animation: lineDown 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--delay, 0ms) + var(--line, 0) * var(--step, 70ms));
+}
+
+@keyframes lineDown {
+  from { transform: translateY(-110%); }
+  to { transform: translateY(0); }
+}
+
+// Pictures in the sentence: small, rounded, sitting on the text.
+.pic {
+  width: 1.9em;
+  height: 1.3em;
+  border-radius: 0.25em;
+  object-fit: cover;
+  vertical-align: -0.28em;
+  background: #383838;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play .inner {
+    animation: none;
+  }
+}
