@@ -288,7 +288,20 @@
   margin: 48px 0;
   padding: var(--sheet-pad-y) var(--sheet-pad-x);
   border-top: 6px solid var(--sheet-accent-color, #2b2b2b);
-  background: #f6f2ea;
+
+  // Graph paper: a grid that is clear at the top of the page and fades into
+  // plain paper further down. The fade is a paper-coloured gradient laid over
+  // the grid, so nothing has to be masked.
+  --sheet-paper: #f6f2ea;
+  --sheet-grid-line: rgb(118 136 168 / 30%);
+  --sheet-grid-size: 32px;
+  --sheet-grid-fade: 720px;
+
+  background:
+    linear-gradient(to bottom, rgb(246 242 234 / 0%), var(--sheet-paper) var(--sheet-grid-fade)) no-repeat,
+    linear-gradient(to right, var(--sheet-grid-line) 1px, transparent 1px) 0 0 / var(--sheet-grid-size) var(--sheet-grid-size),
+    linear-gradient(to bottom, var(--sheet-grid-line) 1px, transparent 1px) 0 0 / var(--sheet-grid-size) var(--sheet-grid-size),
+    var(--sheet-paper);
   color: #2b2b2b;
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 70%),
