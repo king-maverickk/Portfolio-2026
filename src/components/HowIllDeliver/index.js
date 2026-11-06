@@ -392,7 +392,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
             role="dialog"
             aria-modal="true"
             aria-labelledby="delivery-sheet-title"
-            aria-describedby="delivery-sheet-description"
+            aria-describedby={sheet.description ? 'delivery-sheet-description' : undefined}
             data-sheet-dialog=""
             onAnimationEnd={(event) => {
               // The two exit animations end together; the first to report is enough.
@@ -409,9 +409,11 @@ function HowIllDeliver({ className, onAnnotationClick }) {
               Close
             </button>
             <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
-            <p id="delivery-sheet-description" className={styles.sheetDescription}>
-              {sheet.description}
-            </p>
+            {sheet.description && (
+              <p id="delivery-sheet-description" className={styles.sheetDescription}>
+                {sheet.description}
+              </p>
+            )}
             <div className={styles.sheetBody}>
               <sheet.Body
                 key={activeAnnotation}

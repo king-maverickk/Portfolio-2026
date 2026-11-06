@@ -77,12 +77,85 @@ $font: "Outfit", "Segoe UI", sans-serif;
   }
 }
 
-.leadText {
+// Freelance: "For businesses that depend on…" with icons inside the sentence,
+// matched to the Figma frame (32px Outfit Medium, 40px lines, 3 lines).
+// Big, with plenty of room above and below so it reads as the sheet's opener.
+//
+// Everything is in em, so the frame scales as one piece. The icons are the
+// Figma exports at 3x, so an icon's height in em is its file height / 96
+// (3x of a 32px font). The files keep their soft shadows, which leaves
+// transparent edges; the negative margins below take those edges back out so
+// the gaps match the frame.
+.forStatement {
+  --inline-img-radius: 0; // transparent edges with shadows; don't clip them
+
+  // 22em is the Figma text box, so the lines break where they do in the frame.
+  // The font steps down a little from 32px so 22em fits the sheet's column.
+  max-width: 22em !important;
+  margin: clamp(40px, 8vh, 88px) 0 clamp(56px, 11vh, 120px) !important;
+  color: $ink;
   font-family: $font;
-  font-size: clamp(1.2rem, 2.4vw, 1.45rem) !important;
+  font-size: clamp(1.35rem, 3.6vw, 1.85rem) !important;
   font-weight: 500;
-  line-height: 1.4 !important;
-  letter-spacing: -0.01em;
+  line-height: 1.25 !important;
+  letter-spacing: 0;
+
+  // An icon and the word after it never split across lines.
+  .keep {
+    white-space: nowrap;
+  }
+
+  // Nested so these beat InlineImg's own margins whatever order the two
+  // stylesheets load in.
+  .forIcon {
+    // Large negative block margins: the tiles are taller than a line, and
+    // this stops them pushing the lines apart (the frame's 40px rhythm holds).
+    margin-block: -0.6em;
+
+    // Pop in one after another as the sheet finishes sliding in (the slide
+    // takes 800ms). The <img> animates, not the box, so it never clashes
+    // with InlineImg's hover spin.
+    img {
+      animation: forIconPop 560ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0ms) both;
+    }
+  }
+
+  .forIconChat {
+    --inline-img-size: 1.833; // 176 / 96
+    --inline-img-nudge: -0.085em;
+    --pop-delay: 520ms;
+
+    margin-inline: -0.03em 0.03em;
+  }
+
+  .forIconReceipt {
+    --inline-img-size: 1.917; // 184 / 96
+    --inline-img-nudge: -0.04em;
+    --pop-delay: 640ms;
+
+    margin-inline: -0.27em -0.035em;
+  }
+
+  .forIconBadge {
+    --inline-img-size: 2.094; // 201 / 96
+    --pop-delay: 760ms;
+
+    // The right margin takes back the badge's empty edge so it can't push
+    // the last line wider than it looks.
+    margin-inline: -0.33em -0.45em;
+  }
+}
+
+@keyframes forIconPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-8deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .bodyText {
@@ -303,33 +376,7 @@ $font: "Outfit", "Segoe UI", sans-serif;
   transition: transform 200ms $ease, color 200ms ease;
 }
 
-// --- Freelance: audiences, problems, steps, work -----------------------------
-
-.audienceGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.audience {
-  display: grid !important;
-  align-content: start;
-  gap: 4px;
-  padding: 14px 16px;
-  border: 1px solid $rule;
-  border-radius: 12px;
-  background: $card;
-}
-
-.audienceTitle {
-  font-weight: 600;
-}
-
-.audienceText {
-  color: $muted;
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
+// --- Freelance: problems, steps, work -----------------------------
 
 .checkList {
   display: grid;
@@ -576,10 +623,6 @@ a.workCard {
     margin-top: 30px;
   }
 
-  .audienceGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .steps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -596,6 +639,12 @@ a.workCard {
   .paper {
     padding: 18px 16px;
   }
+
+  // Narrow columns break the sentence differently, so icons can end up on
+  // neighbouring lines. A little more line height keeps them from touching.
+  .forStatement {
+    line-height: 1.45 !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -609,7 +658,8 @@ a.workCard {
   }
 
   .paper,
-  .statusDot::after {
+  .statusDot::after,
+  .forStatement .forIcon img {
     animation: none;
   }
 }

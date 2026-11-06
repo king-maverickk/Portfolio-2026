@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
 
+import InlineImg from 'components/InlineImg';
 import { FREELANCE } from './copy';
-import { ContactCta, DraftTag, Icon, SheetSection } from './Blocks';
+import { ContactCta, Icon, SheetSection } from './Blocks';
 import styles from './index.module.scss';
+
+const ICONS = '/assets/HowIllDeliver';
 
 function RecentWork() {
   const { recentWork } = FREELANCE;
@@ -27,25 +31,42 @@ function RecentWork() {
 // Everything is visible at once, top to bottom: who it's for, the problems,
 // how it runs, proof, price, then the form. No selectors hiding anything.
 function FreelanceSheet({ onStartContact }) {
-  const { lead, whoFor, problems, process, pricing, ai, form } = FREELANCE;
+  const { problems, process, pricing, ai, form } = FREELANCE;
 
   return (
     <>
-      <div className={styles.intro}>
-        {lead.draft && <DraftTag />}
-        <p className={styles.leadText}>{lead.text}</p>
-      </div>
-
-      <SheetSection title="Who I work with" draft={whoFor.draft}>
-        <ul className={styles.audienceGrid}>
-          {whoFor.items.map(({ title, text }) => (
-            <li className={styles.audience} key={title}>
-              <span className={styles.audienceTitle}>{title}</span>
-              <span className={styles.audienceText}>{text}</span>
-            </li>
-          ))}
-        </ul>
-      </SheetSection>
+      {/* Who it's for, from the Figma frame. The images sit inside the
+          sentence, so the words live here rather than in copy.js. Each icon
+          leads into the words it stands for and is kept on the same line as
+          them (styles.keep). Sizes and offsets are in index.module.scss. */}
+      <p className={styles.forStatement}>
+        For businesses that depend on{' '}
+        <span className={styles.keep}>
+          <InlineImg
+            src={`${ICONS}/freelance_icons_chat_calendar.png`}
+            ratio={307 / 176}
+            className={cn(styles.forIcon, styles.forIconChat)}
+          />
+          enquiries,
+        </span>{' '}
+        bookings, customer trust,{' '}
+        <span className={styles.keep}>
+          <InlineImg
+            src={`${ICONS}/freelance_icon_receipt.png`}
+            ratio={1}
+            className={cn(styles.forIcon, styles.forIconReceipt)}
+          />
+          repeat
+        </span>{' '}
+        purchases &amp; professional{' '}
+        <InlineImg
+          src={`${ICONS}/freelance_icon_verified.png`}
+          ratio={1}
+          className={cn(styles.forIcon, styles.forIconBadge)}
+        >
+          credibility.
+        </InlineImg>
+      </p>
 
       <SheetSection title={problems.title} draft={problems.draft}>
         <ul className={styles.checkList}>

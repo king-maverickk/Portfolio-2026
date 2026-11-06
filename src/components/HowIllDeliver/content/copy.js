@@ -66,23 +66,8 @@ export const HIRING = {
 
 export const FREELANCE = {
   title: 'Freelance / contract',
-  description: 'A website that brings in enquiries, not just compliments.',
-
-  // From the value-proposition draft in "what goes where".
-  lead: {
-    draft: true,
-    text: 'I design and build bespoke websites for growing businesses and creative professionals. One person from first sketch to launch, so nothing gets lost between design and code.'
-  },
-
-  whoFor: {
-    draft: true,
-    items: [
-      { title: 'Creative professionals', text: 'Portfolios for artists, illustrators, photographers and makers whose work deserves better than a template.' },
-      { title: 'Small and growing businesses', text: 'A branded site made for your industry and your customers, built to turn visits into enquiries.' },
-      { title: 'Brand designers and agencies', text: 'You have the designs. I build them faithfully, motion included.' },
-      { title: 'Sites that need a rebuild', text: 'Outdated, slow or hard to use on a phone. I redesign and redevelop it.' }
-    ]
-  },
+  // No description: the "For businesses that depend on…" statement at the top
+  // of FreelanceSheet does that job (it has inline images, so it lives there).
 
   // Your dad's list of problems to look for.
   problems: {
