@@ -108,24 +108,91 @@ export const FREELANCE = {
   doc: {
     draft: true,
     title: 'Working together',
-    teaser: 'One person, sketch to launch',
-    lead: 'How we’ll talk, meet and make decisions. This is the short version; the details go in our contract.',
+    teaser: 'How we’ll talk, meet and make decisions',
+    lead: 'This is the short version; the details go in our contract.',
     callout: {
       label: 'In short:',
-      text: 'one person from first sketch to launch, about 6 to 7 weeks, and a reply to every message within 24 hours.'
-    }
+      text: 'one person from first design to launch, about 6 to 8 weeks, and a reply to every message within 24 hours.'
+    },
+    // One line or two each, shown as label / text rows. Lines marked CHECK
+    // hold a number or habit Claude picked as a common default: confirm it,
+    // change it, or cut the line.
+    topics: [
+      {
+        title: 'How we’ll talk',
+        text: 'Email for anything we decide, so it’s in writing. Texts are fine for quick questions. I reply within 24 hours!'
+      },
+      {
+        title: 'Updates',
+        // CHECK: Fridays
+        text: 'Every Monday you get a short note: what got done, what’s next, and anything I need from you.'
+      },
+      {
+        title: 'Meetings',
+        text: 'A kickoff, a review at the end of each stage, and a walkthrough at launch. In person in Hamilton, Toronto or on video, whichever suits you.'
+      },
+      {
+        title: 'Rescheduling meetings',
+        text: 'Things come up. Give me 2 hours’ notice and we’ll find another time, and I’ll do the same for you.'
+      },
+      {
+        title: 'Deadlines',
+        text: 'Each stage gets a date before we start. If feedback or content comes in late, launch moves by the same amount, and I’ll tell you the new date right away.'
+      },
+      {
+        title: 'What I’ll need from you',
+        text: 'One person who makes the final call, your logo and photos, and feedback within three working days of each review.'
+      },
+      {
+        title: 'What I’ll show you',
+        text: 'Drafts and references first, then designs, then a clickable prototype (on desktop and mobile), then the real site on a private link before it goes live.'
+      },
+      {
+        title: 'Revisions',
+        // CHECK: two rounds per stage
+        text: 'Each stage includes two rounds of changes. Send your notes together in one go, so nothing slips through.'
+      },
+      {
+        title: 'New ideas along the way',
+        text: 'Always welcome. If it’s outside what we agreed, I’ll send a quick quote first, so the invoice never surprises you.'
+      },
+      {
+        title: 'Payment',
+        // CHECK: deposit, then milestones, last payment before launch
+        text: 'A deposit of 30% is required, another 30% half-way through, with the last one before launch. You get a fixed quote before anything starts.'
+      },
+      {
+        // I don't offer CMS so I can't say that they can change whatever they want once it's launched. They'll have contact me for changes, but this is included in the Care Plan.
+        title: 'Ownership',
+        text: 'Once it’s paid for, the site is yours. Your domain and hosting stay in your name, and you get every login. I may show the work in my portfolio unless you’d rather I didn’t.'
+      },
+      {
+        title: 'After launch',
+        text: 'I fix any bugs for 30 days after launch. After that, the monthly Care Plan keeps your site updated and looked after.'
+      },
+      {
+        title: 'Agencies and teams',
+        text: 'Already have designs or a team? I build from your Figma files, work in your repo and tools, and keep to your conventions.'
+      },
+      // I want to attract engineer teams that have a good product but a bad UI/UX. 
+      {
+        title: 'Engineers and product teams',
+        text: 'I can help you design and build a better interface for your product. I work in Figma and React, and can integrate with your existing codebase.'
+      }
+    ]
   },
 
   process: {
     draft: true,
     title: 'How a project runs',
-    teaser: 'About 6–7 weeks',
-    note: 'About 6 to 7 weeks from first call to launch. Bigger sites take longer.',
+    teaser: 'Typically 6–8 weeks',
+    note: 'About 6 to 8 weeks from first call to launch. Bigger sites take longer.',
     steps: [
-      { label: 'Research', text: 'Your competitors, your industry’s terms, who visits and what they expect.' },
-      { label: 'Sketch', text: 'References and sketches of the layout, before anything is polished.' },
-      { label: 'Screen', text: 'Type, colour and a clickable prototype you can react to.' },
-      { label: 'Build', text: 'I build what we designed, then launch it and hand you the keys.' }
+      { label: 'Research', text: 'Learn about you, your competitors, industry terms, who visits and what they expect.' },
+      { label: 'Direction', text: 'References, sketches and the aesthetic you want, before anything is polished.' },
+      { label: 'Prototype', text: 'A clickable version early, so you can judge before it’s built.' },
+      { label: 'Build', text: 'I build what we designed, with motion and interactivity included in every project.' },
+      { label: 'Launch & Care', text: 'Live on the web with a monthly Care Plan.' }
     ]
   },
 

@@ -237,6 +237,31 @@ button.boxHead {
   line-height: 1.55;
 }
 
+// "Working together": label on the left, a line or two on the right, with a
+// hairline between rows (stacked on phones).
+.topics {
+  display: grid;
+  max-width: 44rem;
+  margin: 24px 0 0;
+}
+
+.topic {
+  display: grid;
+  grid-template-columns: 11.5rem minmax(0, 1fr);
+  gap: 16px;
+  padding: 13px 0;
+  font-size: 1rem;
+  line-height: 1.5;
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
 .text {
   max-width: 38rem;
   font-size: 1rem;
@@ -340,6 +365,11 @@ button.boxHead {
 
   .open .boxTeaser {
     display: none;
+  }
+
+  .topic {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
   }
 
   .boxContent {

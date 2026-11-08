@@ -73,3 +73,11 @@ test('Pain points opens to the card shuffle', () => {
   expect(screen.getByRole('group', { name: `1 of ${FREELANCE.painPoints.items.length}` }))
     .toHaveTextContent(FREELANCE.painPoints.items[0].text);
 });
+
+test('Working together lists how the project will run', () => {
+  render(<FreelanceSheet onStartContact={() => {}} />);
+  fireEvent.click(sectionButton('Working together'));
+  FREELANCE.doc.topics.forEach(({ title }) => {
+    expect(screen.getByText(title)).toBeInTheDocument();
+  });
+});
