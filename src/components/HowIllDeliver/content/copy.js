@@ -205,7 +205,7 @@ export const FREELANCE = {
     draft: true,
     show: true,
     title: 'Pricing',
-    teaser: 'From $800 a page',
+    teaser: 'Starting at $800',
     // One page, then four kinds of client to drag between (DRAFT). `includes`
     // is the work I take on; each task ticks on at the first stop that has it
     // and stays ticked after it (from: 0 = one page, 1 = small business,
