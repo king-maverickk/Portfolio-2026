@@ -77,25 +77,85 @@ $font: "Outfit", "Segoe UI", sans-serif;
   }
 }
 
-.leadText {
+// Freelance: "For businesses that depend on…" with icons inside the sentence,
+// matched to the Figma frame (32px Outfit Medium, 40px lines, 3 lines).
+// Big, with plenty of room above and below so it reads as the sheet's opener.
+//
+// Everything is in em, so the frame scales as one piece. The icons are the
+// Figma exports at 3x, so an icon's height in em is its file height / 96
+// (3x of a 32px font). The files keep their soft shadows, which leaves
+// transparent edges; the negative margins below take those edges back out so
+// the gaps match the frame.
+.forStatement {
+  --inline-img-radius: 0; // transparent edges with shadows; don't clip them
+
+  // 22em is the Figma text box, so the lines break where they do in the frame.
+  // The font steps down a little from 32px so 22em fits the sheet's column.
+  max-width: 22em !important;
+  margin: clamp(40px, 8vh, 88px) 0 clamp(56px, 11vh, 120px) !important;
+  color: $ink;
   font-family: $font;
-  font-size: clamp(1.2rem, 2.4vw, 1.45rem) !important;
+  font-size: clamp(1.35rem, 3.6vw, 1.85rem) !important;
   font-weight: 500;
-  line-height: 1.4 !important;
-  letter-spacing: -0.01em;
+  line-height: 1.25 !important;
+  letter-spacing: 0;
+
+  // An icon and the word after it never split across lines.
+  .keep {
+    white-space: nowrap;
+  }
+
+  // Nested so these beat InlineImg's own margins whatever order the two
+  // stylesheets load in.
+  .forIcon {
+    // Large negative block margins: the tiles are taller than a line, and
+    // this stops them pushing the lines apart (the frame's 40px rhythm holds).
+    margin-block: -0.6em;
+
+    // Pop in one after another as the sheet finishes sliding in (the slide
+    // takes 800ms). The <img> animates, not the box, so it never clashes
+    // with InlineImg's hover spin.
+    img {
+      animation: forIconPop 560ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--pop-delay, 0ms) both;
+    }
+  }
+
+  .forIconChat {
+    --inline-img-size: 1.833; // 176 / 96
+    --inline-img-nudge: -0.085em;
+    --pop-delay: 520ms;
+
+    margin-inline: -0.03em 0.03em;
+  }
+
+  .forIconReceipt {
+    --inline-img-size: 1.917; // 184 / 96
+    --inline-img-nudge: -0.04em;
+    --pop-delay: 640ms;
+
+    margin-inline: -0.27em -0.035em;
+  }
+
+  .forIconBadge {
+    --inline-img-size: 2.094; // 201 / 96
+    --pop-delay: 760ms;
+
+    // The right margin takes back the badge's empty edge so it can't push
+    // the last line wider than it looks.
+    margin-inline: -0.33em -0.45em;
+  }
 }
 
-.bodyText {
-  max-width: 38rem;
-  font-size: 1rem;
-  line-height: 1.6;
-}
+@keyframes forIconPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-8deg);
+  }
 
-.note {
-  margin: 0 0 14px;
-  color: $muted;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 // --- Facts: "Based in   Hamilton, Ontario" ----------------------------------
@@ -303,148 +363,148 @@ $font: "Outfit", "Segoe UI", sans-serif;
   transition: transform 200ms $ease, color 200ms ease;
 }
 
-// --- Freelance: audiences, problems, steps, work -----------------------------
+// --- Freelance: pain point cards (card shuffle) --------------------------------
+// A hand of bright cards, from the "Card shuffle" prototype. The cards share
+// one grid cell, so every card takes the height of the longest sentence. JS
+// sets each card's transform (its spot in the pile, a drag, or a throw) and
+// its colours (--card-bg, --card-ink).
 
-.audienceGrid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+$shuffle-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+.painPoints {
+  position: relative;
 }
 
-.audience {
-  display: grid !important;
-  align-content: start;
-  gap: 4px;
-  padding: 14px 16px;
-  border: 1px solid $rule;
-  border-radius: 12px;
-  background: $card;
-}
-
-.audienceTitle {
-  font-weight: 600;
-}
-
-.audienceText {
-  color: $muted;
-  font-size: 0.92rem;
-  line-height: 1.45;
-}
-
-.checkList {
-  display: grid;
-  gap: 8px;
-
-  li {
-    position: relative;
-    max-width: 38rem;
-    padding-left: 26px;
-    line-height: 1.5;
-
-    // A small ring in the audience colour.
-    &::before {
-      position: absolute;
-      top: 0.42em;
-      left: 2px;
-      width: 10px;
-      height: 10px;
-      border: 2px solid $accent;
-      border-radius: 50%;
-      content: "";
-    }
-  }
-}
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0 0 14px;
-  padding: 0;
-  list-style: none;
-  counter-reset: none;
-}
-
-.step {
-  display: grid !important;
-  align-content: start;
-  gap: 6px;
-  padding: 14px 14px 16px;
-  border-top: 2px solid $accent;
-  border-radius: 2px 2px 10px 10px;
-  background: $card;
-}
-
-.stepNumber {
-  color: $faint;
-  font-family: $font;
-  font-size: 0.78rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.stepLabel {
-  font-family: $font;
-  font-size: 1.1rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.stepText {
-  color: $muted;
-  font-size: 0.88rem;
-  line-height: 1.45;
-}
-
-.workCard {
+// Big and bold, like "Cards" in the reference.
+.deckTitle {
   display: flex;
   align-items: center;
-  gap: 14px;
-  width: fit-content;
-  max-width: 100%;
-  padding: 6px 16px 6px 6px;
-  border: 1px solid $rule;
-  border-radius: 14px;
-  background: $card;
+  margin: 0;
   color: $ink;
-  text-decoration: none;
+  font-family: $font;
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
 }
 
-a.workCard {
-  transition: transform 200ms $ease, background-color 200ms ease;
+// Inside the Freelance sheet's Pain points section: no gap above the deck.
+.painPoints.painPointsBare {
+  margin-top: 0;
 
-  &:hover {
-    background: $card-hover;
-    transform: translateY(-2px);
+  .shuffle {
+    margin-top: 4px;
   }
+}
+
+.shuffle {
+  display: grid;
+  justify-items: center;
+  margin-top: 30px;
+  padding-block: 10px 30px; // room for the pile's edges below the top card
+}
+
+.shuffleDeck {
+  position: relative;
+  display: grid;
+  width: min(100%, 400px);
+  border-radius: 26px;
+  outline: none;
 
   &:focus-visible {
     outline: 2px solid $ink;
-    outline-offset: 2px;
+    outline-offset: 14px;
   }
 }
 
-.workThumb {
-  flex: none;
-  width: 72px;
-  height: 72px;
-  border-radius: 10px;
-  object-fit: cover;
-  background: #ddd8cd;
+.shuffleCard {
+  position: relative;
+  display: flex;
+  grid-area: 1 / 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 300px;
+  padding: 24px 26px 28px;
+  border-radius: 24px;
+  background: var(--card-bg);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 25%),
+    0 1px 2px rgb(0 0 0 / 14%),
+    0 20px 36px -16px rgb(0 0 0 / 42%);
+  color: var(--card-ink);
+  transition: transform 600ms $shuffle-spring;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform;
 }
 
-.workBody {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
+.shuffleCardIsTop {
+  cursor: grab;
+  touch-action: none; // drags and flicks go to the card, not the page
 }
 
-.workTitle {
+.shuffleCardDragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+// Flying off the pile: quick and decelerating, no bounce.
+.shuffleCardOut {
+  transition: transform 320ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+// Coming back from the left: jump to the start point first.
+.shuffleCardInstant {
+  transition: none;
+}
+
+.shuffleCardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.shuffleIcon {
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 12px -6px rgb(0 0 0 / 40%);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.shuffleCount {
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.shuffleText {
+  font-family: $font;
+  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
   font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
 }
 
-.workMeta {
-  color: $muted;
-  font-size: 0.88rem;
+// Only for screen readers.
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 // --- Open to work --------------------------------------------------------------
@@ -576,14 +636,6 @@ a.workCard {
     margin-top: 30px;
   }
 
-  .audienceGrid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .fact {
     grid-template-columns: minmax(0, 1fr);
     gap: 2px;
@@ -596,6 +648,17 @@ a.workCard {
   .paper {
     padding: 18px 16px;
   }
+
+  // Narrow columns break the sentence differently, so icons can end up on
+  // neighbouring lines. A little more line height keeps them from touching.
+  .forStatement {
+    line-height: 1.45 !important;
+  }
+
+  .shuffleCard {
+    min-height: 270px;
+    padding: 20px 20px 22px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -603,13 +666,18 @@ a.workCard {
   .linkCard,
   .linkArrow,
   .primaryAction,
-  .secondaryAction,
-  a.workCard {
+  .secondaryAction {
     transition: none;
   }
 
   .paper,
-  .statusDot::after {
+  .statusDot::after,
+  .forStatement .forIcon img {
     animation: none;
+  }
+
+  // No throwing or springing: the next card is simply on top.
+  .shuffleCard {
+    transition: none;
   }
 }

@@ -1,0 +1,80 @@
+// The letter roll, from LandingSlideUpText: each letter is a two-line column
+// (the letter, then a copy of it from ::after) in a one-line window. Moving the
+// column up by half shows the copy, so the letter appears to roll up.
+
+$step: 30ms; // stagger between letters
+$roll: 300ms;
+
+.text {
+  display: inline;
+}
+
+.letters {
+  display: inline;
+}
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+// The window. A little taller than the font so descenders (g, p, y) fit.
+.charWrap {
+  display: inline-block;
+  height: 1.2em;
+  overflow: hidden;
+  line-height: 1.2;
+  vertical-align: top;
+}
+
+.char {
+  display: inline-flex;
+  flex-direction: column;
+  transition: transform $roll ease;
+  transition-delay: calc(var(--slide-i, 0) * #{$step});
+
+  &::after {
+    content: attr(data-char);
+  }
+}
+
+// Hover / keyboard focus on the host.
+.host:hover .char,
+.host:focus-visible .char {
+  transform: translateY(-50%);
+}
+
+// On demand (rollKey changed): roll once. It ends on the copy, which looks the
+// same as where it started, so nothing jumps afterwards.
+.rolling .char {
+  animation: slideUpRoll 420ms cubic-bezier(0.2, 0.8, 0.2, 1) calc(var(--slide-i, 0) * #{$step}) both;
+}
+
+@keyframes slideUpRoll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char {
+    transition: none;
+  }
+
+  .host:hover .char,
+  .host:focus-visible .char {
+    transform: none;
+  }
+
+  .rolling .char {
+    animation: none;
+  }
+}

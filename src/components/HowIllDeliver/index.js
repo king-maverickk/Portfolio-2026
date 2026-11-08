@@ -69,7 +69,11 @@ const SHEET_CONTENT = {
   freelance: {
     title: FREELANCE.title,
     description: FREELANCE.description,
-    Body: FreelanceSheet
+    Body: FreelanceSheet,
+    // This sheet is a stack of containers: its first container shows the
+    // title (with id="delivery-sheet-title"), and the sheet's margins are slim.
+    ownsTitle: true,
+    className: styles.sheetSections
   },
   'hiring-manager': {
     title: HIRING.title,
@@ -115,7 +119,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
   const closeButtonRef = useRef(null);
   const triggerRef = useRef(null);
   const annotationRefs = useRef({});
-  const sheetBodyRef = useRef(null);
+  const backdropRef = useRef(null);
   const [activeAnnotation, setActiveAnnotation] = useState(null);
   const [sheetAccentColor, setSheetAccentColor] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
@@ -225,7 +229,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
       setSheetAccentColor(accentOf(trigger));
     }
     setActiveAnnotation(id);
-    if (sheetBodyRef.current) sheetBodyRef.current.scrollTop = 0;
+    if (backdropRef.current) backdropRef.current.scrollTop = 0;
     closeButtonRef.current?.focus({ preventScroll: true });
   }, []);
 
@@ -374,41 +378,51 @@ function HowIllDeliver({ className, onAnnotationClick }) {
 
       {sheet && createPortal(
         <div
+          ref={backdropRef}
           className={cn(styles.sheetBackdrop, isClosing && styles.sheetBackdropClosing)}
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) requestClose();
+            // The backdrop is also the scroller: a press on its scrollbar
+            // shouldn't close the sheet.
+            const backdrop = event.currentTarget;
+            const scrollbarWidth = backdrop.offsetWidth - backdrop.clientWidth;
+            const onScrollbar = scrollbarWidth > 0 && event.clientX >= backdrop.clientWidth;
+            if (event.target === event.currentTarget && !onScrollbar) requestClose();
           }}
         >
           <aside
             id="delivery-sheet"
-            className={cn(styles.sheet, isClosing && styles.sheetClosing)}
+            className={cn(styles.sheet, sheet.className, isClosing && styles.sheetClosing)}
             style={{ '--sheet-accent-color': sheetAccentColor }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="delivery-sheet-title"
-            aria-describedby="delivery-sheet-description"
+            aria-describedby={sheet.description ? 'delivery-sheet-description' : undefined}
             data-sheet-dialog=""
             onAnimationEnd={(event) => {
               // The two exit animations end together; the first to report is enough.
               if (isClosing && event.target === event.currentTarget) finishClose();
             }}
           >
-            <header className={styles.sheetHeader}>
-              <button
-                ref={closeButtonRef}
-                type="button"
-                className={styles.sheetClose}
-                aria-label="Close sheet"
-                onClick={requestClose}
-              >
-                Close
-              </button>
-              <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
-              <p id="delivery-sheet-description" className={styles.sheetDescription}>
-                {sheet.description}
-              </p>
-            </header>
-            <div ref={sheetBodyRef} className={styles.sheetBody}>
+            <button
+              ref={closeButtonRef}
+              type="button"
+              className={styles.sheetClose}
+              aria-label="Close sheet"
+              onClick={requestClose}
+            >
+              Close
+            </button>
+            {!sheet.ownsTitle && (
+              <>
+                <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
+                {sheet.description && (
+                  <p id="delivery-sheet-description" className={styles.sheetDescription}>
+                    {sheet.description}
+                  </p>
+                )}
+              </>
+            )}
+            <div className={styles.sheetBody}>
               <sheet.Body
                 key={activeAnnotation}
                 onShowResume={() => switchSheet('hiring-manager')}

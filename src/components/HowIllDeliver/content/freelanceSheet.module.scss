@@ -1,0 +1,360 @@
+// The Freelance / contract sheet as separate containers, from Motheo's
+// references and the "Freelance Sheet Sections" preview.
+//
+// - The first container (title, headline, calls to action) sits straight on
+//   the sheet: no fill, no shadow.
+// - Closed sections are pale, see-through rows with a hairline edge, a bold
+//   title, a one-line hint and a + .
+// - The open section turns solid white and lifts (and shows −), so it's
+//   always clear which one you're reading.
+
+$ink: #2b2b2b;
+$muted: #5b5851;
+$faint: #8a867d;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$font: "Outfit", "Segoe UI", sans-serif;
+$fill: rgb(43 43 43 / 6%);
+$radius: 6px; // sharp-ish corners on the containers
+$change: 320ms; // closed <-> open look
+
+.stack {
+  display: grid;
+  gap: 8px;
+}
+
+.box {
+  position: relative;
+  border-radius: $radius;
+  background: rgb(255 255 255 / 45%);
+  box-shadow: 0 0 0 1px rgb(43 43 43 / 7%);
+  color: $ink;
+  font-family: $font;
+  transition:
+    background-color $change ease,
+    box-shadow $change ease;
+
+  &:not(.open):hover {
+    background: rgb(255 255 255 / 75%);
+  }
+}
+
+.box.open {
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgb(43 43 43 / 5%),
+    0 1px 2px rgb(43 43 43 / 6%),
+    0 18px 40px -22px rgb(43 43 43 / 35%);
+}
+
+// The headline container: straight on the sheet. Its padding stays, so its
+// title lines up with the titles in the rows below.
+.box.boxIntro {
+  background: none;
+  box-shadow: none;
+}
+
+.boxHeading {
+  margin: 0;
+  font: inherit;
+}
+
+// Title (and draft tag) | hint | toggle.
+.boxHead {
+  display: grid;
+  grid-template-areas: "label teaser toggle";
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 18px;
+  width: 100%;
+  padding: 20px 18px 20px 26px;
+  border: 0;
+  border-radius: $radius;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+button.boxHead {
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: -4px;
+  }
+
+  &:hover .boxToggle {
+    background: rgb(43 43 43 / 7%);
+  }
+}
+
+.boxLabel {
+  display: flex;
+  grid-area: label;
+  align-items: center;
+  min-width: 0;
+}
+
+.boxTitle {
+  min-width: 0;
+  font-size: clamp(1.3rem, 3vw, 1.55rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+// The first container carries the sheet's name, so it stays big.
+.boxIntro .boxTitle {
+  font-size: clamp(2rem, 5.5vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+// The hint on a closed row. It steps aside when the section opens.
+.boxTeaser {
+  grid-area: teaser;
+  color: $muted;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition:
+    opacity 240ms ease,
+    transform 240ms $ease;
+}
+
+.open .boxTeaser {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+// + when closed, − when open: the vertical bar folds away.
+.boxToggle {
+  position: relative;
+  flex: none;
+  grid-area: toggle;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 160ms ease;
+
+  &::before,
+  &::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 1.7px;
+    margin: -0.85px 0 0 -6.5px;
+    border-radius: 1px;
+    background: $ink;
+    content: "";
+    transition: transform 320ms $ease;
+  }
+
+  &::after {
+    transform: rotate(90deg);
+  }
+}
+
+.open .boxToggle::after {
+  transform: rotate(90deg) scaleX(0);
+}
+
+.boxBody {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms $ease;
+}
+
+.open > .boxBody {
+  grid-template-rows: 1fr;
+}
+
+.boxInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.settled .boxInner {
+  overflow: visible;
+}
+
+.boxContent {
+  padding: 0 26px 28px;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.open .boxContent {
+  opacity: 1;
+  transition-delay: 90ms;
+}
+
+// --- Inside the containers -----------------------------------------------------
+
+// Pain points: a thrown card flies out over the sections below, not under them.
+.box.boxPain {
+  z-index: 2;
+}
+
+// The headline sits close under the sheet's title. (Beats .forStatement's own
+// big margins, which are !important to win over the sheet's paragraph styles.)
+.box .introHeadline {
+  margin: 4px 0 6px !important;
+}
+
+// "Start a project" and "See how a project runs" under the headline.
+.introActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.downArrow {
+  transition: transform 200ms $ease;
+}
+
+.introActions button:hover .downArrow {
+  transform: translateY(2px);
+}
+
+.lead {
+  color: $muted;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.callout {
+  max-width: 30rem;
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: 4px;
+  background: $fill;
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.text {
+  max-width: 38rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.note {
+  margin-top: 12px;
+  color: $muted;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.list,
+.steps,
+.checklist {
+  display: grid;
+  gap: 8px;
+  max-width: 38rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1rem;
+  line-height: 1.5;
+
+  li {
+    position: relative;
+    padding-left: 26px;
+  }
+}
+
+.text + .list {
+  margin-top: 10px;
+}
+
+.list li::before {
+  position: absolute;
+  top: 0.6em;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(43 43 43 / 28%);
+  content: "";
+}
+
+.steps {
+  counter-reset: step;
+
+  li {
+    counter-increment: step;
+  }
+
+  li::before {
+    position: absolute;
+    left: 0;
+    color: $faint;
+    font-variant-numeric: tabular-nums;
+    content: counter(step) ".";
+  }
+}
+
+// "Next steps" as a checklist, like the action items in a meeting note.
+// The boxes are drawn, not real checkboxes: nothing to tick here.
+.checklist li {
+  padding-left: 30px;
+}
+
+.checkbox {
+  position: absolute;
+  top: 0.2em;
+  left: 0;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid rgb(43 43 43 / 55%);
+  border-radius: 4px;
+}
+
+.action {
+  margin-top: 22px;
+}
+
+@media (max-width: 767px) {
+  .boxHead {
+    padding: 18px 12px 16px 20px;
+  }
+
+  // Hint under the title, toggle on the right of both.
+  .boxHead {
+    grid-template-areas:
+      "label toggle"
+      "teaser toggle";
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 2px;
+  }
+
+  .boxTeaser {
+    font-size: 0.88rem;
+    white-space: normal;
+  }
+
+  .open .boxTeaser {
+    display: none;
+  }
+
+  .boxContent {
+    padding: 0 20px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box,
+  .boxBody,
+  .boxContent,
+  .boxTeaser,
+  .boxToggle,
+  .boxToggle::before,
+  .boxToggle::after,
+  .downArrow {
+    transition: none;
+  }
+}

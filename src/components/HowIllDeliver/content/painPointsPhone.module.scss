@@ -1,0 +1,310 @@
+// The phone lock screen for "Pain points", from the Notifications
+// prototype. The wallpaper is made from the three tag colours.
+
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+$font: "Outfit", "Segoe UI", sans-serif;
+
+.wrap {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding-block: 4px 6px;
+}
+
+.phone {
+  position: relative;
+  width: min(100%, 330px);
+  height: 640px;
+  padding: 10px;
+  border-radius: 52px;
+  background: #121212;
+  box-shadow:
+    0 0 0 2px #2c2c2c,
+    inset 0 0 0 1px #3a3a3a,
+    0 30px 56px -24px rgb(0 0 0 / 50%);
+}
+
+.screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 42px;
+  background:
+    radial-gradient(120% 70% at 0% 0%, #2a6ff0 0%, transparent 62%),
+    radial-gradient(90% 60% at 100% 45%, #1fb556 0%, transparent 62%),
+    radial-gradient(110% 70% at 20% 100%, #f2473b 0%, transparent 64%),
+    #141821;
+  color: #fff;
+  font-family: $font;
+}
+
+.island {
+  position: absolute;
+  z-index: 4;
+  top: 11px;
+  left: 50%;
+  width: 96px;
+  height: 28px;
+  translate: -50% 0;
+  border-radius: 20px;
+  background: #000;
+}
+
+.status {
+  position: absolute;
+  z-index: 3;
+  top: 15px;
+  right: 26px;
+  left: 30px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  svg {
+    width: auto;
+    height: 12px;
+  }
+}
+
+.lock {
+  position: absolute;
+  top: 56px;
+  right: 0;
+  left: 0;
+  text-align: center;
+}
+
+.date {
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+.time {
+  font-size: 5.2rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.feed {
+  position: absolute;
+  top: 196px;
+  right: 10px;
+  bottom: 34px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// Each notification sits in a slot that opens (0fr -> 1fr) so the others
+// slide down smoothly, and closes again when it's dismissed or stacked.
+.slot {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 480ms $ease;
+}
+
+.slotIn {
+  grid-template-rows: 1fr;
+}
+
+.slotInner {
+  min-height: 0;
+  padding-bottom: 8px;
+}
+
+// A closed slot clips its notification, so stacked and dismissed ones don't
+// show through. (Open slots don't clip, so the drop-in can overshoot.)
+.slot:not(.slotIn) .slotInner {
+  overflow: hidden;
+}
+
+.slotFresh .notif {
+  animation: notifDrop 640ms $spring both;
+}
+
+@keyframes notifDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-22px) scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.notif {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 10px;
+  padding: 11px 13px 12px 11px;
+  border-radius: 22px;
+  background: rgb(246 246 246 / 80%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+  color: #1c1c1e;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    translate 420ms $ease,
+    opacity 320ms ease,
+    scale 160ms ease;
+
+  &:active {
+    scale: 0.98;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
+.notifDragging {
+  cursor: grabbing;
+  transition: none;
+}
+
+.appIcon {
+  width: 38px;
+  height: 38px;
+  overflow: hidden;
+  border-radius: 9px;
+  box-shadow: 0 0 0 0.5px rgb(0 0 0 / 12%);
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.notifBody {
+  display: grid;
+  min-width: 0;
+}
+
+.notifTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: #6c6c70;
+  font-size: 0.78rem;
+}
+
+.appName {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.notifTitle {
+  margin-top: 1px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.notifText {
+  margin-top: 2px;
+  color: #2c2c2e;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+// The stack of notifications that don't fit.
+.more {
+  display: grid;
+  justify-items: center;
+  margin-top: -8px;
+
+  span {
+    display: block;
+    height: 9px;
+    border-radius: 0 0 16px 16px;
+    background: rgb(246 246 246 / 55%);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+  }
+
+  span:nth-child(1) {
+    width: 94%;
+  }
+
+  span:nth-child(2) {
+    width: 86%;
+    opacity: 0.7;
+  }
+
+  b {
+    margin-top: 6px;
+    color: rgb(255 255 255 / 85%);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+}
+
+.empty {
+  margin-top: 30px;
+  color: rgb(255 255 255 / 75%);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.homeBar {
+  position: absolute;
+  bottom: 9px;
+  left: 50%;
+  width: 120px;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 85%);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+}
+
+.hint {
+  color: #8a867d;
+  font-family: $font;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .phone {
+    height: 620px;
+  }
+
+  .time {
+    font-size: 4.6rem;
+  }
+
+  .feed {
+    top: 184px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slot,
+  .notif {
+    transition: none;
+  }
+
+  .slotFresh .notif {
+    animation: none;
+  }
+}

@@ -66,40 +66,60 @@ export const HIRING = {
 
 export const FREELANCE = {
   title: 'Freelance / contract',
-  description: 'A website that brings in enquiries, not just compliments.',
+  // No description: the "For businesses that depend on…" statement at the top
+  // of FreelanceSheet does that job (it has inline images, so it lives there).
 
-  // From the value-proposition draft in "what goes where".
-  lead: {
+  // The pain points, shown as the card shuffle (PainPoints.js). One sentence
+  // per card (`text`); every card is the size of the longest, so keep each to
+  // about 25 words. The first card leads with growth (your favourite). `icon`
+  // is the tile in the card's corner: calendar, badge, builder, analytics,
+  // notes, messages or phone (painPointIcons.js). `notification` is for the
+  // phone version (PainPointsPhone.js, not in use: it slowed the sheet down).
+  // `teaser` on each section: the one-line hint on its row while it's
+  // collapsed (draft), so the closed sheet still says something useful.
+  painPoints: {
     draft: true,
-    text: 'I design and build bespoke websites for growing businesses and creative professionals. One person from first sketch to launch, so nothing gets lost between design and code.'
-  },
-
-  whoFor: {
-    draft: true,
+    title: 'Pain points',
+    teaser: 'Sound familiar?',
     items: [
-      { title: 'Creative professionals', text: 'Portfolios for artists, illustrators, photographers and makers whose work deserves better than a template.' },
-      { title: 'Small and growing businesses', text: 'A branded site made for your industry and your customers, built to turn visits into enquiries.' },
-      { title: 'Brand designers and agencies', text: 'You have the designs. I build them faithfully, motion included.' },
-      { title: 'Sites that need a rebuild', text: 'Outdated, slow or hard to use on a phone. I redesign and redevelop it.' }
+      { notification: { app: 'Calendar', icon: 'calendar', title: 'Grand opening: second location' }, icon: 'calendar', text: 'You’re adding services, opening a location or hiring, but your website still describes the business you were two years ago.' },
+      { notification: { app: 'Messages', icon: 'messages', title: '“Do you have any examples of your work?”' }, icon: 'badge', text: 'There’s nowhere that shows your work, your services, what clients say or your qualifications, so visitors can’t tell how good you are.' },
+      { notification: { app: 'Site Builder', icon: 'builder', title: 'Your template site is live' }, icon: 'builder', text: 'Your site looks like your next twenty competitors’. The builder ads promised it would bring clients in. It hasn’t.' },
+      { notification: { app: 'Analytics', icon: 'analytics', title: 'Weekly report: most visitors left after one page' }, icon: 'analytics', text: 'You paid for a website, but visitors leave after one page. Few click around, and fewer get in touch.' },
+      { notification: { app: 'Notes', icon: 'notes', title: 'About us (draft 7)' }, icon: 'notes', text: 'You know exactly what you do. Putting why you’re the one to hire into words, on your own site, is a different job.' },
+      { notification: { app: 'Messages', icon: 'messages', title: '“Your site won’t work on my phone”' }, icon: 'messages', text: 'Your site is hard to use on a phone, or hard to contact you from.' },
+      { notification: { app: 'Phone', icon: 'phone', title: 'Missed calls (4)' }, icon: 'phone', text: 'People phone to ask prices or availability the site could have answered.' }
     ]
   },
 
-  // Your dad's list of problems to look for.
-  problems: {
+
+  // Two calls to action under the headline (draft): the same "Start a project"
+  // as the end of the sheet, and a jump to how a project runs.
+  introActions: {
     draft: true,
-    title: 'Sound familiar?',
-    items: [
-      'Customers find you on social media or by word of mouth, but there’s no website to send them to.',
-      'Your site is hard to use on a phone, or hard to contact you from.',
-      'People phone to ask prices or availability the site could have answered.',
-      'There’s nowhere that shows your work, your services or what clients say.',
-      'Nobody can book, pay or ask for a quote online.'
-    ]
+    primary: 'Start a project',
+    secondary: 'See how a project runs'
+  },
+
+  // --- The "document" half --------------------------------------------------
+  // The practical sections read like a clean shared doc (headings, short
+  // lists, a callout), so the part where people decide whether to spend money
+  // reads as calm and organised. Each is its own collapsible container.
+  doc: {
+    draft: true,
+    title: 'Working together',
+    teaser: 'One person, sketch to launch',
+    lead: 'How a project runs, what it costs, and how to start one.',
+    callout: {
+      label: 'In short:',
+      text: 'one person from first sketch to launch, about 6 to 7 weeks, and a reply to every message within 24 hours.'
+    }
   },
 
   process: {
     draft: true,
     title: 'How a project runs',
+    teaser: 'About 6–7 weeks',
     note: 'About 6 to 7 weeks from first call to launch. Bigger sites take longer.',
     steps: [
       { label: 'Research', text: 'Your competitors, your industry’s terms, who visits and what they expect.' },
@@ -109,37 +129,42 @@ export const FREELANCE = {
     ]
   },
 
-  recentWork: {
-    title: 'Photos by Alex',
-    meta: 'Photographer, Hamilton · about 6 weeks',
-    image: '/assets/Home/project_alex_text_in_photos.png',
-    // Add the live site or case-study link and the card becomes clickable.
-    href: ''
-  },
-
   // You were leaning toward per-page pricing; these numbers are your tentative
   // ones. Set `show: false` to hide the block until you decide.
   pricing: {
     draft: true,
     show: true,
     title: 'Pricing',
-    text: 'Priced by page, not by package. One page starts at $800; a full site usually lands around $2,600. You get a fixed quote before anything starts.'
+    teaser: 'From $800 a page',
+    intro: 'Priced by page, not by package.',
+    points: [
+      'One page starts at $800.',
+      'A full site usually lands around $2,600.',
+      'You get a fixed quote before anything starts.'
+    ]
   },
 
   // Your AI line, kept to what your note says.
   ai: {
     draft: true,
     title: 'On AI',
+    teaser: 'The design is all mine',
     text: 'I research and design everything myself. In development I use AI on components I’ve written and directed.'
   },
 
-  // The form lives in the contact section at the bottom of the page; this
+  // The doc ends like a meeting note: what happens next, then the button. The
+  // form itself lives in the contact section at the bottom of the page; the
   // button closes the sheet and takes the visitor there with "after a new
   // website" already picked.
   form: {
-    title: 'Start a project',
     draft: true,
-    text: 'Tell me about it in one sentence (or a few). It goes straight to my inbox, and I reply within 24 hours.',
+    title: 'Next steps',
+    teaser: 'A reply within 24 hours',
+    steps: [
+      'Tell me about your business and what you need, in a sentence or a few.',
+      'I reply within 24 hours to set up a short call.',
+      'You get a fixed quote and a timeline. Work starts once you’re happy with both.'
+    ],
     cta: 'Start a project'
   }
 };
