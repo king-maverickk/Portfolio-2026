@@ -74,6 +74,15 @@ test('Pain points opens to the card shuffle', () => {
     .toHaveTextContent(FREELANCE.painPoints.items[0].text);
 });
 
+test('How a project runs opens to the folder tree', () => {
+  render(<FreelanceSheet onStartContact={() => {}} />);
+  fireEvent.click(sectionButton('How a project runs'));
+  FREELANCE.process.stages.forEach(({ label, items }) => {
+    expect(screen.getByText(label)).toBeInTheDocument();
+    items.forEach((item) => expect(screen.getByText(item)).toBeInTheDocument());
+  });
+});
+
 test('Working together lists how the project will run', () => {
   render(<FreelanceSheet onStartContact={() => {}} />);
   fireEvent.click(sectionButton('Working together'));

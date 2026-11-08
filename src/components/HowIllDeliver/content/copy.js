@@ -186,13 +186,16 @@ export const FREELANCE = {
     draft: true,
     title: 'How a project runs',
     teaser: 'Typically 6–8 weeks',
-    note: 'About 6 to 8 weeks from first call to launch. Bigger sites take longer.',
-    steps: [
-      { label: 'Research', text: 'Learn about you, your competitors, industry terms, who visits and what they expect.' },
-      { label: 'Direction', text: 'References, sketches and the aesthetic you want, before anything is polished.' },
-      { label: 'Prototype', text: 'A clickable version early, so you can judge before it’s built.' },
-      { label: 'Build', text: 'I build what we designed, with motion and interactivity included in every project.' },
-      { label: 'Launch & Care', text: 'Live on the web with a monthly Care Plan.' }
+    // The folder tree from the Design canvas (Freelance/contract, Workflow).
+    // Each stage is a folder; its items sit inside it. itemIcon swaps the
+    // items' folder icon (the prototype gets a pointer).
+    intro: 'An overview of how a typical build runs, about 6–8 weeks',
+    stages: [
+      { label: 'Research', items: ['Your business, goals & style', 'Industry & competitors', 'Standards & terminology'] },
+      { label: 'Direction', items: ['References', 'Sketches', 'Type & color pairings'] },
+      { label: 'Prototype', items: ['A clickable version early, so you can judge before it’s built.'], itemIcon: 'cursor' },
+      { label: 'Build', items: ['Responsive frontend', 'Motion & Interaction'] },
+      { label: 'Launch and Care', items: ['Live on cloud hosting', 'Optional: Monthly Care Plan'] }
     ]
   },
 

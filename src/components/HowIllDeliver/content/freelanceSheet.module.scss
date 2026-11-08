@@ -10,7 +10,6 @@
 
 $ink: #2b2b2b;
 $muted: #5b5851;
-$faint: #8a867d;
 $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 $font: "Outfit", "Segoe UI", sans-serif;
 $fill: rgb(43 43 43 / 6%);
@@ -268,15 +267,115 @@ button.boxHead {
   line-height: 1.6;
 }
 
-.note {
-  margin-top: 12px;
+// "How a project runs": the folder tree from the Design canvas. A trunk runs
+// down the left, a branch reaches each folder, and the last folder's branch
+// curves in where the trunk stops. Each folder holds a smaller tree under its
+// icon. Rows are 26px tall, so the branches meet the middle of a row's first
+// line (long items wrap on phones).
+.tree,
+.tree ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree {
+  position: relative;
+  padding-left: 29px;
+
+  li {
+    position: relative;
+  }
+
+  li::before {
+    position: absolute;
+    top: 0;
+    left: -29px;
+    height: 100%;
+    border-left: 1px solid $ink;
+    content: "";
+  }
+
+  .folder::after {
+    position: absolute;
+    top: 12px;
+    left: -29px;
+    width: 24px;
+    border-top: 1px solid $ink;
+    content: "";
+  }
+
+  .folder:last-child::before {
+    box-sizing: border-box;
+    width: 24px;
+    height: 13px;
+    border-bottom: 1px solid $ink;
+    border-bottom-left-radius: 8px;
+  }
+
+  .folder:last-child::after {
+    display: none;
+  }
+
+  ul {
+    margin-left: 10px;
+    padding-left: 24px;
+  }
+
+  ul li::before,
+  ul .folder::after {
+    left: -24px;
+  }
+
+  ul .folder::after,
+  ul .folder:last-child::before {
+    width: 20px;
+  }
+}
+
+.treeIntro {
+  font-size: 0.9rem;
+  line-height: 24px;
+}
+
+.treeRecent {
+  padding: 2px 0 10px;
   color: $muted;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.8rem;
+  line-height: 18px;
+}
+
+.treeRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 1rem;
+  line-height: 20px;
+
+  svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.tree ul .treeRow {
+  font-size: 0.875rem;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    margin-top: 2px;
+  }
 }
 
 .list,
-.steps,
 .checklist {
   display: grid;
   gap: 8px;
@@ -306,22 +405,6 @@ button.boxHead {
   border-radius: 50%;
   background: rgb(43 43 43 / 28%);
   content: "";
-}
-
-.steps {
-  counter-reset: step;
-
-  li {
-    counter-increment: step;
-  }
-
-  li::before {
-    position: absolute;
-    left: 0;
-    color: $faint;
-    font-variant-numeric: tabular-nums;
-    content: counter(step) ".";
-  }
 }
 
 // "Next steps" as a checklist, like the action items in a meeting note.

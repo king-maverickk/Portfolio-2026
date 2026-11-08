@@ -135,6 +135,35 @@ Action.propTypes = {
   className: PropTypes.string
 };
 
+// The folder and pointer from the Design canvas's project tree (Lucide shapes).
+// The stroke is set in CSS (.treeRow svg).
+const TREE_ICONS = {
+  folder: ['M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'],
+  cursor: [
+    'M12.586 12.586 19 19',
+    'M3.688 3.037a.497.497 0 0 0-.651.651l6.5 15.999a.501.501 0 0 0 .947-.062l1.569-6.083a2 2 0 0 1 1.448-1.479l6.124-1.579a.5.5 0 0 0 .063-.947z'
+  ]
+};
+
+// One row of the tree: an icon, then the words.
+function TreeRow({ icon = 'folder', children }) {
+  return (
+    <span className={sx.treeRow}>
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        {TREE_ICONS[icon].map((d) => (
+          <path key={d} d={d} />
+        ))}
+      </svg>
+      {children}
+    </span>
+  );
+}
+
+TreeRow.propTypes = {
+  icon: PropTypes.oneOf(['folder', 'cursor']),
+  children: PropTypes.node
+};
+
 function FreelanceSheet({ onStartContact }) {
   const { introActions, painPoints, doc, process, pricing, ai, form } = FREELANCE;
   // Every collapsible section starts closed.
@@ -220,15 +249,24 @@ function FreelanceSheet({ onStartContact }) {
         <PainPoints {...painPoints} showTitle={false} />
       </Section>
 
+      {/* The project as a folder tree, from the Design canvas. */}
       <Section {...sectionProps('process', process)}>
-        <ol className={sx.steps}>
-          {process.steps.map(({ label, text }) => (
-            <li key={label}>
-              <strong>{label}.</strong> {text}
+        <ul className={sx.tree}>
+          <li className={sx.treeIntro}>{process.intro}</li>
+          <li className={sx.treeRecent}>{process.recent}</li>
+          {process.stages.map(({ label, items, itemIcon }) => (
+            <li className={sx.folder} key={label}>
+              <TreeRow>{label}</TreeRow>
+              <ul>
+                {items.map((item) => (
+                  <li className={sx.folder} key={item}>
+                    <TreeRow icon={itemIcon}>{item}</TreeRow>
+                  </li>
+                ))}
+              </ul>
             </li>
           ))}
-        </ol>
-        <div className={sx.note}>{process.note}</div>
+        </ul>
       </Section>
 
       <Section {...sectionProps('together', doc)}>
