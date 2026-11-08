@@ -220,13 +220,6 @@ function FreelanceSheet({ onStartContact }) {
         <PainPoints {...painPoints} showTitle={false} />
       </Section>
 
-      <Section {...sectionProps('together', doc)}>
-        <div className={sx.lead}>{doc.lead}</div>
-        <div className={sx.callout}>
-          <strong>{doc.callout.label}</strong> {doc.callout.text}
-        </div>
-      </Section>
-
       <Section {...sectionProps('process', process)}>
         <ol className={sx.steps}>
           {process.steps.map(({ label, text }) => (
@@ -236,6 +229,21 @@ function FreelanceSheet({ onStartContact }) {
           ))}
         </ol>
         <div className={sx.note}>{process.note}</div>
+      </Section>
+
+      <Section {...sectionProps('together', doc)}>
+        <div className={sx.lead}>{doc.lead}</div>
+        <div className={sx.callout}>
+          <strong>{doc.callout.label}</strong> {doc.callout.text}
+        </div>
+        <dl className={sx.topics}>
+          {doc.topics.map(({ title, text }) => (
+            <div className={sx.topic} key={title}>
+              <dt>{title}</dt>
+              <dd>{text}</dd>
+            </div>
+          ))}
+        </dl>
       </Section>
 
       {pricing.show && (

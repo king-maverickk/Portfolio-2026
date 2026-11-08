@@ -109,7 +109,7 @@ export const FREELANCE = {
     draft: true,
     title: 'Working together',
     teaser: 'One person, sketch to launch',
-    lead: 'How a project runs, what it costs, and how to start one.',
+    lead: 'How we’ll talk, meet and make decisions. This is the short version; the details go in our contract.',
     callout: {
       label: 'In short:',
       text: 'one person from first sketch to launch, about 6 to 7 weeks, and a reply to every message within 24 hours.'
