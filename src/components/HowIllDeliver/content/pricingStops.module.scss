@@ -38,8 +38,11 @@ $knob: 42px;
   font-variant-numeric: tabular-nums;
 }
 
+// One line at every width, so "Quoted per project" is no taller than a number
+// (the size eases down on the narrowest phones to make room).
 .price {
-  font-size: clamp(3.4rem, 12vw, 5.25rem);
+  font-size: clamp(2.75rem, 12vw, 5.25rem);
+  white-space: nowrap;
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.05em;
@@ -53,6 +56,22 @@ $knob: 42px;
   font-size: 1.1rem;
   font-weight: 500;
   letter-spacing: 0;
+}
+
+// All the stops' lines in one grid cell; only the current one is visible (the
+// hidden ones are skipped by screen readers too). The cell is as tall as the
+// longest, so nothing below moves when you change stop.
+.stack {
+  display: grid;
+
+  > * {
+    grid-area: 1 / 1;
+    visibility: hidden;
+  }
+
+  > .shown {
+    visibility: visible;
+  }
 }
 
 .blurb {
@@ -285,6 +304,19 @@ $knob: 42px;
     font-size: 0.8rem;
   }
 
+}
+
+// The narrowest phones (about 320px): five labels can't fit side by side, so
+// only the current one shows, under its dot. (The line above the price names
+// the stop too, and tapping or dragging the track still works.)
+@media (max-width: 360px) {
+  .labels button {
+    max-width: 50%;
+  }
+
+  .labels button:not(.current) {
+    visibility: hidden;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

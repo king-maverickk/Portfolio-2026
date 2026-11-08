@@ -49,7 +49,7 @@ function useCountTo(target) {
 
 function PricingStops({ stops, includes, includesLabel, note }) {
   const [stop, setStop] = useState(0);
-  const { lead, price, per, blurb } = stops[stop];
+  const { lead, price, per } = stops[stop];
   const shown = useCountTo(price);
   const last = stops.length - 1;
   const labelId = useId();
@@ -57,14 +57,27 @@ function PricingStops({ stops, includes, includesLabel, note }) {
   return (
     <div className={styles.pricing}>
       <div className={styles.panel}>
-        <div className={styles.panelHead}>
-          <span>{lead}</span>
+        {/* Every stop's lead and description sit in the same spot, and only
+            the current one shows, so the section keeps the height of the
+            longest (Contract's) instead of growing and shrinking. */}
+        <div className={cn(styles.panelHead, styles.stack)}>
+          {stops.map((s, i) => (
+            <span key={s.label} className={cn({ [styles.shown]: i === stop })}>
+              {s.lead}
+            </span>
+          ))}
         </div>
         <div className={styles.price}>
           {money(shown)}
           {per && <span className={styles.per}>{per}</span>}
         </div>
-        {blurb && <div className={styles.blurb}>{blurb}</div>}
+        <div className={cn(styles.blurb, styles.stack)}>
+          {stops.map((s, i) => (
+            <div key={s.label} className={cn({ [styles.shown]: i === stop })}>
+              {s.blurb}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* What this kind of client doesn't get is greyed, and hidden from screen
