@@ -260,7 +260,7 @@ export const FREELANCE = {
       { text: 'Prototypes for pitches', from: 3 },
       { text: 'New work every month', from: 4 }
     ],
-    note: 'An estimate. You get a fixed quote, or a monthly agreement on contract, before anything starts.',
+    note: 'Note: these are estimates.',
     cta: 'Get a fixed quote'
   },
 
