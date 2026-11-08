@@ -375,7 +375,6 @@ button.boxHead {
   }
 }
 
-.list,
 .checklist {
   display: grid;
   gap: 8px;
@@ -390,21 +389,6 @@ button.boxHead {
     position: relative;
     padding-left: 26px;
   }
-}
-
-.text + .list {
-  margin-top: 10px;
-}
-
-.list li::before {
-  position: absolute;
-  top: 0.6em;
-  left: 8px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgb(43 43 43 / 28%);
-  content: "";
 }
 
 // "Next steps" as a checklist, like the action items in a meeting note.

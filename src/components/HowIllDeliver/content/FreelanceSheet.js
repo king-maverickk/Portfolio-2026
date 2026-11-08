@@ -7,6 +7,7 @@ import SlideUpText, { slideUpHost } from 'components/SlideUpText';
 import { FREELANCE } from './copy';
 import { DraftTag } from './Blocks';
 import PainPoints from './PainPoints';
+import PricingStops from './PricingStops';
 import styles from './index.module.scss';
 import sx from './freelanceSheet.module.scss';
 
@@ -253,7 +254,7 @@ function FreelanceSheet({ onStartContact }) {
       <Section {...sectionProps('process', process)}>
         <ul className={sx.tree}>
           <li className={sx.treeIntro}>{process.intro}</li>
-          <li className={sx.treeRecent}>{process.recent}</li>
+          {process.recent && <li className={sx.treeRecent}>{process.recent}</li>}
           {process.stages.map(({ label, items, itemIcon }) => (
             <li className={sx.folder} key={label}>
               <TreeRow>{label}</TreeRow>
@@ -286,12 +287,13 @@ function FreelanceSheet({ onStartContact }) {
 
       {pricing.show && (
         <Section {...sectionProps('pricing', pricing)}>
-          <div className={sx.text}>{pricing.intro}</div>
-          <ul className={sx.list}>
-            {pricing.points.map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
+          <PricingStops
+            stops={pricing.stops}
+            includes={pricing.includes}
+            includesLabel={pricing.includesLabel}
+            note={pricing.note}
+          />
+          <Action label={pricing.cta} onClick={() => onStartContact('website')} className={sx.action} />
         </Section>
       )}
 

@@ -206,12 +206,62 @@ export const FREELANCE = {
     show: true,
     title: 'Pricing',
     teaser: 'From $800 a page',
-    intro: 'Priced by page, not by package.',
-    points: [
-      'One page starts at $800.',
-      'A full site usually lands around $2,600.',
-      'You get a fixed quote before anything starts.'
-    ]
+    // One page, then four kinds of client to drag between (DRAFT). `includes`
+    // is the work I take on; each task ticks on at the first stop that has it
+    // and stays ticked after it (from: 0 = one page, 1 = small business,
+    // 2 = growing company, 3 = startup & agency, 4 = contract). `price` is a
+    // number (shown as dollars) or a word; `per` goes small after it.
+    // Contract is at least a living wage, 3-month minimum: Hamilton's 2025
+    // rate ($22.60/h, Ontario Living Wage Network) x 35 h a week x 52 / 12
+    // = $3,428 a month full time; half time (17.5 h a week) = $1,714.
+    stops: [
+      {
+        label: 'One page',
+        lead: 'One page, from',
+        price: 800,
+        blurb: 'One thing, for a day or an event: a quick-turnaround site.'
+      },
+      {
+        label: 'Small business',
+        lead: 'Small business, about',
+        price: 1800,
+        blurb: 'Fewer, simpler needs: the essentials, done well.'
+      },
+      {
+        label: 'Growing company',
+        lead: 'Growing company, about',
+        price: 2600,
+        blurb: 'Show off what you have, and how you’re different.'
+      },
+      {
+        label: 'Startup & agency',
+        lead: 'Startup or agency',
+        price: 'Quoted',
+        per: 'per project',
+        blurb: 'Different work, about more than a site.'
+      },
+      {
+        label: 'Contract',
+        lead: 'On contract, from',
+        price: 1720,
+        per: '/month',
+        blurb: 'New work every month, and I’m responsible for it. $1,720 a month part-time, $3,430 full-time. 3-month minimum.'
+      }
+    ],
+    includesLabel: 'What I take on',
+    includes: [
+      { text: 'Design & build', from: 0 },
+      { text: 'Research your market', from: 1 },
+      { text: 'Enquiries & bookings', from: 1 },
+      { text: 'Stand out from rivals', from: 1 },
+      { text: 'Show off your work', from: 2 },
+      { text: 'Motion & interaction', from: 2 },
+      { text: 'Campaigns & landing pages', from: 3 },
+      { text: 'Prototypes for pitches', from: 3 },
+      { text: 'New work every month', from: 4 }
+    ],
+    note: 'An estimate. You get a fixed quote, or a monthly agreement on contract, before anything starts.',
+    cta: 'Get a fixed quote'
   },
 
   // Your AI line, kept to what your note says.

@@ -34,7 +34,7 @@ test('clicking a title opens and closes its section', () => {
 
   fireEvent.click(sectionButton('Pricing'));
   expect(sectionButton('Pricing')).toHaveAttribute('aria-expanded', 'true');
-  expect(screen.getByText(FREELANCE.pricing.points[0])).toBeInTheDocument();
+  expect(screen.getByRole('slider', { name: 'What you need' })).toBeInTheDocument();
   expect(screen.getByRole('list')).toBeInTheDocument();
 
   fireEvent.click(sectionButton('Pricing'));
