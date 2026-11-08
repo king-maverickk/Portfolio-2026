@@ -375,6 +375,20 @@
   }
 }
 
+// A sheet built from separate containers (Freelance / contract): slim margins
+// so the containers fill it, and no gap above the first one. Close still sits
+// in the top margin.
+.sheet.sheetSections {
+  --sheet-pad-x: clamp(10px, 2.4vw, 20px);
+  --sheet-pad-y: 60px;
+
+  padding-bottom: clamp(12px, 2.4vw, 20px);
+}
+
+.sheetSections .sheetBody {
+  margin-top: 0;
+}
+
 @keyframes backdropIn {
   from { opacity: 0; }
   to { opacity: 1; }

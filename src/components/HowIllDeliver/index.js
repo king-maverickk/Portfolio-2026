@@ -69,7 +69,11 @@ const SHEET_CONTENT = {
   freelance: {
     title: FREELANCE.title,
     description: FREELANCE.description,
-    Body: FreelanceSheet
+    Body: FreelanceSheet,
+    // This sheet is a stack of containers: its first container shows the
+    // title (with id="delivery-sheet-title"), and the sheet's margins are slim.
+    ownsTitle: true,
+    className: styles.sheetSections
   },
   'hiring-manager': {
     title: HIRING.title,
@@ -387,7 +391,7 @@ function HowIllDeliver({ className, onAnnotationClick }) {
         >
           <aside
             id="delivery-sheet"
-            className={cn(styles.sheet, isClosing && styles.sheetClosing)}
+            className={cn(styles.sheet, sheet.className, isClosing && styles.sheetClosing)}
             style={{ '--sheet-accent-color': sheetAccentColor }}
             role="dialog"
             aria-modal="true"
@@ -408,11 +412,15 @@ function HowIllDeliver({ className, onAnnotationClick }) {
             >
               Close
             </button>
-            <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
-            {sheet.description && (
-              <p id="delivery-sheet-description" className={styles.sheetDescription}>
-                {sheet.description}
-              </p>
+            {!sheet.ownsTitle && (
+              <>
+                <h2 id="delivery-sheet-title" className={styles.sheetTitle}>{sheet.title}</h2>
+                {sheet.description && (
+                  <p id="delivery-sheet-description" className={styles.sheetDescription}>
+                    {sheet.description}
+                  </p>
+                )}
+              </>
             )}
             <div className={styles.sheetBody}>
               <sheet.Body
