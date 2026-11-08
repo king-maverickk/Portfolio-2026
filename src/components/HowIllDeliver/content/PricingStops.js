@@ -7,8 +7,7 @@ import styles from './pricingStops.module.scss';
 // Pricing by what you need (one page, then small business, growing company,
 // startup and agency, contract), after an estimator Motheo liked: drag the
 // knob, click a label, or use the arrow keys. The work he takes on for that kind of client
-// ticks on (the rest stays greyed, so you can see what the next one adds), the
-// badge counts the tasks, and the price counts to its new value.
+// ticks on (the rest stays greyed, so you can see what the next one adds).
 //
 // The control is the browser's own slider, made invisible over the track, so
 // dragging, keyboard and screen readers all work without extra code.
@@ -54,15 +53,12 @@ function PricingStops({ stops, includes, includesLabel, note }) {
   const shown = useCountTo(price);
   const last = stops.length - 1;
   const labelId = useId();
-  const count = includes.filter(({ from }) => from <= stop).length;
-  const tasks = `${count} ${count === 1 ? 'task' : 'tasks'}`;
 
   return (
     <div className={styles.pricing}>
       <div className={styles.panel}>
         <div className={styles.panelHead}>
           <span>{lead}</span>
-          <span className={styles.badge}>{tasks}</span>
         </div>
         <div className={styles.price}>
           {money(shown)}
@@ -108,7 +104,7 @@ function PricingStops({ stops, includes, includesLabel, note }) {
           aria-label="What you need"
           aria-valuetext={`${lead}${typeof price === 'number' ? ` ${money(price)}` : `: ${price.toLowerCase()}`}${
             per ? ` ${per.replace(/^\//, 'a ')}` : ''
-          }, ${tasks}`}
+          }`}
         />
       </div>
 
