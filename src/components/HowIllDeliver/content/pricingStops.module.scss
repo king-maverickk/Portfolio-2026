@@ -1,0 +1,302 @@
+// Pricing by kind of client (PricingStops.js): the price on a soft panel, the
+// work as chips, and a dark track with the freelance green filling up to the
+// knob. Same ink, paper and 6px corners as the rest of the sheet.
+
+$ink: #2b2b2b;
+$muted: #5b5851;
+$green: #22c55e; // the freelance colour (HowIllDeliver/index.module.scss)
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$move: 360ms;
+$pad: 5px; // inside the track
+$knob: 42px;
+
+.pricing {
+  max-width: 40rem;
+}
+
+// The price sits straight on the section (no box).
+.panel {
+  padding-top: 2px;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: $muted;
+  font-size: 0.95rem;
+}
+
+.badge {
+  flex: none;
+  padding: 2px 9px;
+  border: 1px solid rgb(43 43 43 / 16%);
+  border-radius: 4px;
+  color: $ink;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.price {
+  font-size: clamp(3.4rem, 12vw, 5.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+// "/month" or "per project" after the price.
+.per {
+  margin-left: 6px;
+  color: $muted;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.blurb {
+  max-width: 32rem;
+  color: $muted;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+// The work, as a checklist (like "Next steps"): a box, then the task. Greyed
+// with an empty box until this kind of client gets it.
+.includesLabel {
+  margin: 16px 0 8px;
+  line-height: 1.3;
+  color: $muted;
+  font-size: 0.9rem;
+}
+
+.includes {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+
+.include {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: rgb(43 43 43 / 32%);
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: color 240ms ease;
+}
+
+.check {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.15em;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  transition:
+    background-color 240ms ease,
+    border-color 240ms ease;
+}
+
+.on {
+  color: $ink;
+
+  .check {
+    border-color: $ink;
+    background: $ink;
+  }
+
+  // The tick pops in.
+  .check::after {
+    width: 9px;
+    height: 5px;
+    margin-top: -2px;
+    border-bottom: 2px solid #fff;
+    border-left: 2px solid #fff;
+    content: "";
+    transform: rotate(-45deg);
+    animation: tick 280ms $ease;
+  }
+}
+
+@keyframes tick {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.3);
+  }
+}
+
+// The track: dots for each size, then the green fill with the knob at its end.
+// --at is where the knob is (0 to 1); --p is a dot's place.
+.track {
+  position: relative;
+  height: $knob + $pad * 2;
+  border-radius: 999px;
+  background: $ink;
+}
+
+.track:has(.range:focus-visible) {
+  outline: 2px solid $ink;
+  outline-offset: 3px;
+}
+
+.dot {
+  position: absolute;
+  top: 50%;
+  left: calc(#{$pad + $knob * 0.5} + (100% - #{$pad * 2 + $knob}) * var(--p));
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 30%);
+}
+
+.fill {
+  position: absolute;
+  top: $pad;
+  left: $pad;
+  width: calc(#{$knob} + (100% - #{$pad * 2 + $knob}) * var(--at));
+  height: $knob;
+  border-radius: 999px;
+  background: $green;
+  transition: width $move $ease;
+}
+
+.knob {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  place-items: center;
+  width: $knob;
+  height: $knob;
+  border-radius: 50%;
+  background: #fff;
+  color: $ink;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+  transition: transform 160ms ease;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.track:active .knob {
+  transform: scale(0.94);
+}
+
+// The real slider, invisible, over the whole track. Its thumb is the track's
+// height wide, so a size lands under the pointer where its dot is.
+.range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: grab;
+  appearance: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &::-webkit-slider-thumb {
+    width: $knob + $pad * 2;
+    height: $knob + $pad * 2;
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    width: $knob + $pad * 2;
+    height: $knob + $pad * 2;
+    border: 0;
+  }
+}
+
+.labels {
+  display: grid;
+  margin-top: 8px;
+
+  // All in one cell, each pushed along to sit centred under its dot; the
+  // first and last line up with the track's ends. Long labels wrap.
+  button {
+    grid-area: 1 / 1;
+    justify-self: start;
+    max-width: 22%;
+    margin-left: calc(#{$pad + $knob * 0.5} + (100% - #{$pad * 2 + $knob}) * var(--p));
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: $muted;
+    font: inherit;
+    font-size: 0.9rem;
+    line-height: 1.25;
+    text-align: center;
+    cursor: pointer;
+    transform: translateX(-50%);
+    transition: color 160ms ease;
+  }
+
+  button:first-child {
+    margin-left: 0;
+    text-align: left;
+    transform: none;
+  }
+
+  button:last-child {
+    justify-self: end;
+    margin-left: 0;
+    text-align: right;
+    transform: none;
+  }
+
+  button:hover,
+  .current {
+    color: $ink;
+  }
+
+  .current {
+    font-weight: 600;
+  }
+}
+
+.note {
+  margin-top: 18px;
+  color: $muted;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 767px) {
+  // Five labels share a phone's width: a touch smaller.
+  .labels button {
+    font-size: 0.8rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .include,
+  .check,
+  .fill,
+  .knob,
+  .labels button {
+    transition: none;
+  }
+
+  .on .check::after {
+    animation: none;
+  }
+}

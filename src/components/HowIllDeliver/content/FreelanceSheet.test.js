@@ -34,7 +34,7 @@ test('clicking a title opens and closes its section', () => {
 
   fireEvent.click(sectionButton('Pricing'));
   expect(sectionButton('Pricing')).toHaveAttribute('aria-expanded', 'true');
-  expect(screen.getByText(FREELANCE.pricing.points[0])).toBeInTheDocument();
+  expect(screen.getByRole('slider', { name: 'What you need' })).toBeInTheDocument();
   expect(screen.getByRole('list')).toBeInTheDocument();
 
   fireEvent.click(sectionButton('Pricing'));
@@ -72,4 +72,21 @@ test('Pain points opens to the card shuffle', () => {
   fireEvent.click(sectionButton('Pain points'));
   expect(screen.getByRole('group', { name: `1 of ${FREELANCE.painPoints.items.length}` }))
     .toHaveTextContent(FREELANCE.painPoints.items[0].text);
+});
+
+test('How a project runs opens to the folder tree', () => {
+  render(<FreelanceSheet onStartContact={() => {}} />);
+  fireEvent.click(sectionButton('How a project runs'));
+  FREELANCE.process.stages.forEach(({ label, items }) => {
+    expect(screen.getByText(label)).toBeInTheDocument();
+    items.forEach((item) => expect(screen.getByText(item)).toBeInTheDocument());
+  });
+});
+
+test('Working together lists how the project will run', () => {
+  render(<FreelanceSheet onStartContact={() => {}} />);
+  fireEvent.click(sectionButton('Working together'));
+  FREELANCE.doc.topics.forEach(({ title }) => {
+    expect(screen.getByText(title)).toBeInTheDocument();
+  });
 });
