@@ -342,7 +342,23 @@ button.boxHead {
   }
 
   .boxContent {
-    padding: 0 20px 24px;
+    padding: 0 20px 148px;
+  }
+
+  // Phones: "Freelance / contract" as big as the width allows, on one line,
+  // edge to edge inside the padding (same 20px each side as the content
+  // below). 100cqi is the width inside the padding; the title is about 8.14em
+  // wide in Outfit 500 with this letter spacing, so dividing by a little more
+  // keeps the last letter just clear of the edge. Browsers without container
+  // units keep the size set above.
+  .boxIntro .boxHead {
+    padding-right: 20px;
+    container-type: inline-size;
+  }
+
+  .boxIntro .boxTitle {
+    font-size: calc(100cqi / 8.16);
+    white-space: nowrap;
   }
 }
 

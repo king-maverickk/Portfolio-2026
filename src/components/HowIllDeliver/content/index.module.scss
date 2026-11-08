@@ -651,7 +651,9 @@ $shuffle-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   // Narrow columns break the sentence differently, so icons can end up on
   // neighbouring lines. A little more line height keeps them from touching.
+  // 1px bigger than on desktop, so it holds its own above the two buttons.
   .forStatement {
+    font-size: calc(clamp(1.35rem, 3.6vw, 1.85rem) + 1px) !important;
     line-height: 1.45 !important;
   }
 
