@@ -210,6 +210,7 @@ button.boxHead {
   align-items: center;
   gap: 10px;
   margin-top: 22px;
+  padding: 0 26px;
 }
 
 .downArrow {
@@ -342,6 +343,11 @@ button.boxHead {
   }
 
   .boxContent {
+    padding: 0 20px 24px;
+  }
+
+  // The headline container: more room below the buttons on phones.
+  .boxIntro .boxContent {
     padding: 0 20px 148px;
   }
 
@@ -359,6 +365,10 @@ button.boxHead {
   .boxIntro .boxTitle {
     font-size: calc(100cqi / 8.16);
     white-space: nowrap;
+  }
+
+  .introActions {
+    padding: 0;
   }
 }
 

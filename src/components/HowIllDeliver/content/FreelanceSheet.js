@@ -205,12 +205,13 @@ function FreelanceSheet({ onStartContact }) {
             credibility.
           </InlineImg>
         </p>
-        <div className={sx.introActions}>
-          <Action label={introActions.primary} onClick={() => onStartContact('website')} />
-          <Action label={introActions.secondary} onClick={showProcess} variant="secondary" arrow="↓" />
-          {introActions.draft && <DraftTag />}
-        </div>
       </Section>
+
+      <div className={sx.introActions}>
+        <Action label={introActions.primary} onClick={() => onStartContact('website')} />
+        <Action label={introActions.secondary} onClick={showProcess} variant="secondary" arrow="↓" />
+        {introActions.draft && <DraftTag />}
+      </div>
 
       {/* The card shuffle. (The phone notifications, PainPointsPhone.js, were
           too heavy: their frosted blur on top of the sheet's own blur slowed
