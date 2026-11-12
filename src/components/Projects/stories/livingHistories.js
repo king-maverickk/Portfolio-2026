@@ -130,9 +130,14 @@ const LIVING_HISTORIES_STORY = {
       id: 'role',
       title: 'My role in detail',
       blocks: [
-        { type: 'p', text: `Lesibana Ngoepe and I built it in 36 hours, as team Plus+Plus, at Microsoft South Africa’s AI for Good hackathon. It was held at their head office in Bryanston on 3–4 May 2025. I handled the backend, cloud deployment and the pitch. Lesibana built the front end, and we did the research and the presentation together. We placed 3rd.` },
-        { type: 'figure', src: '/assets/Home/project_me_at_microsoft.webp', alt: 'At the Microsoft hackathon', caption: 'At the Microsoft hackathon.' },
-        { type: 'p', text: `The two public repos ([front end](${FRONTEND_REPO}) and [back end](${BACKEND_REPO})) are the versions I rebuilt after the hackathon. The code we wrote during those 36 hours was scrappy and only had to get us through the demo. From then on I worked alone: I did the redesign, the front end, the backend and the Azure resources.` }
+        { type: 'p', text: `Lesibana Ngoepe and I built it in 36 hours, as team Plus+Plus, at Microsoft South Africa’s AI for Good hackathon. It was held at their head office in Bryanston on 3–4 May 2025.` },
+        // The hackathon photos are Geekulcha's. Check the licence on the Flickr
+        // album and keep the credit in each caption.
+        { type: 'figure', src: '/assets/Home/lh_everyone_at_microsoft.webp', alt: 'A large group of hackathon participants waving in front of the Microsoft sign at the Bryanston office', caption: 'Everyone at the hackathon, outside Microsoft’s office in Bryanston. Photo: Geekulcha.' },
+        { type: 'p', text: 'I handled the backend, cloud deployment and the pitch. Lesibana built the front end, and we did the research and the presentation together. We placed 3rd.' },
+        { type: 'figure', src: '/assets/Home/lh_team_medals.webp', alt: 'Lesibana, in a lilac hoodie, giving two thumbs up, and me in a yellow cap holding my medal, in front of a Microsoft banner', caption: 'Lesibana and me with our 3rd-place medals. Photo: Geekulcha.' },
+        { type: 'p', text: `The two public repos ([front end](${FRONTEND_REPO}) and [back end](${BACKEND_REPO})) are the versions I rebuilt after the hackathon. The code we wrote during those 36 hours was scrappy and only had to get us through the demo. From then on I worked alone: I did the redesign, the front end, the backend and the Azure resources.` },
+        { type: 'figure', src: '/assets/Home/project_me_at_microsoft.webp', alt: 'At the Microsoft hackathon', caption: 'At the Microsoft hackathon.' }
       ]
     },
     {
@@ -215,6 +220,7 @@ const LIVING_HISTORIES_STORY = {
         { type: 'draft', text: 'Drafted from your notes in copy.md. Rewrite in your voice.' },
         { type: 'h3', text: 'What I’m proud of' },
         { type: 'p', text: 'The presentation we put on at the hackathon, and that it landed us 3rd. It was my third hackathon, and finishing that close to first, in a competition of 160+ teams and 390 people across the country, is a result I’m proud of.' },
+        { type: 'figure', src: '/assets/Home/lh_medallists_on_stage.webp', alt: 'The hackathon’s medal winners standing in a row on stage with a Microsoft representative, in front of Microsoft banners and the South African flag', caption: 'The medallists on stage. Photo: Geekulcha.' },
         { type: 'h3', text: 'What it taught me' },
         { type: 'p', text: 'React context and providers, hands-on. An effective web app does a lot of its work on the client side, preparing and working with abstract ideas before they’re finally used, and this project gave me a boots-on-the-ground understanding of that.' },
         { type: 'p', text: 'Learning how to work with AI was the biggest part of it: how to talk to agents and LLMs about design features in code, and the do’s and don’ts of it. I can see the difference in my work with AI agents in development now.' },

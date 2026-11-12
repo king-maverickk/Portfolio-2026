@@ -56,6 +56,21 @@ test('Status says the app is live and links to it in a new tab', () => {
   expect(app.getAttribute('rel')).toMatch(/noopener/);
 });
 
+test('the hackathon photos sit beside the sentences they show, with credit', () => {
+  renderStory();
+  const role = screen.getByRole('region', { name: 'My role in detail' });
+  const roleSrcs = within(role).getAllByRole('img').map((img) => img.getAttribute('src'));
+  expect(roleSrcs).toEqual(expect.arrayContaining([
+    '/assets/Home/lh_everyone_at_microsoft.webp',
+    '/assets/Home/lh_team_medals.webp'
+  ]));
+
+  const retro = screen.getByRole('region', { name: 'Retrospective' });
+  expect(within(retro).getByRole('img')).toHaveAttribute('src', '/assets/Home/lh_medallists_on_stage.webp');
+
+  expect(screen.getAllByText(/Photo: Geekulcha\./)).toHaveLength(3);
+});
+
 test('My role: one card for the hackathon, one for afterwards', () => {
   renderStory();
   const roles = screen.getByRole('region', { name: 'My role' });
