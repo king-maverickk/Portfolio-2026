@@ -131,7 +131,7 @@ const PROJECTS = [
       { img: '/assets/Home/about_bronze_medal.png', alt: '' },
       '.'
     ],
-    context: 'Built with Lesiba Ngoepe as team Plus+Plus at Microsoft South Africa’s AI for Good hackathon, 3–4 May 2025. Open it anywhere and it suggests events from the past 80 years around you; pick one and two AI hosts talk you through it. After the hackathon I redesigned and rebuilt it on my own, on and off for a year.',
+    context: 'Built with Lesibana Ngoepe as team Plus+Plus at Microsoft South Africa’s AI for Good hackathon, 3–4 May 2025. Open it anywhere and it suggests events from the past 80 years around you; pick one and two AI hosts talk you through it. After the hackathon I redesigned and rebuilt it on my own, on and off for a year.',
     intention: 'What if, wherever you were, you could hear what happened there in the last 80 years?',
     sections: [],
     stack: ['figma', 'react', 'azure', 'openai'],

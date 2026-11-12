@@ -16,7 +16,7 @@ test('opens with the sentence, then Type, Team and Media', () => {
   expect(lede).toHaveTextContent(/two-voice\s+podcast episode\./);
 
   expect(screen.getByText('Hackathon, then personal project · 2025 – 2026')).toBeInTheDocument();
-  expect(screen.getByText('Lesiba Ngoepe')).toBeInTheDocument();
+  expect(screen.getByText('Lesibana Ngoepe')).toBeInTheDocument();
   expect(screen.getByText('Motheo Moleko')).toBeInTheDocument();
   expect(screen.getByText('Finished 3rd')).toBeInTheDocument();
 });

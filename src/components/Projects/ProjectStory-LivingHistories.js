@@ -167,12 +167,37 @@ function Facts({ facts }) {
         <dt className={styles.factLabel}>Team</dt>
         <dd className={styles.factValue}>
           <ul className={styles.chips}>
-            {team.map((person) => (
-              <li key={person.name} className={styles.chip}>
+            {team.map((person) => {
+              const avatar = person.photo ? (
+                <img className={cn(styles.avatar, styles.avatarPhoto)} src={person.photo} alt="" />
+              ) : (
                 <span className={styles.avatar} aria-hidden="true">{person.initials}</span>
-                {person.name}
-              </li>
-            ))}
+              );
+              if (!person.href) {
+                return (
+                  <li key={person.name} className={styles.chip}>
+                    {avatar}
+                    {person.name}
+                  </li>
+                );
+              }
+              return (
+                <li key={person.name}>
+                  <a
+                    className={cn(styles.chip, styles.chipLink)}
+                    href={person.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={person.title}
+                  >
+                    {avatar}
+                    {person.name}
+                    <span className={styles.srOnly}> (opens in a new tab)</span>
+                    <span className={styles.chipArrow} aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              );
+            })}
             {result && (
               <li className={styles.chip}>
                 <img className={styles.medal} src={result.img} alt="" />

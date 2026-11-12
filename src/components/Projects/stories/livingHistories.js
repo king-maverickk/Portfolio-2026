@@ -65,9 +65,17 @@ const LIVING_HISTORIES_STORY = {
 
   facts: {
     type: 'Hackathon, then personal project · 2025 – 2026',
+    // `photo` replaces the initials (a square image works best; it's shown
+    // as a 24px circle). `href` makes the chip a link that opens in a new tab.
     team: [
-      { name: 'Lesiba Ngoepe', initials: 'LN' },
-      { name: 'Motheo Moleko', initials: 'MM' }
+      {
+        name: 'Lesibana Ngoepe',
+        initials: 'LN',
+        photo: '/assets/Home/lesibana_ngoepe.webp',
+        href: 'https://www.linkedin.com/in/lesibana-ngoepe-junior-software-developer/',
+        title: 'Lesibana Ngoepe on LinkedIn'
+      },
+      { name: 'Motheo Moleko', initials: 'MM', photo: '/assets/Home/my-face.png' }
     ],
     result: { label: 'Finished 3rd', img: '/assets/Home/about_bronze_medal.png' },
     // These open in a new tab. The photos are Geekulcha's, so they're linked
@@ -116,7 +124,7 @@ const LIVING_HISTORIES_STORY = {
       id: 'role',
       title: 'My role in detail',
       blocks: [
-        { type: 'p', text: `Lesiba Ngoepe and I built it in 36 hours, as team Plus+Plus, at Microsoft South Africa’s AI for Good hackathon. It was held at their head office in Bryanston on 3–4 May 2025. I handled the backend, cloud deployment and the pitch. Lesiba built the front end, and we did the research and the presentation together. We placed 3rd.` },
+        { type: 'p', text: `Lesibana Ngoepe and I built it in 36 hours, as team Plus+Plus, at Microsoft South Africa’s AI for Good hackathon. It was held at their head office in Bryanston on 3–4 May 2025. I handled the backend, cloud deployment and the pitch. Lesibana built the front end, and we did the research and the presentation together. We placed 3rd.` },
         { type: 'figure', src: '/assets/Home/project_me_at_microsoft.webp', alt: 'At the Microsoft hackathon', caption: 'At the Microsoft hackathon.' },
         { type: 'p', text: `The two public repos ([front end](${FRONTEND_REPO}) and [back end](${BACKEND_REPO})) are the versions I rebuilt after the hackathon. The code we wrote during those 36 hours was scrappy and only had to get us through the demo. From then on I worked alone: I did the redesign, the front end, the backend and the Azure resources.` }
       ]
@@ -187,7 +195,7 @@ const LIVING_HISTORIES_STORY = {
       title: 'Challenges',
       blocks: [
         { type: 'h3', text: 'AI making up history' },
-        { type: 'p', text: 'We knew from the start that this could undermine the whole idea. At the hackathon Lesiba and I split the research so we weren’t both reading the same thing, and looked at retrieval-augmented generation to ground the model in real sources. With less than two days, there were too many moving parts to build it safely. So we gave part of the pitch to the problem instead: what hallucination is, and how, with funding, we’d ground the hosts in South African archives’ websites, offline media and news publishers. The judges appreciated that we were upfront about it. The current code tells the model it is “a factual historian” when it lists events, but nothing checks what it says.' },
+        { type: 'p', text: 'We knew from the start that this could undermine the whole idea. At the hackathon Lesibana and I split the research so we weren’t both reading the same thing, and looked at retrieval-augmented generation to ground the model in real sources. With less than two days, there were too many moving parts to build it safely. So we gave part of the pitch to the problem instead: what hallucination is, and how, with funding, we’d ground the hosts in South African archives’ websites, offline media and news publishers. The judges appreciated that we were upfront about it. The current code tells the model it is “a factual historian” when it lists events, but nothing checks what it says.' },
         { type: 'h3', text: 'Location data and security' },
         { type: 'p', text: 'The app needs your location, so I wrote a security audit for how it should be handled, including Microsoft Entra ID sign-in between the front end and the backend. I didn’t build it. Security was new to me then, and switching to it from designing and developing felt like a big change of context. I chose to do the core of the app well rather than everything badly. Every function in the current backend is open to anyone.' },
         { type: 'h3', text: 'Cost' },

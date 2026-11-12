@@ -16,7 +16,7 @@ test('opens with the sentence, then Type, Team and Media', () => {
   expect(lede).toHaveTextContent(/two-voice\s+podcast episode\./);
 
   expect(screen.getByText('Hackathon, then personal project · 2025 – 2026')).toBeInTheDocument();
-  expect(screen.getByText('Lesiba Ngoepe')).toBeInTheDocument();
+  expect(screen.getByText('Lesibana Ngoepe')).toBeInTheDocument();
   expect(screen.getByText('Motheo Moleko')).toBeInTheDocument();
   expect(screen.getByText('Finished 3rd')).toBeInTheDocument();
 });
@@ -32,6 +32,19 @@ test('the Photos and YouTube chips link out in a new tab', () => {
   expect(video).toHaveAttribute('href', expect.stringContaining('youtube.com/watch?v=YwHBtCoK-wE'));
   expect(video).toHaveAttribute('target', '_blank');
   expect(video.getAttribute('rel')).toMatch(/noopener/);
+});
+
+test('Lesibana links to his LinkedIn, and both chips show photos', () => {
+  renderStory();
+  const lesibana = screen.getByRole('link', { name: /Lesibana Ngoepe/ });
+  expect(lesibana).toHaveAttribute('href', 'https://www.linkedin.com/in/lesibana-ngoepe-junior-software-developer/');
+  expect(lesibana).toHaveAttribute('target', '_blank');
+  expect(lesibana.getAttribute('rel')).toMatch(/noopener/);
+  expect(lesibana.querySelector('img')).toHaveAttribute('src', '/assets/Home/lesibana_ngoepe.webp');
+
+  const me = screen.getByText('Motheo Moleko').closest('li');
+  expect(me.querySelector('img')).toHaveAttribute('src', '/assets/Home/my-face.png');
+  expect(me).not.toHaveTextContent('MM');
 });
 
 test('My role: one card for the hackathon, one for afterwards', () => {
