@@ -5,6 +5,7 @@ import cn from 'classnames';
 
 import DotGrid from 'components/DotGrid';
 import LineReveal from './LineReveal';
+import ProjectStoryLivingHistories from './ProjectStory-LivingHistories';
 import TOOL_ICONS, { TEXT_ONLY } from './toolIcons';
 import { fadeOut, glideFrom, manualScroll, prefersReducedMotion, rememberHeading } from './transition';
 import styles from './ProjectDetail.module.scss';
@@ -189,6 +190,10 @@ MediaGrid.propTypes = { media: PropTypes.array, active: PropTypes.bool, classNam
 // View B: the media on the left, a compact context card on the right.
 // Clicking whatever is on the right swaps between them.
 // Phones: one column, the right-hand box first, then the rest.
+//
+// A project with a `story` (see projects.js) uses ProjectStory-LivingHistories instead of the
+// two views: one column that reads top to bottom. The heading, the slim bar
+// and the glide back to the list are the same.
 function ProjectDetail({ project }) {
   const history = useHistory();
   const location = useLocation();
@@ -292,14 +297,14 @@ function ProjectDetail({ project }) {
     }, FADE_OUT_MS);
   };
 
-  const { name, images, year, category, role, sentence, context, intention, sections = [], stack, style, video, poster, media } = project;
+  const { name, images, year, category, role, sentence, context, intention, sections = [], stack, style, video, poster, media, story } = project;
   const meta = [year, category].filter(Boolean).join(' · ');
 
   return (
     <div
       ref={pageRef}
-      className={cn(styles.page, swapStyle === 'instant' && styles.instant)}
-      data-view={view}
+      className={cn(styles.page, story && styles.pageStory, swapStyle === 'instant' && styles.instant)}
+      data-view={story ? undefined : view}
     >
       <DotGrid color="255, 255, 255" />
 
@@ -349,6 +354,17 @@ function ProjectDetail({ project }) {
         </h1>
       </header>
 
+      {story && (
+        <div
+          ref={columnsRef}
+          className={cn(styles.storyWrap, sweeping && (cameFrom ? styles.sweepLate : styles.sweep))}
+          onAnimationEnd={(event) => { if (event.target === event.currentTarget) setSweeping(false); }}
+        >
+          <ProjectStoryLivingHistories story={story} />
+        </div>
+      )}
+
+      {!story && (
       <div
         ref={columnsRef}
         className={cn(styles.columns, sweeping && (cameFrom ? styles.sweepLate : styles.sweep), swapping && styles.swapping)}
@@ -426,8 +442,9 @@ function ProjectDetail({ project }) {
           )}
         </div>
       </div>
+      )}
 
-      {SHOW_DRAFT_MARKERS && (
+      {SHOW_DRAFT_MARKERS && !story && (
         <div className={styles.devSwitch} role="group" aria-label="Swap style (only in npm start)">
           <span>swap:</span>
           {['fade', 'instant'].map((option) => (
@@ -467,6 +484,7 @@ ProjectDetail.propTypes = {
     video: PropTypes.string,
     poster: PropTypes.string,
     media: PropTypes.array,
+    story: PropTypes.object,
     draft: PropTypes.bool
   }).isRequired
 };

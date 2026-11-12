@@ -25,9 +25,15 @@
 //   poster     a still for the right-hand box
 //   media      everything for the media view: { src, type: 'image' | 'video',
 //              alt }. The first is shown large.
+//   story      optional. A project with a `story` gets a page that reads top
+//              to bottom (big sentence, facts, roles, then a document)
+//              instead of the context/media views. Its words live in
+//              stories/<project>.js. The fields above still feed the lists.
 //
 // `draft: true` = Claude wrote the words from your resume and notes. In
 // `npm start` they get a dashed "draft" tag; rewrite them in your voice.
+
+import LIVING_HISTORIES_STORY from './stories/livingHistories';
 
 const PROJECTS = [
   {
@@ -113,30 +119,22 @@ const PROJECTS = [
     id: 'living-histories',
     name: 'Living Histories',
     images: ['/assets/Home/project_living_histories.webp', '/assets/Home/project_me_at_microsoft.webp'],
-    year: '2025',
+    year: '2025 – 2026',
     category: 'Hackathon',
-    role: 'UI design and React front end, with one teammate',
+    role: 'Backend and cloud, then redesign and full stack',
     sentence: [
-      'A generative AI app that turns a historical topic',
+      'A map that finds where you are',
       { img: '/assets/Home/project_living_histories.webp', alt: '' },
-      'into geotagged podcast shorts with narration. 3rd place at Microsoft’s AI for Social Good',
+      'and turns the history around you into two-voice',
+      { img: '/assets/Home/about_speech_bubble.png', alt: '' },
+      'podcast episodes. 3rd place at Microsoft’s AI for Good hackathon',
       { img: '/assets/Home/about_bronze_medal.png', alt: '' },
       '.'
     ],
-    context: 'Built with one teammate at Microsoft’s AI for Social Good hackathon in May 2025. Give it a historical topic and it writes a short podcast episode, narrates it and pins it to the map.',
-    intention: 'Hackathon judges have minutes, not hours. The app had to explain itself in one screen and work on the first try.',
-    sections: [
-      {
-        title: 'Design and technical choices',
-        text: 'The OpenAI API writes the episode, Google Maps places it, and Microsoft Foundry’s text-to-speech narrates it. Deployed on Azure Static Web Apps with Azure Functions. I designed the UI in Figma and built the React front end.'
-      },
-      {
-        title: 'Away from code',
-        img: '/assets/Home/project_me_at_microsoft.webp',
-        text: 'TODO: what happened around the code. The pitch, working as a pair, what the judges asked.'
-      }
-    ],
-    stack: ['figma', 'react', 'openai', 'azure'],
+    context: 'Built with Lesiba Ngoepe as team Plus+Plus at Microsoft South Africa’s AI for Good hackathon, 3–4 May 2025. Open it anywhere and it suggests events from the past 80 years around you; pick one and two AI hosts talk you through it. After the hackathon I redesigned and rebuilt it on my own, on and off for a year.',
+    intention: 'What if, wherever you were, you could hear what happened there in the last 80 years?',
+    sections: [],
+    stack: ['figma', 'react', 'azure', 'openai'],
     style: { colors: [], fonts: [] },
     video: null,
     poster: '/assets/Home/project_living_histories.webp',
@@ -144,6 +142,7 @@ const PROJECTS = [
       { type: 'image', src: '/assets/Home/project_living_histories.webp', alt: 'Choosing an event in the app' },
       { type: 'image', src: '/assets/Home/project_me_at_microsoft.webp', alt: 'At the Microsoft hackathon' }
     ],
+    story: LIVING_HISTORIES_STORY,
     draft: true
   },
   {

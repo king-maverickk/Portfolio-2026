@@ -29,10 +29,23 @@ $radius: 12px;
   // Everything sits above the fixed dot grid.
   > .topBar,
   > .heading,
-  > .columns {
+  > .columns,
+  > .storyWrap {
     position: relative;
     z-index: 1;
   }
+}
+
+// A project that tells its story top to bottom (ProjectStory-LivingHistories). Its last block
+// is a sheet that rises from the bottom edge, so the page has no bottom
+// padding of its own.
+.storyWrap {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page.pageStory {
+  padding-bottom: 0;
 }
 
 // --- Top bar (same as /projects and the Lab) ------------------------------------

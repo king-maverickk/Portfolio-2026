@@ -39,8 +39,16 @@ test('/projects opens like the Lab, then lists every project with its own addres
 test('clicking a project goes to its page', async () => {
   const location = renderAt('/projects');
   fireEvent.click(screen.getByRole('link', { name: 'Living Histories' }));
-  expect(await screen.findByRole('button', { name: /Show the media for Living Histories/ })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { level: 1, name: 'Living Histories' })).toBeInTheDocument();
   expect(location().pathname).toBe('/projects/living-histories');
+});
+
+test('Living Histories tells its story top to bottom, with no media swap', () => {
+  renderAt('/projects/living-histories');
+  expect(screen.getByRole('heading', { level: 2, name: 'My role' })).toBeInTheDocument();
+  expect(screen.getByRole('article', { name: 'The full story' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /Show the media for/ })).not.toBeInTheDocument();
+  expect(screen.queryByRole('region', { name: 'Project context' })).not.toBeInTheDocument();
 });
 
 test('a project page: heading, context, tools and style', () => {
