@@ -78,6 +78,12 @@ const LIVING_HISTORIES_STORY = {
       { name: 'Motheo Moleko', initials: 'MM', photo: '/assets/Home/my-face.png' }
     ],
     result: { label: 'Finished 3rd', img: '/assets/Home/about_bronze_medal.png' },
+    // Opens the deployed app in a new tab.
+    status: {
+      label: 'Live Prototype (rough)',
+      href: 'https://red-bush-085e4ea10.3.azurestaticapps.net/',
+      title: 'Open the Living Histories app'
+    },
     // These open in a new tab. The photos are Geekulcha's, so they're linked
     // rather than copied here.
     media: [

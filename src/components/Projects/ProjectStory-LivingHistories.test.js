@@ -47,6 +47,15 @@ test('Lesibana links to his LinkedIn, and both chips show photos', () => {
   expect(me).not.toHaveTextContent('MM');
 });
 
+test('Status says the app is live and links to it in a new tab', () => {
+  renderStory();
+  expect(screen.getByText('Status', { selector: 'dt' })).toBeInTheDocument();
+  const app = screen.getByRole('link', { name: /Live Prototype \(rough\)/ });
+  expect(app).toHaveAttribute('href', 'https://red-bush-085e4ea10.3.azurestaticapps.net/');
+  expect(app).toHaveAttribute('target', '_blank');
+  expect(app.getAttribute('rel')).toMatch(/noopener/);
+});
+
 test('My role: one card for the hackathon, one for afterwards', () => {
   renderStory();
   const roles = screen.getByRole('region', { name: 'My role' });

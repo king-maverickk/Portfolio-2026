@@ -155,7 +155,7 @@ MediaIcon.propTypes = { kind: PropTypes.string };
 // --- Top: facts and roles -----------------------------------------------------------
 
 function Facts({ facts }) {
-  const { type, team = [], result, media = [] } = facts;
+  const { type, team = [], result, status, media = [] } = facts;
   return (
     <dl className={styles.facts}>
       <div className={styles.factRow}>
@@ -207,6 +207,33 @@ function Facts({ facts }) {
           </ul>
         </dd>
       </div>
+
+      {status && (
+        <div className={styles.factRow}>
+          <dt className={styles.factLabel}>Status</dt>
+          <dd className={styles.factValue}>
+            {status.href ? (
+              <ul className={styles.chips}>
+                <li>
+                  <a
+                    className={cn(styles.chip, styles.chipLink, styles.chipText)}
+                    href={status.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={status.title}
+                  >
+                    {status.label}
+                    <span className={styles.srOnly}> (opens in a new tab)</span>
+                    <span className={styles.chipArrow} aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              </ul>
+            ) : (
+              status.label
+            )}
+          </dd>
+        </div>
+      )}
 
       {media.length > 0 && (
         <div className={styles.factRow}>

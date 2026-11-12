@@ -123,6 +123,11 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   transition: background-color 200ms ease;
 }
 
+// A chip with no avatar or icon on its left.
+.chipText {
+  padding-left: 14px;
+}
+
 .chipLink {
   &:focus-visible {
     outline: 2px solid $text;
