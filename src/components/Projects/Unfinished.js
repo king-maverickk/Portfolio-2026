@@ -259,7 +259,8 @@ const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTo
       <ul className={styles.rows}>
         {entries.map((entry) => {
           const hasNote = Boolean(entry.note) && showTodos;
-          const canOpen = Boolean(entry.entry || entry.summary || hasNote);
+          // A row marked `disabled` isn't written yet: listed, but nothing to open.
+          const canOpen = !entry.disabled && Boolean(entry.entry || entry.summary || hasNote);
           const isOpen = canOpen && open.includes(entry.id);
           const panelId = `unfinished-${entry.id}-panel`;
 
@@ -270,12 +271,13 @@ const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTo
               <span className={styles.hint}>
                 {hasText(entry.hint, showTodos) && <Mixed value={entry.hint} showTodos={showTodos} />}
               </span>
-              {canOpen && <span className={styles.sign} aria-hidden="true">{isOpen ? '−' : '+'}</span>}
+              {/* Kept, empty, on a row that can't open, so the hints stay lined up. */}
+              <span className={styles.sign} aria-hidden="true">{canOpen && (isOpen ? '−' : '+')}</span>
             </>
           );
 
           return (
-            <li key={entry.id} id={`unfinished-${entry.id}`} className={cn(styles.row, isOpen && styles.rowOpen)}>
+            <li key={entry.id} id={`unfinished-${entry.id}`} className={cn(styles.row, isOpen && styles.rowOpen, entry.disabled && styles.rowDisabled)}>
               <h3 className={styles.rowHead}>
                 {canOpen ? (
                   <button

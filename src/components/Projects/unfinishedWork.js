@@ -17,6 +17,8 @@
 //   onHome    1 or 2: lends its image to the fanned pictures beside
 //             "Unfinished" on the home list, in that order
 //   open      true = the row starts open. No row has it: they all start closed.
+//   disabled  true = not written yet: the row is listed, greyed out, and
+//             can't be opened. Delete the line when the row is ready.
 //   summary   a sentence or two shown when the row opens
 //   note      a todo() reminder shown under the summary (never in production)
 //   entry     the full write-up (see Entelect below). When it's set, the row
@@ -114,6 +116,7 @@ const UNFINISHED = [
   },
   {
     id: 'safm-redesign',
+    disabled: true,
     name: 'SAfm redesign',
     year: 2022,
     hint: 'Built before anyone asked for it.',
@@ -126,6 +129,7 @@ const UNFINISHED = [
     // for the desktop, shortlisted for Digital Labs Africa’s 8th edition in
     // the video games category." Built in Python and C# with WPF.
     id: 'virtual-guitar',
+    disabled: true,
     name: 'Virtual Guitar',
     year: todo('YEAR'),
     hint: 'Three versions. Shortlisted, Digital Labs Africa.',
@@ -141,6 +145,7 @@ const UNFINISHED = [
     // Azure (Static Web App, Blob Storage for media)." Role there: full-stack
     // developer, September 2022 to September 2023.
     id: 'milk-and-honey-tv',
+    disabled: true,
     name: 'Milk & Honey TV',
     year: '2024',
     hint: todo('WHY IT STOPPED'),
@@ -151,6 +156,7 @@ const UNFINISHED = [
   },
   {
     id: 'image-to-map',
+    disabled: true,
     name: 'Image to Map',
     year: 2024,
     hint: ['Made for a friend.', todo('WHY IT STOPPED')],
@@ -160,6 +166,7 @@ const UNFINISHED = [
   },
   {
     id: 'video-cutter',
+    disabled: true,
     name: 'Video Cutter',
     year: 2023,
     hint: ['A tool for helping with ML.', todo('WHY IT STOPPED')],

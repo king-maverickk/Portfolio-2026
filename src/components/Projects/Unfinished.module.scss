@@ -133,6 +133,18 @@ $phone: 600px;
   cursor: default;
 }
 
+// A row that isn't written yet (`disabled: true` in unfinishedWork.js): no
+// fill, and everything in the one grey. #8d8d96 still reads on the page (4.5:1).
+.rowDisabled {
+  background: #16161a;;
+
+  .year,
+  .name,
+  .hint {
+    color: #8d8d96;
+  }
+}
+
 .year {
   width: 56px;
   color: $muted;

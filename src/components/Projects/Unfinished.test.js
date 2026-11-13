@@ -18,14 +18,18 @@ test('one row per entry: year, name and hint, under an “Unfinished” heading'
 
   const entelect = row('Entelect Challenge 2024');
   expect(entelect).toHaveTextContent('2024');
-  expect(entelect).toHaveTextContent('Solo entry. Stopped five weeks in.');
+  expect(entelect).toHaveTextContent(UNFINISHED[0].hint);
 });
 
+// Sample rows, so the tests below don't depend on which rows are written yet.
+const SAMPLE = { id: 'sample', name: 'Sample row', year: 2023, hint: 'A hint.', summary: 'Made for my dad.' };
+const NOT_WRITTEN = { ...SAMPLE, id: 'not-written', name: 'Not written yet', disabled: true };
+
 test('every row starts closed; rows open and close on their own', () => {
-  render(<Unfinished />);
+  render(<Unfinished entries={[UNFINISHED[0], SAMPLE]} />);
   screen.getAllByRole('button').forEach((button) => expect(button).toHaveAttribute('aria-expanded', 'false'));
   const entelect = screen.getByRole('button', { name: /Entelect Challenge 2024/ });
-  const safm = screen.getByRole('button', { name: /SAfm redesign/ });
+  const sample = screen.getByRole('button', { name: /Sample row/ });
   expect(screen.getByText(/A bot for Sproutopia/)).not.toBeVisible();
   expect(screen.getByText(/Made for my dad/)).not.toBeVisible();
 
@@ -33,10 +37,10 @@ test('every row starts closed; rows open and close on their own', () => {
   expect(entelect).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getByText(/A bot for Sproutopia/)).toBeVisible();
   // Opening one leaves the others as they were.
-  expect(safm).toHaveAttribute('aria-expanded', 'false');
+  expect(sample).toHaveAttribute('aria-expanded', 'false');
 
-  fireEvent.click(safm);
-  expect(safm).toHaveAttribute('aria-expanded', 'true');
+  fireEvent.click(sample);
+  expect(sample).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getByText(/Made for my dad/)).toBeVisible();
   expect(entelect).toHaveAttribute('aria-expanded', 'true');
 
@@ -46,9 +50,24 @@ test('every row starts closed; rows open and close on their own', () => {
 });
 
 test('a row marked `open: true` in unfinishedWork.js starts open', () => {
-  render(<Unfinished entries={[{ ...UNFINISHED[0], open: true }, UNFINISHED[1]]} />);
+  render(<Unfinished entries={[{ ...UNFINISHED[0], open: true }, SAMPLE]} />);
   expect(screen.getByRole('button', { name: /Entelect Challenge 2024/ })).toHaveAttribute('aria-expanded', 'true');
-  expect(screen.getByRole('button', { name: /SAfm redesign/ })).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.getByRole('button', { name: /Sample row/ })).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('a row marked `disabled: true` is listed but greyed out, with nothing to open', () => {
+  render(<Unfinished entries={[SAMPLE, NOT_WRITTEN]} />);
+  const off = row('Not written yet');
+  expect(off).toHaveClass('rowDisabled');
+  expect(off).toHaveTextContent('2023');
+  expect(off).toHaveTextContent('A hint.');
+  expect(within(off).queryByRole('button')).not.toBeInTheDocument();
+  expect(off).not.toHaveTextContent('+');
+  // Its summary isn't on the page at all, so it can't be reached by search or a screen reader.
+  expect(screen.getAllByText('Made for my dad.')).toHaveLength(1);
+  // The row beside it is untouched.
+  expect(row('Sample row')).not.toHaveClass('rowDisabled');
+  expect(within(row('Sample row')).getByRole('button')).toBeInTheDocument();
 });
 
 test('the Entelect entry: the sentence, four short sections and the shelf', () => {
