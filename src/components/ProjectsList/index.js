@@ -4,6 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import cn from 'classnames';
 
 import PROJECTS from 'components/Projects/projects';
+import UNFINISHED, { HOME_FAN } from 'components/Projects/unfinishedWork';
 import {
   clearNotes, manualScroll, partRows, peekReturn, plainRect, rememberPick, returnRows
 } from 'components/Projects/transition';
@@ -20,6 +21,8 @@ import styles from './index.module.scss';
 // - Clicking a row: the other rows part (up and down) and fade, then the
 //   project's page opens and its heading glides from this row to the top.
 //   Coming back plays it in reverse (see Projects/transition.js).
+// - On the home page a last, greyed row, "Unfinished", stands for everything
+//   in Projects/unfinishedWork.js and goes to that section of /projects.
 
 function ProjectsList({
   className,
@@ -27,6 +30,7 @@ function ProjectsList({
   origin = 'home',
   showLabel = true,
   showButton = true,
+  showUnfinished = true,
   alsoFade = []
 }) {
   const history = useHistory();
@@ -206,6 +210,32 @@ function ProjectsList({
             </Link>
           </li>
         ))}
+
+        {showUnfinished && UNFINISHED.length > 0 && (
+          <li className={styles.item} style={{ '--i': projects.length }}>
+            <Link
+              className={cn(styles.row, styles.rowUnfinished, centred === projects.length && styles.rowCentred)}
+              to="/projects#unfinished"
+              aria-label={`Unfinished work, ${UNFINISHED.length} entries`}
+              data-row={projects.length}
+            >
+              <span className={cn(styles.fan, styles.fanLeft)} aria-hidden="true">
+                {HOME_FAN.slice(0, 2).map((src) => (
+                  <img key={src} className={styles.fanPic} src={src} alt="" loading="lazy" decoding="async" />
+                ))}
+              </span>
+              <span className={styles.name}>
+                Unfinished
+                <span className={styles.count}>{UNFINISHED.length}</span>
+              </span>
+              <span className={cn(styles.fan, styles.fanRight)} aria-hidden="true">
+                {HOME_FAN.slice(0, 2).reverse().map((src) => (
+                  <img key={src} className={styles.fanPic} src={src} alt="" loading="lazy" decoding="async" />
+                ))}
+              </span>
+            </Link>
+          </li>
+        )}
       </ul>
 
       {showButton && (
@@ -230,6 +260,8 @@ ProjectsList.propTypes = {
   origin: PropTypes.oneOf(['home', 'projects']),
   showLabel: PropTypes.bool,
   showButton: PropTypes.bool,
+  // The greyed "Unfinished" row after the projects (home page only).
+  showUnfinished: PropTypes.bool,
   // Other things on the page to fade along with the parting rows.
   alsoFade: PropTypes.arrayOf(PropTypes.shape({ current: PropTypes.any }))
 };

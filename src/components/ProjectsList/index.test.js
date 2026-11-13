@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import ProjectsList from './index';
 import PROJECTS from 'components/Projects/projects';
+import UNFINISHED from 'components/Projects/unfinishedWork';
 
 function renderList(props) {
   return render(
@@ -22,9 +23,32 @@ test('each project links to its own page, named by the project alone', () => {
 });
 
 test('shows only as many as `limit`, then a button to the full page', () => {
-  renderList({ limit: 2 });
+  renderList({ limit: 2, showUnfinished: false });
   expect(screen.getAllByRole('listitem')).toHaveLength(2);
   expect(screen.getByRole('link', { name: /See all projects/ })).toHaveAttribute('href', '/projects');
+});
+
+test('the home list ends with one “Unfinished” row that goes to that section of /projects', () => {
+  renderList();
+  const row = screen.getByRole('link', { name: `Unfinished work, ${UNFINISHED.length} entries` });
+  expect(row).toHaveAttribute('href', '/projects#unfinished');
+  expect(row).toHaveTextContent(`Unfinished${UNFINISHED.length}`);
+  // After the projects, as the last row of the same list.
+  const items = screen.getAllByRole('listitem');
+  expect(items).toHaveLength(PROJECTS.length + 1);
+  expect(items[items.length - 1]).toContainElement(row);
+});
+
+test('unfinished work is not listed among the projects', () => {
+  renderList();
+  ['Milk & Honey TV', 'Virtual Guitar'].forEach((name) => {
+    expect(screen.queryByRole('link', { name })).not.toBeInTheDocument();
+  });
+});
+
+test('`showUnfinished={false}` leaves the row out (the /projects page has the section instead)', () => {
+  renderList({ showUnfinished: false });
+  expect(screen.queryByRole('link', { name: /Unfinished/ })).not.toBeInTheDocument();
 });
 
 describe('on touch screens', () => {

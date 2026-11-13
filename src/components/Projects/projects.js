@@ -1,6 +1,9 @@
 // Your projects. One object per project; the home list, the /projects list
 // and each project's page all read from here.
 //
+// Work you started and stopped (Entelect, Virtual Guitar, Milk & Honey TV, …)
+// lives in unfinishedWork.js, and shows in the "Unfinished" section instead.
+//
 // EVERY FIELD, in the order it appears on the project page:
 //
 //   id         the address: /projects/<id>
@@ -143,59 +146,6 @@ const PROJECTS = [
       { type: 'image', src: '/assets/Home/project_me_at_microsoft.webp', alt: 'At the Microsoft hackathon' }
     ],
     story: LIVING_HISTORIES_STORY,
-    draft: true
-  },
-  {
-    id: 'milk-and-honey-tv',
-    name: 'Milk & Honey TV',
-    images: ['/assets/Home/project_milk_and_honey.webp', '/assets/Home/project_milk_and_honey.webp'],
-    year: '2022 – 2023',
-    category: 'Client',
-    role: 'Full-stack developer',
-    sentence: [
-      'The company website for',
-      { img: '/assets/Home/project_milk_and_honey.webp', alt: '' },
-      'Milk & Honey TV, designed in Figma, built in React and deployed on Azure.'
-    ],
-    context: 'My role at Milk & Honey TV from September 2022 to September 2023, taking the website from design to deployment.',
-    intention: '',
-    sections: [
-      {
-        title: 'Design and technical choices',
-        text: 'Designed in Figma, built in React, and deployed on an Azure Static Web App with Blob Storage for media.'
-      }
-    ],
-    stack: ['figma', 'react', 'azure'],
-    style: { colors: [], fonts: [] },
-    video: null,
-    poster: '/assets/Home/project_milk_and_honey.webp',
-    media: [
-      { type: 'image', src: '/assets/Home/project_milk_and_honey.webp', alt: 'Milk & Honey TV website' }
-    ],
-    draft: true
-  },
-  {
-    id: 'virtual-guitar',
-    name: 'Virtual Guitar',
-    images: ['/assets/Home/project_guitar.webp', '/assets/Home/project_guitar.webp'],
-    year: '',
-    category: 'Personal',
-    role: 'Design and build',
-    sentence: [
-      'A playable guitar for the desktop',
-      { img: '/assets/Home/project_guitar.webp', alt: '' },
-      ', shortlisted for Digital Labs Africa’s 8th edition in the video games category.'
-    ],
-    context: 'A desktop guitar built in Python and C# with WPF.',
-    intention: '',
-    sections: [],
-    stack: ['python', 'csharp', 'wpf'],
-    style: { colors: [], fonts: [] },
-    video: null,
-    poster: '/assets/Home/project_guitar.webp',
-    media: [
-      { type: 'image', src: '/assets/Home/project_guitar.webp', alt: 'Virtual Guitar' }
-    ],
     draft: true
   }
 ];

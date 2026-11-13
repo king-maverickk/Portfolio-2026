@@ -82,6 +82,68 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+// The last row on the home page: "Unfinished", greyed, with a small count and
+// two pictures fanned out either side instead of one. Sizes are in em, so it
+// scales with the rows above it.
+.rowUnfinished {
+  color: #8d8d96;
+}
+
+.count {
+  display: inline-block;
+  margin: 0.25em 0 0 0.35em;
+  color: #a9a9b2;
+  font-size: 0.26em;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+  vertical-align: top;
+}
+
+.fan {
+  position: relative;
+  flex: none;
+  width: 1.2em;
+  height: 0.8em;
+}
+
+.fanPic {
+  position: absolute;
+  width: 0.9em;
+  height: 0.6em;
+  border-radius: 0.05em;
+  object-fit: cover;
+  background: #2b2b2b;
+  box-shadow: 0 0.035em 0.12em rgb(0 0 0 / 45%);
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fanLeft .fanPic:first-child { top: 0.02em; left: 0; transform: rotate(-7deg); }
+.fanLeft .fanPic:last-child { top: 0.175em; left: 0.3em; transform: rotate(5deg); }
+.fanRight .fanPic:first-child { top: 0.175em; left: 0; transform: rotate(-5deg); }
+.fanRight .fanPic:last-child { top: 0.02em; left: 0.3em; transform: rotate(7deg); }
+
+// Highlighted (see below): the fans open a little wider.
+.row:focus-visible .fanLeft .fanPic:first-child,
+.rowCentred .fanLeft .fanPic:first-child {
+  transform: rotate(-13deg) translateX(-0.08em);
+}
+
+.row:focus-visible .fanLeft .fanPic:last-child,
+.rowCentred .fanLeft .fanPic:last-child {
+  transform: rotate(10deg) translateX(0.04em);
+}
+
+.row:focus-visible .fanRight .fanPic:first-child,
+.rowCentred .fanRight .fanPic:first-child {
+  transform: rotate(-10deg) translateX(-0.04em);
+}
+
+.row:focus-visible .fanRight .fanPic:last-child,
+.rowCentred .fanRight .fanPic:last-child {
+  transform: rotate(13deg) translateX(0.08em);
+}
+
 // The highlighted row: its pictures tilt out; every other row steps back.
 // Mouse and trackpad: the row you hover. Touch screens: the row in the middle
 // of the screen (set in index.js). Keyboard: the focused row.
@@ -114,6 +176,11 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   .list:hover .row:not(:hover) {
     opacity: 0.35;
   }
+
+  .row:hover .fanLeft .fanPic:first-child { transform: rotate(-13deg) translateX(-0.08em); }
+  .row:hover .fanLeft .fanPic:last-child { transform: rotate(10deg) translateX(0.04em); }
+  .row:hover .fanRight .fanPic:first-child { transform: rotate(-10deg) translateX(-0.04em); }
+  .row:hover .fanRight .fanPic:last-child { transform: rotate(13deg) translateX(0.08em); }
 }
 
 .button {
@@ -165,12 +232,18 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
     width: 1.1em;
     height: 0.75em;
   }
+
+  // Same step down as the pictures above (its children are sized in em).
+  .fan {
+    font-size: 0.92em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .item,
   .row,
   .thumb,
+  .fanPic,
   .button,
   .buttonArrow {
     transition: none;

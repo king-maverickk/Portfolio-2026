@@ -4,6 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 
 import Projects from './index';
 import PROJECTS, { findProject } from './projects';
+import UNFINISHED from './unfinishedWork';
 
 jest.mock('components/DotGrid', () => () => null);
 
@@ -34,6 +35,40 @@ test('/projects opens like the Lab, then lists every project with its own addres
   PROJECTS.forEach((project) => {
     expect(within(list).getByRole('link', { name: project.name })).toHaveAttribute('href', `/projects/${project.id}`);
   });
+});
+
+test('/projects ends with the Unfinished section, one row per entry, Entelect open', () => {
+  renderAt('/projects');
+  const section = screen.getByRole('region', { name: 'Unfinished' });
+  expect(within(section).getAllByRole('listitem').filter((item) => item.id.startsWith('unfinished-'))).toHaveLength(UNFINISHED.length);
+  expect(within(section).getByRole('button', { name: /Entelect Challenge 2024/ })).toHaveAttribute('aria-expanded', 'true');
+  // Unfinished work is not in the big list above.
+  const list = screen.getByRole('region', { name: 'Projects' });
+  expect(within(list).queryByRole('link', { name: /Unfinished/ })).not.toBeInTheDocument();
+  expect(within(list).queryByRole('link', { name: 'Virtual Guitar' })).not.toBeInTheDocument();
+});
+
+test('/projects#unfinished lands on the Unfinished section', () => {
+  Element.prototype.scrollIntoView = jest.fn();
+  renderAt('/projects#unfinished');
+  expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
+  expect(Element.prototype.scrollIntoView.mock.instances[0]).toBe(screen.getByRole('region', { name: 'Unfinished' }));
+  delete Element.prototype.scrollIntoView;
+});
+
+test('the old pages of projects that moved to Unfinished go to their row there', () => {
+  Element.prototype.scrollIntoView = jest.fn();
+  const location = renderAt('/projects/virtual-guitar');
+  expect(location().pathname).toBe('/projects');
+  expect(location().hash).toBe('#unfinished-virtual-guitar');
+  expect(Element.prototype.scrollIntoView.mock.instances[0]).toBe(document.getElementById('unfinished-virtual-guitar'));
+  delete Element.prototype.scrollIntoView;
+});
+
+test('an address that was never a project goes back to the list', () => {
+  const location = renderAt('/projects/not-a-project');
+  expect(location().pathname).toBe('/projects');
+  expect(location().hash).toBe('');
 });
 
 test('clicking a project goes to its page', async () => {
