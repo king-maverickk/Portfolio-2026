@@ -232,26 +232,41 @@ $phone: 600px;
   }
 }
 
-// Two columns: sentence and story on the left, the shelf on the right, running
-// off the row's right edge. One column on tablets and phones, shelf last.
+// Two columns: sentence and story on the left; on the right the shelf, running
+// off the row's right edge, with the note about the README under it.
+// Tablets: one column, shelf after the words. Phones: shelf first, then the
+// words, then the note.
 .entry {
   display: grid;
+  grid-template-areas:
+    "main shelf"
+    "main note";
   grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   column-gap: 56px;
   padding: 20px 0 40px 24px;
 
   @media (max-width: $stack) {
+    grid-template-areas:
+      "main"
+      "shelf"
+      "note";
     grid-template-columns: minmax(0, 1fr);
-    row-gap: 40px;
+    grid-template-rows: auto;
     padding: 20px 24px 32px;
   }
 
   @media (max-width: $phone) {
+    grid-template-areas:
+      "shelf"
+      "main"
+      "note";
     padding: 16px 16px 28px;
   }
 }
 
 .main {
+  grid-area: main;
   display: flex;
   flex-direction: column;
   gap: 56px;
@@ -356,10 +371,13 @@ $phone: 600px;
 // --- The shelf -------------------------------------------------------------------------
 
 .shelf {
+  grid-area: shelf;
   min-width: 0;
   padding-top: 22px;
 
-  @media (max-width: $stack) { padding-top: 0; }
+  @media (max-width: $stack) { padding-top: 40px; }
+  // First thing in the entry on a phone.
+  @media (max-width: $phone) { padding: 4px 0 18px; }
 }
 
 .shelfTitle {
@@ -507,8 +525,12 @@ $phone: 600px;
 
 // The line about the README, small under the shelf.
 .disclosure {
+  grid-area: note;
   max-width: 400px;
   padding: 18px 24px 0 0;
+
+  @media (max-width: $phone) { padding-top: 28px; }
+
   color: $muted;
   font-size: 13px;
   line-height: 1.6;

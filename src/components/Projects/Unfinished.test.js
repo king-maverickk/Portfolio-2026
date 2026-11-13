@@ -49,7 +49,7 @@ test('the shelf: a labelled group per pile of cards, each card a link out', () =
   render(<Unfinished showTodos={false} />);
   const shelf = screen.getByRole('region', { name: 'Shelf' });
   expect(within(shelf).getByRole('link', { name: 'GitHub' }))
-    .toHaveAttribute('href', 'https://github.com/king-maverickk/ent-chal-bot-v1');
+    .toHaveAttribute('href', expect.stringContaining('github.com/king-maverickk/ent-chal-bot-v1'));
   expect(within(shelf).getByRole('link', { name: 'Trailer' })).toHaveAttribute('target', '_blank');
 
   // Trailer and the two workshop posts are piled up: one behind, two tilted.

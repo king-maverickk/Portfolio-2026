@@ -17,7 +17,7 @@ const SHOW_TODOS = process.env.NODE_ENV !== 'production';
 // short sections on the left, a "Shelf" of cards on the right.
 //   1024+        hint on the right of the row; entry in two columns
 //   601–1023     hint under the name; entry in one column, shelf last
-//   up to 600    year moves down beside the hint
+//   up to 600    year moves down beside the hint; shelf first, then the words
 
 // A string, a todo(), or a list of both, as inline text. Todos are skipped
 // when `showTodos` is off. Returns null when nothing is left.
@@ -114,7 +114,7 @@ const STACK_SPOTS = [styles.stackBack, styles.stackLeft, styles.stackRight];
 // The shelf: the things you can pick up and look at (notebook, trailer,
 // repo), as cards in a row that scrolls sideways. A group of three cards
 // marked `stack` is piled up: one wide card behind, two tilted in front.
-function Shelf({ shelf, disclosure, showTodos, id }) {
+function Shelf({ shelf, showTodos, id }) {
   const groups = shelf
     .map((group) => ({ ...group, cards: group.cards.filter((card) => cardIsReal(card) || showTodos) }))
     .filter((group) => group.cards.length > 0);
@@ -138,16 +138,17 @@ function Shelf({ shelf, disclosure, showTodos, id }) {
           );
         })}
       </ul>
-      {disclosure && <p className={styles.disclosure}>{disclosure}</p>}
     </section>
   );
 }
 
 Shelf.propTypes = {
-  shelf: PropTypes.array.isRequired, disclosure: PropTypes.string, showTodos: PropTypes.bool, id: PropTypes.string.isRequired
+  shelf: PropTypes.array.isRequired, showTodos: PropTypes.bool, id: PropTypes.string.isRequired
 };
 
-// A full write-up: the sentence and the story on the left, the shelf on the right.
+// A full write-up: the sentence and the story on the left, the shelf on the
+// right with the note about the README under it. On phones the shelf comes
+// first, then the words, then the note.
 function Entry({ entry, showTodos, draft, id }) {
   return (
     <div className={styles.entry}>
@@ -159,9 +160,8 @@ function Entry({ entry, showTodos, draft, id }) {
           ))}
         </div>
       </div>
-      {entry.shelf && (
-        <Shelf shelf={entry.shelf} disclosure={entry.disclosure} showTodos={showTodos} id={`${id}-shelf`} />
-      )}
+      {entry.shelf && <Shelf shelf={entry.shelf} showTodos={showTodos} id={`${id}-shelf`} />}
+      {entry.disclosure && <p className={styles.disclosure}>{entry.disclosure}</p>}
     </div>
   );
 }
