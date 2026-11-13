@@ -412,6 +412,23 @@ $phone: 600px;
   }
 }
 
+// With a mouse the row can be dragged sideways (useDragScroll in Unfinished.js).
+@media (hover: hover) and (pointer: fine) {
+  .shelfRow {
+    cursor: grab;
+    user-select: none;
+  }
+
+  .dragging {
+    cursor: grabbing;
+
+    // So the card under the mouse doesn't lift or show a hand mid-drag.
+    .card {
+      pointer-events: none;
+    }
+  }
+}
+
 .group {
   display: flex;
   flex: none;

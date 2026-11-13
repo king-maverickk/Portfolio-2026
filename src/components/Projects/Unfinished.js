@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
@@ -111,10 +111,79 @@ Card.propTypes = { card: PropTypes.object.isRequired, className: PropTypes.strin
 
 const STACK_SPOTS = [styles.stackBack, styles.stackLeft, styles.stackRight];
 
+// How far the mouse has to move before a press on the shelf counts as a drag
+// and not a click on a card.
+const DRAG_START = 6;
+
+// Lets a row that scrolls sideways be dragged with the mouse, like a phone
+// screen. (A trackpad's two-finger swipe and a touch screen already scroll it
+// on their own.) Returns the ref to put on the scrolling element.
+function useDragScroll() {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const row = ref.current;
+    if (!row) return undefined;
+    let startX = 0;
+    let startLeft = 0;
+    let dragged = false;
+
+    const onMove = (event) => {
+      const moved = event.clientX - startX;
+      if (!dragged && Math.abs(moved) < DRAG_START) return;
+      if (!dragged) {
+        dragged = true;
+        row.classList.add(styles.dragging);
+      }
+      row.scrollLeft = startLeft - moved;
+    };
+
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+      row.classList.remove(styles.dragging);
+    };
+
+    const onDown = (event) => {
+      if (event.button !== 0) return;
+      startX = event.clientX;
+      startLeft = row.scrollLeft;
+      dragged = false;
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    };
+
+    // Letting go after a drag would otherwise open the card under the mouse.
+    const onClick = (event) => {
+      if (!dragged) return;
+      dragged = false;
+      event.preventDefault();
+      event.stopPropagation();
+    };
+
+    // Stop the browser picking up a link or a picture as something to drag away.
+    const onDragStart = (event) => event.preventDefault();
+
+    row.addEventListener('mousedown', onDown);
+    row.addEventListener('click', onClick, true);
+    row.addEventListener('dragstart', onDragStart);
+    return () => {
+      row.removeEventListener('mousedown', onDown);
+      row.removeEventListener('click', onClick, true);
+      row.removeEventListener('dragstart', onDragStart);
+      onUp();
+    };
+  }, []);
+
+  return ref;
+}
+
 // The shelf: the things you can pick up and look at (notebook, trailer,
-// repo), as cards in a row that scrolls sideways. A group of three cards
-// marked `stack` is piled up: one wide card behind, two tilted in front.
+// repo), as cards in a row that scrolls sideways, by swipe, trackpad or
+// dragging with the mouse. A group of three cards marked `stack` is piled up:
+// one wide card behind, two tilted in front.
 function Shelf({ shelf, showTodos, id }) {
+  const rowRef = useDragScroll();
   const groups = shelf
     .map((group) => ({ ...group, cards: group.cards.filter((card) => cardIsReal(card) || showTodos) }))
     .filter((group) => group.cards.length > 0);
@@ -123,7 +192,7 @@ function Shelf({ shelf, showTodos, id }) {
   return (
     <section className={styles.shelf} aria-labelledby={id}>
       <h4 id={id} className={styles.shelfTitle}>Shelf</h4>
-      <ul className={styles.shelfRow}>
+      <ul ref={rowRef} className={styles.shelfRow}>
         {groups.map((group) => {
           const stacked = group.stack && group.cards.length === 3;
           return (

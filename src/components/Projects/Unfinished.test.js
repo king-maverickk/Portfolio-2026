@@ -1,5 +1,5 @@
 import React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { createEvent, fireEvent, render, screen, within } from '@testing-library/react';
 
 import Unfinished from './Unfinished';
 import UNFINISHED, { todo } from './unfinishedWork';
@@ -58,6 +58,35 @@ test('the shelf: a labelled group per pile of cards, each card a link out', () =
   expect(within(pile).getByRole('link', { name: 'Trailer' })).toHaveClass('stackBack');
   expect(within(pile).getByRole('link', { name: 'Workshop poster' })).toHaveClass('stackLeft');
   expect(within(pile).getByRole('link', { name: 'Workshop photos' })).toHaveClass('stackRight');
+});
+
+test('the shelf can be dragged sideways with the mouse, without opening a card', () => {
+  render(<Unfinished showTodos={false} />);
+  const shelf = screen.getByRole('region', { name: 'Shelf' });
+  const cards = within(shelf).getByRole('list');
+  const github = within(shelf).getByRole('link', { name: 'GitHub' });
+  const click = () => {
+    const event = createEvent.click(github);
+    fireEvent(github, event);
+    return event.defaultPrevented;
+  };
+
+  // Press on a card, pull 120px to the left, let go: the row has moved 120px
+  // and the card under the mouse does not open.
+  fireEvent.mouseDown(github, { button: 0, clientX: 300 });
+  fireEvent.mouseMove(window, { clientX: 180 });
+  expect(cards.scrollLeft).toBe(120);
+  expect(cards).toHaveClass('dragging');
+  fireEvent.mouseUp(window);
+  expect(cards).not.toHaveClass('dragging');
+  expect(click()).toBe(true);
+
+  // An ordinary click (the mouse barely moves) still opens the card.
+  fireEvent.mouseDown(github, { button: 0, clientX: 300 });
+  fireEvent.mouseMove(window, { clientX: 298 });
+  fireEvent.mouseUp(window);
+  expect(cards.scrollLeft).toBe(120);
+  expect(click()).toBe(false);
 });
 
 test('a shelf card with a picture shows the picture and keeps its name for screen readers', () => {
