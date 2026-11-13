@@ -5,6 +5,11 @@ import Unfinished from './Unfinished';
 import UNFINISHED, { todo } from './unfinishedWork';
 
 const row = (name) => screen.getByRole('heading', { level: 3, name: new RegExp(name) }).closest('li');
+// Rows start closed. Opens one and returns its <li>.
+const openRow = (name) => {
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(name) }));
+  return row(name);
+};
 
 test('one row per entry: year, name and hint, under an “Unfinished” heading', () => {
   render(<Unfinished />);
@@ -16,18 +21,23 @@ test('one row per entry: year, name and hint, under an “Unfinished” heading'
   expect(entelect).toHaveTextContent('Solo entry. Stopped five weeks in.');
 });
 
-test('rows open and close on their own; Entelect starts open', () => {
+test('every row starts closed; rows open and close on their own', () => {
   render(<Unfinished />);
+  screen.getAllByRole('button').forEach((button) => expect(button).toHaveAttribute('aria-expanded', 'false'));
   const entelect = screen.getByRole('button', { name: /Entelect Challenge 2024/ });
   const safm = screen.getByRole('button', { name: /SAfm redesign/ });
-  expect(entelect).toHaveAttribute('aria-expanded', 'true');
-  expect(safm).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.getByText(/A bot for Sproutopia/)).not.toBeVisible();
   expect(screen.getByText(/Made for my dad/)).not.toBeVisible();
+
+  fireEvent.click(entelect);
+  expect(entelect).toHaveAttribute('aria-expanded', 'true');
+  expect(screen.getByText(/A bot for Sproutopia/)).toBeVisible();
+  // Opening one leaves the others as they were.
+  expect(safm).toHaveAttribute('aria-expanded', 'false');
 
   fireEvent.click(safm);
   expect(safm).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getByText(/Made for my dad/)).toBeVisible();
-  // Opening one leaves the other as it was.
   expect(entelect).toHaveAttribute('aria-expanded', 'true');
 
   fireEvent.click(entelect);
@@ -35,9 +45,15 @@ test('rows open and close on their own; Entelect starts open', () => {
   expect(screen.getByText(/A bot for Sproutopia/)).not.toBeVisible();
 });
 
+test('a row marked `open: true` in unfinishedWork.js starts open', () => {
+  render(<Unfinished entries={[{ ...UNFINISHED[0], open: true }, UNFINISHED[1]]} />);
+  expect(screen.getByRole('button', { name: /Entelect Challenge 2024/ })).toHaveAttribute('aria-expanded', 'true');
+  expect(screen.getByRole('button', { name: /SAfm redesign/ })).toHaveAttribute('aria-expanded', 'false');
+});
+
 test('the Entelect entry: the sentence, four short sections and the shelf', () => {
   render(<Unfinished showTodos />);
-  const entry = row('Entelect Challenge 2024');
+  const entry = openRow('Entelect Challenge 2024');
   expect(within(entry).getByText(/My first programming competition/)).toBeInTheDocument();
   expect(within(entry).getAllByRole('heading', { level: 4 }).map((heading) => heading.textContent))
     .toEqual(['What it was', 'How far it got', 'Why I stopped', 'What I’d take from it', 'Shelf']);
@@ -47,6 +63,7 @@ test('the Entelect entry: the sentence, four short sections and the shelf', () =
 
 test('the shelf: a labelled group per pile of cards, each card a link out', () => {
   render(<Unfinished showTodos={false} />);
+  openRow('Entelect Challenge 2024');
   const shelf = screen.getByRole('region', { name: 'Shelf' });
   expect(within(shelf).getByRole('link', { name: 'GitHub' }))
     .toHaveAttribute('href', expect.stringContaining('github.com/king-maverickk/ent-chal-bot-v1'));
@@ -62,6 +79,7 @@ test('the shelf: a labelled group per pile of cards, each card a link out', () =
 
 test('the shelf can be dragged sideways with the mouse, without opening a card', () => {
   render(<Unfinished showTodos={false} />);
+  openRow('Entelect Challenge 2024');
   const shelf = screen.getByRole('region', { name: 'Shelf' });
   const cards = within(shelf).getByRole('list');
   const github = within(shelf).getByRole('link', { name: 'GitHub' });
@@ -155,6 +173,7 @@ describe('placeholders', () => {
   test('once a todo() is replaced with words, they show everywhere', () => {
     const entries = [{
       ...UNFINISHED[0],
+      open: true,
       entry: {
         ...UNFINISHED[0].entry,
         sections: [

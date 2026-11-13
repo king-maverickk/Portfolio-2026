@@ -16,7 +16,7 @@
 //   image     optional thumbnail (a file in public/assets/Home)
 //   onHome    1 or 2: lends its image to the fanned pictures beside
 //             "Unfinished" on the home list, in that order
-//   open      true = the row starts open
+//   open      true = the row starts open. No row has it: they all start closed.
 //   summary   a sentence or two shown when the row opens
 //   note      a todo() reminder shown under the summary (never in production)
 //   entry     the full write-up (see Entelect below). When it's set, the row
@@ -43,8 +43,7 @@ const UNFINISHED = [
     id: 'entelect-challenge-2024',
     name: 'Entelect Challenge 2024',
     year: '2024',
-    hint: 'Solo entry. Stopped five weeks in.',
-    open: true,
+    hint: 'C# Machine Learning game. Complex language, simple rules.',
     draft: true,
     entry: {
       // The highlight sentence. Words and pictures, in order. A picture with

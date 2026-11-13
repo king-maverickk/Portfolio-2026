@@ -37,11 +37,11 @@ test('/projects opens like the Lab, then lists every project with its own addres
   });
 });
 
-test('/projects ends with the Unfinished section, one row per entry, Entelect open', () => {
+test('/projects ends with the Unfinished section, one row per entry, all closed', () => {
   renderAt('/projects');
   const section = screen.getByRole('region', { name: 'Unfinished' });
   expect(within(section).getAllByRole('listitem').filter((item) => item.id.startsWith('unfinished-'))).toHaveLength(UNFINISHED.length);
-  expect(within(section).getByRole('button', { name: /Entelect Challenge 2024/ })).toHaveAttribute('aria-expanded', 'true');
+  expect(within(section).getByRole('button', { name: /Entelect Challenge 2024/ })).toHaveAttribute('aria-expanded', 'false');
   // Unfinished work is not in the big list above.
   const list = screen.getByRole('region', { name: 'Projects' });
   expect(within(list).queryByRole('link', { name: /Unfinished/ })).not.toBeInTheDocument();
