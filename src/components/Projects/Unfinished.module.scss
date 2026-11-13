@@ -1,25 +1,19 @@
-// The "Unfinished" section at the bottom of /projects. Sizes and colours are
-// from the Design canvas ("Unfinished on /projects"), at four widths:
-// 1440 (base), 1280, 768 and 390.
+// The "Unfinished" section at the bottom of /projects. The rows are from the
+// Design canvas ("Unfinished on /projects"); an open entry follows Motheo's
+// own mockup (Nov 13): sentence and story on the left, a shelf of cards on
+// the right.
 
 $text: #f2f2f5;
 $body: #e9e9ee;
 $muted: #a9a9b2;
 $row: #26262b;
 $line: #3d3d44;
-$well: #1f1f23;
 $dash: #6b6b74;
 $placeholder: #c9c9d1;
-$link: #9dbcff;
-$link-hover: #c7d9ff;
-$level-0: #2a2a30; // the commit calendar, no commits to most
-$level-1: #2b3d66;
-$level-2: #3d5a9e;
-$level-3: #5577cc;
-$level-4: #6f9bff;
+$card: #d9d9d9;     // a shelf card with no picture
+$card-ink: #1c1c20;
 $font: "Outfit", "Segoe UI", sans-serif;
 
-$laptop: 1439px; // small laptop and below
 $stack: 1023px;  // tablet and below: one column
 $phone: 600px;
 
@@ -238,12 +232,33 @@ $phone: 600px;
   }
 }
 
+// Two columns: sentence and story on the left, the shelf on the right, running
+// off the row's right edge. One column on tablets and phones, shelf last.
 .entry {
-  padding: 28px 24px 36px;
+  display: grid;
+  grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+  column-gap: 56px;
+  padding: 20px 0 40px 24px;
+
+  @media (max-width: $stack) {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 40px;
+    padding: 20px 24px 32px;
+  }
 
   @media (max-width: $phone) {
-    padding: 20px 16px 28px;
+    padding: 16px 16px 28px;
   }
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  min-width: 0;
+
+  @media (max-width: $stack) { gap: 40px; }
+  @media (max-width: $phone) { gap: 32px; }
 }
 
 .body {
@@ -276,28 +291,23 @@ $phone: 600px;
 
 // The highlight sentence, with small pictures in the line.
 .sentence {
-  max-width: 900px;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.6;
 
-  @media (max-width: $laptop) { font-size: 28px; }
-  @media (max-width: $stack) { font-size: 26px; }
-  @media (max-width: $phone) { font-size: 22px; }
+  @media (max-width: $phone) { font-size: 21px; }
 }
 
 .chip {
   display: inline-block;
-  width: 78px;
-  height: 44px;
-  margin: 0 4px;
-  border-radius: 8px;
+  width: 64px;
+  height: 36px;
+  margin: 0 3px;
+  border-radius: 7px;
   object-fit: cover;
   vertical-align: middle;
 
-  @media (max-width: $laptop) { width: 74px; height: 42px; }
-  @media (max-width: $stack) { width: 70px; height: 40px; }
-  @media (max-width: $phone) { width: 60px; height: 34px; }
+  @media (max-width: $phone) { width: 56px; height: 32px; }
 }
 
 // A picture that hasn't been added yet (dev only).
@@ -311,329 +321,211 @@ $phone: 600px;
   line-height: 1;
 }
 
-// Two columns: the story on the left; facts, links and the note on the right.
-// One column on tablets and phones, facts first and links last.
-.cols {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  grid-template-rows: auto auto auto 1fr;
-  grid-template-areas:
-    "story facts"
-    "story material"
-    "story disclosure"
-    "story .";
-  gap: 36px 64px;
-  padding-top: 48px;
-
-  @media (max-width: $laptop) {
-    column-gap: 56px;
-    padding-top: 44px;
-  }
-
-  @media (max-width: $stack) {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: none;
-    grid-template-areas:
-      "facts"
-      "story"
-      "material"
-      "disclosure";
-    gap: 40px;
-    padding-top: 40px;
-  }
-
-  @media (max-width: $phone) {
-    gap: 36px;
-    padding-top: 32px;
-  }
-}
-
-.facts {
-  grid-area: facts;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin: 0;
-
-  @media (max-width: $stack) {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 32px;
-  }
-
-  @media (max-width: $phone) {
-    display: flex;
-    gap: 12px;
-  }
-}
-
-.fact {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  dt {
-    color: $muted;
-    font-size: 14px;
-  }
-
-  dd {
-    margin: 0;
-    color: $body;
-    font-size: 17px;
-    line-height: 1.5;
-  }
-}
+// --- The story -------------------------------------------------------------------------
 
 .story {
-  grid-area: story;
   display: flex;
   flex-direction: column;
-  gap: 40px;
-  min-width: 0;
-
-  @media (max-width: $phone) { gap: 36px; }
+  gap: 20px;
 }
 
 .block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-
-  // The chart and the dated steps sit a little further apart.
-  &:has(.timeline) {
-    gap: 16px;
-  }
-}
-
-.blockTitle {
-  color: $muted;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-// --- Commit chart --------------------------------------------------------------------
-
-.timeline {
-  padding: 20px 20px 14px;
-  border-radius: 6px;
-  background: $well;
-
-  @media (max-width: $phone) { padding: 16px 16px 12px; }
-}
-
-// A commit calendar, like the one on a GitHub profile: one column per week
-// (Sunday at the top), one square per day, darker to brighter by commits.
-.calendar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 20px 40px;
-}
-
-.weeks {
-  display: flex;
-  flex-direction: column;
   gap: 6px;
 }
 
-.weekLabels {
-  display: grid;
-  grid-auto-columns: 28px;
-  grid-auto-flow: column;
-  gap: 5px;
-  padding-left: 40px;
-  color: $muted;
-  font-size: 12px;
-  white-space: nowrap;
+.blockTitle {
+  color: $text;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
 }
 
-.grid {
-  display: flex;
-  gap: 8px;
-}
-
-.dayLabels {
-  display: grid;
-  grid-template-rows: repeat(7, 28px);
-  gap: 5px;
-  width: 32px;
-  color: $muted;
-  font-size: 12px;
-  line-height: 28px;
-}
-
-.cells {
-  display: grid;
-  grid-auto-columns: 28px;
-  grid-auto-flow: column;
-  grid-template-rows: repeat(7, 28px);
-  gap: 5px;
-}
-
-.cell {
-  border-radius: 5px;
-  background: $level-0;
-}
-
-// A day worth pointing at that isn't a commit (the workshop).
-.cellMarked {
-  outline: 1px dashed $muted;
-  outline-offset: 1px;
-}
-
-.legend {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 2px;
-  color: $muted;
-  font-size: 13px;
-}
-
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.legendPeak { color: $body; }
-
-.swatch {
-  flex: none;
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  background: $level-0;
-}
-
-// After .cell and .swatch, so a level wins over their plain background.
-.cellOff { background: transparent; }
-.level1 { background: $level-1; }
-.level2 { background: $level-2; }
-.level3 { background: $level-3; }
-.level4 { background: $level-4; }
-
-.swatchMarked {
-  background: transparent;
-  outline: 1px dashed $muted;
-  outline-offset: -1px;
-}
-
-.scale {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding-top: 6px;
-}
-
-.caption {
-  padding-top: 10px;
-  color: $muted;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.step {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 20px;
-}
-
-.stepWhen {
-  flex: 0 0 132px;
+.blockBody {
   color: $muted;
   font-size: 16px;
+  line-height: 1.45;
 }
 
-.stepText {
-  flex: 1 1 320px;
-  color: $body;
-  font-size: 18px;
-  line-height: 1.5;
-
-  @media (max-width: $phone) { font-size: 17px; }
-}
-
-// --- Links out -----------------------------------------------------------------------
-
-.material {
-  grid-area: material;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-}
-
-.link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1px solid $line;
-  border-radius: 6px;
-  color: $link;
-  font-size: 17px;
-  text-decoration: none;
-  transition: border-color 200ms ease, color 200ms ease;
-
-  &:hover {
-    border-color: #55555e;
-    color: $link-hover;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $text;
-    outline-offset: 2px;
-  }
-}
-
-// A note to yourself under the links (dev only).
-.reminder {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 8px;
-  min-height: 140px;
-  padding: 24px 20px;
-  border: 2px dashed $placeholder;
-  border-radius: 6px;
+// A todo() from unfinishedWork.js. Only ever rendered in `npm start`.
+.blockTodo {
   color: $placeholder;
 }
 
-.reminderTitle {
+// --- The shelf -------------------------------------------------------------------------
+
+.shelf {
+  min-width: 0;
+  padding-top: 22px;
+
+  @media (max-width: $stack) { padding-top: 0; }
+}
+
+.shelfTitle {
   color: $text;
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+// The cards, in a row that scrolls sideways. The padding leaves room for the
+// tilted cards, the lift on hover and the focus ring, which would otherwise be
+// cut off by the scrolling box.
+.shelfRow {
+  display: flex;
+  gap: 28px;
+  margin: 0 0 0 -8px;
+  padding: 14px 24px 14px 8px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-color: $line transparent;
+  scrollbar-width: thin;
+
+  @media (max-width: $stack) {
+    margin: 0 -24px;
+    padding: 14px 24px;
+  }
+
+  @media (max-width: $phone) {
+    gap: 22px;
+    margin: 0 -16px;
+    padding: 14px 16px;
+  }
+}
+
+.group {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.groupLabel {
+  color: $text;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.cards {
+  display: flex;
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 150px;
+  height: 200px;
+  padding: 10px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: $card;
+  color: $card-ink;
+  font-size: 15px;
   line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  transform: rotate(var(--tilt, 0deg)) translateY(var(--lift, 0));
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 300ms ease;
 }
 
-.reminderText {
-  font-size: 16px;
-  line-height: 1.5;
+.cardLink:focus-visible {
+  outline: 2px solid $text;
+  outline-offset: 3px;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .cardLink:hover {
+    --lift: -6px;
+
+    box-shadow: 0 10px 24px rgb(0 0 0 / 35%);
+  }
+}
+
+.cardImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardTitle {
+  position: relative;
+}
+
+// A picture still to add (dev only).
+.cardTodo {
+  position: relative;
+  color: #55555e;
+  font-size: 11px;
+}
+
+// Three cards piled up: one wide card behind, two tilted in front.
+.stack {
+  position: relative;
+  display: block;
+  width: 190px;
+  height: 200px;
+
+  .card {
+    position: absolute;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 30%);
+  }
+}
+
+.stackBack {
+  top: 12px;
+  left: 18px;
+  width: 150px;
+  height: 84px;
+}
+
+.stackLeft {
+  --tilt: -4deg;
+
+  top: 74px;
+  left: 2px;
+  width: 88px;
+  height: 116px;
+}
+
+.stackRight {
+  --tilt: 8deg;
+
+  top: 84px;
+  left: 96px;
+  width: 90px;
+  height: 118px;
+}
+
+// The line about the README, small under the shelf.
 .disclosure {
-  grid-area: disclosure;
+  max-width: 400px;
+  padding: 18px 24px 0 0;
   color: $muted;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
 }
 
+// For the name of a card whose picture already says it.
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .link {
+  .card {
     transition: none;
   }
 }

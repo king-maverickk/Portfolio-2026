@@ -59,51 +59,64 @@ const UNFINISHED = [
         { img: null, label: 'notebook', alt: '' },
         'a notebook.'
       ],
-      facts: [
-        { label: 'When', value: '16 Jun – 23 Jul 2024' },
-        { label: 'Built for', value: 'Entelect Challenge 2024, entered solo' },
-        { label: 'Stack', value: 'C#, .NET 8, SignalR' },
-        { label: 'State', value: 'Connects, reads the board and moves. No finished strategy.' }
+      // The story: a bold title and a short paragraph each. A todo() body is
+      // yours to write; until then the whole block stays out of production.
+      sections: [
+        {
+          title: 'What it was',
+          body: 'A bot for Sproutopia, Entelect’s 2024 game. Four bots share a 50 × 50 field and claim land by drawing a trail around it and getting home before anyone cuts the trail. Each bot sees only a small square around itself. The most land when time runs out wins.'
+        },
+        {
+          title: 'How far it got',
+          body: 'Research, ML & the Git repository. 30+ commits over five weeks. The busiest day was the one after Entelect’s workshop.'
+        },
+        { title: 'Why I stopped', body: todo('YOURS: WHY I STOPPED, TWO OR THREE SENTENCES') },
+        { title: 'What I’d take from it', body: todo('YOURS: WHAT I’D TAKE FROM IT') }
       ],
-      meant: 'A bot for Sproutopia, Entelect’s 2024 game. Four bots share a 50 × 50 field and claim land by drawing a trail around it and getting home before anyone cuts the trail. Each bot sees only a small square around itself. The most land when time runs out wins.',
-      // The commit calendar. `from` = the day of the first commit, `days` =
-      // how many days later the last one was; each commit day is
-      // [day number counted from the first commit, commits that day].
-      timeline: {
-        from: '2024-06-16',
-        days: 37,
-        commits: [[0, 2], [2, 4], [10, 1], [13, 2], [19, 3], [23, 5], [24, 1], [28, 6], [29, 2], [30, 1], [34, 1], [37, 2]],
-        marker: { day: 27, label: 'Workshop, 13 Jul' },
-        peak: { day: 28, label: '6 commits, 14 Jul' },
-        caption: '30 commits over five weeks. The busiest day was the one after Entelect’s workshop.'
-      },
-      steps: [
-        { when: '16–18 Jun', text: 'Set up, and wrote the game down for myself: the cell types, what the player can see.' },
-        { when: '26 Jun – 9 Jul', text: 'Taught it to stay in bounds, keep off its own trail and score each direction.' },
-        { when: '14 Jul', text: 'Six commits. The Python experiments go and the bot is rebuilt on the 2024 code.' },
-        { when: '16–23 Jul', text: 'Measured enclosed land with the shoelace formula. A cone-shaped search of the view was left undone.' }
+      // The shelf: cards in a row that scrolls sideways. Each group has a
+      // label under it and one or more cards.
+      //   title   the words on the card (and what a screen reader says)
+      //   href    where the card goes. No href = not a link.
+      //   image   a picture that fills the card (a file in public/assets/…).
+      //           todo('…') = still to add: the card shows in `npm start`
+      //           only, unless it has an href.
+      //   stack   on a group of exactly three cards: pile them up, the first
+      //           wide and behind, the other two tilted in front.
+      shelf: [
+        {
+          label: 'Notebook notes',
+          cards: [{ title: 'Notebook', image: todo('ADD NOTEBOOK PHOTOS') }]
+        },
+        {
+          label: 'Trailer and Workshop',
+          stack: true,
+          cards: [
+            { title: 'Trailer', href: 'https://www.instagram.com/p/C4vYg27tUGZ/' },
+            { title: 'Workshop poster', href: 'https://www.instagram.com/p/C9URVyQtScE/' },
+            { title: 'Workshop photos', href: 'https://www.instagram.com/p/C9hei_vtTPa/?img_index=3' }
+          ]
+        },
+        {
+          label: 'GitHub',
+          cards: [{ title: 'GitHub', href: 'https://github.com/king-maverickk/ent-chal-bot-v1/tree/NEATBot' }]
+        },
+        {
+          label: 'The game',
+          cards: [{ title: 'Game rules', href: 'https://github.com/EntelectChallenge/2024-Sproutopia/blob/main/Sproutopia/GAMERULES.md' }]
+        },
+        {
+          label: 'Workshop notes',
+          cards: [{ title: 'Entelect’s gist', href: 'https://gist.github.com/EntelectChallenge/9bdb52a082c00dbe55c80c29cab0716f' }]
+        }
       ],
-      // Yours to write. Replace each todo() with a string.
-      why: todo('YOURS: WHY I STOPPED, TWO OR THREE SENTENCES'),
-      take: todo('YOURS: WHAT I’D TAKE FROM IT'),
-      links: [
-        { label: 'The repo, 30 commits', href: 'https://github.com/king-maverickk/ent-chal-bot-v1' },
-        { label: 'The game rules', href: 'https://github.com/EntelectChallenge/2024-Sproutopia/blob/main/Sproutopia/GAMERULES.md' },
-        { label: 'Entelect’s trailer', href: 'https://www.instagram.com/p/C4vYg27tUGZ/' },
-        { label: 'Workshop notes', href: 'https://gist.github.com/EntelectChallenge/9bdb52a082c00dbe55c80c29cab0716f' }
-      ],
-      // A reminder to yourself, shown under the links in `npm start` only.
-      reminder: {
-        title: 'ADD NOTEBOOK PAGES HERE',
-        text: 'Reminder: photograph the notebook pages where the plan was worked out, and put them here.'
-      },
+      // Shown small under the shelf, beside the link to the repo.
       disclosure: 'The README for this repo was reconstructed with an AI agent in 2026. The Developer’s Note in it is mine.'
     }
   },
   {
     id: 'safm-redesign',
     name: 'SAfm redesign',
-    year: todo('YEAR'),
+    year: 2022,
     hint: 'Built before anyone asked for it.',
     summary: 'A redesign of the SAfm radio site with a modern audio player and news layout, plus a news API behind it. Made for my dad. Never used.',
     note: todo('ENTRY NOT WRITTEN YET. IDEA: DRAG TO COMPARE AGAINST THE LIVE SITE'),

@@ -13,11 +13,11 @@ const SHOW_TODOS = process.env.NODE_ENV !== 'production';
 // The "Unfinished" section at the bottom of /projects: one collapsible row per
 // entry (year, name, a one-line hint, +). A row opens in place to its entry.
 //
-// Layout follows the Design canvas at four widths:
-//   1440+        hint on the right of the row; entry in two columns
-//   1024–1439    the same, slightly smaller type
-//   601–1023     hint under the name; entry in one column, facts first (2 × 2)
-//   up to 600    year moves down beside the hint; facts as a single list
+// An open entry follows Motheo's own mockup (Nov 13): the sentence and four
+// short sections on the left, a "Shelf" of cards on the right.
+//   1024+        hint on the right of the row; entry in two columns
+//   601–1023     hint under the name; entry in one column, shelf last
+//   up to 600    year moves down beside the hint
 
 // A string, a todo(), or a list of both, as inline text. Todos are skipped
 // when `showTodos` is off. Returns null when nothing is left.
@@ -68,175 +68,107 @@ function Sentence({ parts, showTodos, draft }) {
 
 Sentence.propTypes = { parts: PropTypes.array.isRequired, showTodos: PropTypes.bool, draft: PropTypes.bool };
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-const DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
-const dayMonth = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
-
-// 0 commits = level 0, 1 = 1, 2 = 2, 3–4 = 3, 5 or more = 4.
-const levelOf = (count) => {
-  if (!count) return 0;
-  if (count <= 2) return count;
-  return count <= 4 ? 3 : 4;
-};
-
-// Commits per day as a calendar, like the one on a GitHub profile: a column
-// per week starting on Sunday, a square per day.
-function Timeline({ timeline }) {
-  const {
-    from, days, commits, marker, peak, caption
-  } = timeline;
-  const first = Date.parse(`${from}T00:00:00Z`);
-  const lead = new Date(first).getUTCDay(); // squares before the first day, in its week
-  const counts = new Map(commits);
-  const weeks = Math.ceil((lead + days + 1) / 7);
-
-  const cells = [];
-  for (let slot = 0; slot < weeks * 7; slot += 1) {
-    const day = slot - lead;
-    const inRange = day >= 0 && day <= days;
-    const count = inRange ? counts.get(day) || 0 : 0;
-    const date = dayMonth.format(first + day * DAY_MS);
-    let title;
-    if (inRange && count) title = `${date}: ${count} ${count === 1 ? 'commit' : 'commits'}`;
-    if (inRange && marker && marker.day === day) title = marker.label;
-    cells.push(
-      <span
-        key={slot}
-        className={cn(
-          styles.cell,
-          !inRange && styles.cellOff,
-          count > 0 && styles[`level${levelOf(count)}`],
-          inRange && marker && marker.day === day && styles.cellMarked
-        )}
-        title={title}
-        data-commits={inRange ? count : undefined}
-      />
-    );
-  }
-
-  // Every other week gets its date above it.
-  const weekLabels = Array.from({ length: weeks }, (_, week) => (
-    week % 2 === 0 ? dayMonth.format(first + (week * 7 - lead) * DAY_MS) : ''
-  ));
-
-  return (
-    <figure className={styles.timeline}>
-      <div className={styles.calendar} aria-hidden="true">
-        <div className={styles.weeks}>
-          <div className={styles.weekLabels}>
-            {weekLabels.map((label, week) => <span key={week}>{label}</span>)}
-          </div>
-          <div className={styles.grid}>
-            <div className={styles.dayLabels}>
-              {DAY_LABELS.map((label, row) => <span key={row}>{label}</span>)}
-            </div>
-            <div className={styles.cells}>{cells}</div>
-          </div>
-        </div>
-
-        <div className={styles.legend}>
-          {peak && (
-            <span className={cn(styles.legendItem, styles.legendPeak)}>
-              <span className={cn(styles.swatch, styles.level4)} />
-              {peak.label}
-            </span>
-          )}
-          {marker && (
-            <span className={styles.legendItem}>
-              <span className={cn(styles.swatch, styles.swatchMarked)} />
-              {marker.label}
-            </span>
-          )}
-          <span className={styles.scale}>
-            Less
-            {[0, 1, 2, 3, 4].map((level) => (
-              <span key={level} className={cn(styles.swatch, level > 0 && styles[`level${level}`])} />
-            ))}
-            More
-          </span>
-        </div>
-      </div>
-      <figcaption className={styles.caption}>{caption}</figcaption>
-    </figure>
-  );
-}
-
-Timeline.propTypes = { timeline: PropTypes.object.isRequired };
-
-// A titled block of the story. A todo() body is a dashed box (dev only).
-function Block({ title, body, showTodos, children }) {
-  if (!children && (!body || (isTodo(body) && !showTodos))) return null;
+// A titled block of the story: a bold title and a short paragraph. A todo()
+// body is a bracketed placeholder (never in production, where the whole block
+// is left out).
+function Block({ title, body, showTodos }) {
+  if (!body || (isTodo(body) && !showTodos)) return null;
   return (
     <section className={styles.block}>
       <h4 className={styles.blockTitle}>{title}</h4>
-      {children}
-      {body && (isTodo(body)
-        ? <p className={styles.todoBox}>[{body.todo}]</p>
-        : <p className={styles.body}>{body}</p>)}
+      {isTodo(body)
+        ? <p className={cn(styles.blockBody, styles.blockTodo)}>[{body.todo}]</p>
+        : <p className={styles.blockBody}>{body}</p>}
     </section>
   );
 }
 
-Block.propTypes = {
-  title: PropTypes.string.isRequired, body: PropTypes.any, showTodos: PropTypes.bool, children: PropTypes.node
+Block.propTypes = { title: PropTypes.string.isRequired, body: PropTypes.any, showTodos: PropTypes.bool };
+
+// Is there anything to show a visitor on this card? A link or a real picture.
+const cardIsReal = (card) => Boolean(card.href) || (Boolean(card.image) && !isTodo(card.image));
+
+// One card on the shelf. With a picture, the picture fills it; without, the
+// title sits on a plain light card. With a link, the whole card is the link.
+function Card({ card, className }) {
+  const picture = card.image && !isTodo(card.image);
+  const face = (
+    <>
+      {picture && <img className={styles.cardImage} src={card.image} alt="" loading="lazy" decoding="async" />}
+      <span className={cn(styles.cardTitle, picture && styles.srOnly)}>{card.title}</span>
+      {isTodo(card.image) && <span className={styles.cardTodo}>[{card.image.todo}]</span>}
+    </>
+  );
+  if (!card.href) return <span className={cn(styles.card, className)}>{face}</span>;
+  return (
+    <a className={cn(styles.card, styles.cardLink, className)} href={card.href} target="_blank" rel="noreferrer">
+      {face}
+    </a>
+  );
+}
+
+Card.propTypes = { card: PropTypes.object.isRequired, className: PropTypes.string };
+
+const STACK_SPOTS = [styles.stackBack, styles.stackLeft, styles.stackRight];
+
+// The shelf: the things you can pick up and look at (notebook, trailer,
+// repo), as cards in a row that scrolls sideways. A group of three cards
+// marked `stack` is piled up: one wide card behind, two tilted in front.
+function Shelf({ shelf, disclosure, showTodos, id }) {
+  const groups = shelf
+    .map((group) => ({ ...group, cards: group.cards.filter((card) => cardIsReal(card) || showTodos) }))
+    .filter((group) => group.cards.length > 0);
+  if (!groups.length) return null;
+
+  return (
+    <section className={styles.shelf} aria-labelledby={id}>
+      <h4 id={id} className={styles.shelfTitle}>Shelf</h4>
+      <ul className={styles.shelfRow}>
+        {groups.map((group) => {
+          const stacked = group.stack && group.cards.length === 3;
+          return (
+            <li key={group.label} className={styles.group}>
+              <div className={cn(styles.cards, stacked && styles.stack)}>
+                {group.cards.map((card, index) => (
+                  <Card key={card.title} card={card} className={stacked ? STACK_SPOTS[index] : undefined} />
+                ))}
+              </div>
+              <p className={styles.groupLabel}>{group.label}</p>
+            </li>
+          );
+        })}
+      </ul>
+      {disclosure && <p className={styles.disclosure}>{disclosure}</p>}
+    </section>
+  );
+}
+
+Shelf.propTypes = {
+  shelf: PropTypes.array.isRequired, disclosure: PropTypes.string, showTodos: PropTypes.bool, id: PropTypes.string.isRequired
 };
 
-// A full write-up: sentence, facts, the story, links out.
-function Entry({ entry, showTodos, draft }) {
+// A full write-up: the sentence and the story on the left, the shelf on the right.
+function Entry({ entry, showTodos, draft, id }) {
   return (
     <div className={styles.entry}>
-      <Sentence parts={entry.sentence} showTodos={showTodos} draft={draft} />
-
-      <div className={styles.cols}>
-        <dl className={styles.facts}>
-          {entry.facts.map((fact) => (
-            <div key={fact.label} className={styles.fact}>
-              <dt>{fact.label}</dt>
-              <dd>{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
-
+      <div className={styles.main}>
+        <Sentence parts={entry.sentence} showTodos={showTodos} draft={draft} />
         <div className={styles.story}>
-          <Block title="What it was meant to be" body={entry.meant} showTodos={showTodos} />
-          <Block title="How far it got">
-            {entry.timeline && <Timeline timeline={entry.timeline} />}
-            <ol className={styles.steps}>
-              {entry.steps.map((step) => (
-                <li key={step.when} className={styles.step}>
-                  <span className={styles.stepWhen}>{step.when}</span>
-                  <span className={styles.stepText}>{step.text}</span>
-                </li>
-              ))}
-            </ol>
-          </Block>
-          <Block title="Why I stopped" body={entry.why} showTodos={showTodos} />
-          <Block title="What I’d take from it" body={entry.take} showTodos={showTodos} />
-        </div>
-
-        <section className={styles.material}>
-          <h4 className={styles.blockTitle}>Open the material</h4>
-          {entry.links.map((link) => (
-            <a key={link.href} className={styles.link} href={link.href} target="_blank" rel="noreferrer">
-              {link.label}
-              <span aria-hidden="true">↗</span>
-            </a>
+          {entry.sections.map((section) => (
+            <Block key={section.title} title={section.title} body={section.body} showTodos={showTodos} />
           ))}
-          {showTodos && entry.reminder && (
-            <div className={styles.reminder}>
-              <span className={styles.reminderTitle}>[{entry.reminder.title}]</span>
-              <span className={styles.reminderText}>{entry.reminder.text}</span>
-            </div>
-          )}
-        </section>
-
-        {entry.disclosure && <p className={styles.disclosure}>{entry.disclosure}</p>}
+        </div>
       </div>
+      {entry.shelf && (
+        <Shelf shelf={entry.shelf} disclosure={entry.disclosure} showTodos={showTodos} id={`${id}-shelf`} />
+      )}
     </div>
   );
 }
 
-Entry.propTypes = { entry: PropTypes.object.isRequired, showTodos: PropTypes.bool, draft: PropTypes.bool };
+Entry.propTypes = {
+  entry: PropTypes.object.isRequired, showTodos: PropTypes.bool, draft: PropTypes.bool, id: PropTypes.string.isRequired
+};
 
 const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTodos = SHOW_TODOS }, ref) {
   const [open, setOpen] = useState(() => entries.filter((entry) => entry.open).map((entry) => entry.id));
@@ -294,7 +226,7 @@ const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTo
               {canOpen && (
                 <div id={panelId} className={styles.panel} hidden={!isOpen}>
                   {entry.entry ? (
-                    <Entry entry={entry.entry} showTodos={showTodos} draft={entry.draft} />
+                    <Entry entry={entry.entry} showTodos={showTodos} draft={entry.draft} id={`unfinished-${entry.id}`} />
                   ) : (
                     <div className={styles.stub}>
                       {entry.summary && <p className={styles.body}>{entry.summary}</p>}

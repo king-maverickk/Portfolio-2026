@@ -35,40 +35,51 @@ test('rows open and close on their own; Entelect starts open', () => {
   expect(screen.getByText(/A bot for Sproutopia/)).not.toBeVisible();
 });
 
-test('the Entelect entry: sentence, facts, the story, the chart and links out', () => {
-  render(<Unfinished />);
+test('the Entelect entry: the sentence, four short sections and the shelf', () => {
+  render(<Unfinished showTodos />);
   const entry = row('Entelect Challenge 2024');
   expect(within(entry).getByText(/My first programming competition/)).toBeInTheDocument();
-  expect(within(entry).getByText('Stack').closest('div')).toHaveTextContent('C#, .NET 8, SignalR');
-  expect(within(entry).getByRole('heading', { level: 4, name: 'How far it got' })).toBeInTheDocument();
-  expect(within(entry).getByText(/30 commits over five weeks/)).toBeInTheDocument();
-  expect(within(entry).getByRole('link', { name: /The repo, 30 commits/ }))
-    .toHaveAttribute('href', 'https://github.com/king-maverickk/ent-chal-bot-v1');
+  expect(within(entry).getAllByRole('heading', { level: 4 }).map((heading) => heading.textContent))
+    .toEqual(['What it was', 'How far it got', 'Why I stopped', 'What I’d take from it', 'Shelf']);
+  expect(within(entry).getByText(/30\+ commits over five weeks/)).toBeInTheDocument();
   expect(within(entry).getByText(/reconstructed with an AI agent/)).toBeInTheDocument();
 });
 
-test('the commit calendar: a square per day, the busiest day and the workshop marked', () => {
-  const { container } = render(<Unfinished />);
-  const days = [...container.querySelectorAll('[data-commits]')];
-  // 16 Jun to 23 Jul 2024, both ends included.
-  expect(days).toHaveLength(38);
-  expect(days.reduce((sum, day) => sum + Number(day.dataset.commits), 0)).toBe(30);
-  // Six whole weeks of squares, Sunday first; the days after the last commit are blank.
-  expect(container.querySelectorAll('figure .cell')).toHaveLength(42);
-  expect(container.querySelectorAll('figure .cellOff')).toHaveLength(4);
-  expect(container.querySelector('[title="14 Jul: 6 commits"]')).toHaveClass('level4');
-  expect(container.querySelector('[title="26 Jun: 1 commit"]')).toHaveClass('level1');
-  expect(container.querySelector('[title="Workshop, 13 Jul"]')).toHaveClass('cellMarked');
-  expect(screen.getByText('6 commits, 14 Jul')).toBeInTheDocument();
+test('the shelf: a labelled group per pile of cards, each card a link out', () => {
+  render(<Unfinished showTodos={false} />);
+  const shelf = screen.getByRole('region', { name: 'Shelf' });
+  expect(within(shelf).getByRole('link', { name: 'GitHub' }))
+    .toHaveAttribute('href', 'https://github.com/king-maverickk/ent-chal-bot-v1');
+  expect(within(shelf).getByRole('link', { name: 'Trailer' })).toHaveAttribute('target', '_blank');
+
+  // Trailer and the two workshop posts are piled up: one behind, two tilted.
+  const pile = within(shelf).getByText('Trailer and Workshop').closest('li');
+  expect(within(pile).getAllByRole('link')).toHaveLength(3);
+  expect(within(pile).getByRole('link', { name: 'Trailer' })).toHaveClass('stackBack');
+  expect(within(pile).getByRole('link', { name: 'Workshop poster' })).toHaveClass('stackLeft');
+  expect(within(pile).getByRole('link', { name: 'Workshop photos' })).toHaveClass('stackRight');
+});
+
+test('a shelf card with a picture shows the picture and keeps its name for screen readers', () => {
+  const entries = [{
+    ...UNFINISHED[0],
+    entry: {
+      ...UNFINISHED[0].entry,
+      shelf: [{ label: 'Notebook notes', cards: [{ title: 'Notebook', image: '/assets/notebook.jpg' }] }]
+    }
+  }];
+  const { container } = render(<Unfinished entries={entries} showTodos={false} />);
+  expect(container.querySelector('img[src="/assets/notebook.jpg"]')).toBeInTheDocument();
+  expect(screen.getByText('Notebook')).toHaveClass('srOnly');
 });
 
 describe('placeholders', () => {
   test('while developing: todo()s, reminders, picture chips and draft tags are shown', () => {
     const { container } = render(<Unfinished showTodos />);
     expect(screen.getByText('[YOURS: WHY I STOPPED, TWO OR THREE SENTENCES]')).toBeInTheDocument();
-    expect(screen.getByText('[ADD NOTEBOOK PAGES HERE]')).toBeInTheDocument();
-    expect(row('Milk & Honey TV')).toHaveTextContent('[WHY IT STOPPED]');
-    expect(row('SAfm redesign')).toHaveTextContent('[YEAR]');
+    // The notebook card has no photos yet: it shows as a reminder, not as a link.
+    expect(screen.getByText('[ADD NOTEBOOK PHOTOS]')).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Notebook/ })).not.toBeInTheDocument();
     expect(screen.getByText('console')).toBeInTheDocument();
     expect(container.querySelectorAll('[data-draft]').length).toBeGreaterThan(0);
   });
@@ -83,23 +94,45 @@ describe('placeholders', () => {
     expect(container.querySelector('[data-draft]')).toBeNull();
     expect(screen.queryByText('console')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Why I stopped' })).not.toBeInTheDocument();
+    // A card with no link and no picture yet is left off the shelf, and so is its group.
+    expect(screen.queryByText('Notebook notes')).not.toBeInTheDocument();
     // The sentence still reads as one sentence without its pictures.
     expect(screen.getByText(/five weeks teaching a C# bot to claim land on a field/)).toBeInTheDocument();
   });
 
+  // These use their own rows, so filling in a year or a hint in
+  // unfinishedWork.js never breaks them.
+  const GAPS = [
+    { id: 'gaps', name: 'Row with gaps', year: todo('YEAR'), hint: ['Made for a friend.', todo('WHY IT STOPPED')] },
+    { id: 'summary', name: 'Row with a summary', year: 2023, hint: 'A hint.', summary: 'A sentence.' }
+  ];
+
+  test('while developing: a missing year or hint shows in [BRACKETS]', () => {
+    render(<Unfinished entries={GAPS} showTodos />);
+    expect(row('Row with gaps')).toHaveTextContent('[YEAR]');
+    expect(row('Row with gaps')).toHaveTextContent('Made for a friend. [WHY IT STOPPED]');
+  });
+
   test('in the production build: a row with nothing to open is a plain line', () => {
-    render(<Unfinished showTodos={false} />);
-    const milk = row('Milk & Honey TV');
-    expect(within(milk).queryByRole('button')).not.toBeInTheDocument();
-    expect(milk).toHaveTextContent('2024');
-    // A row with a summary still opens.
-    expect(within(row('Virtual Guitar')).getByRole('button')).toBeInTheDocument();
+    render(<Unfinished entries={GAPS} showTodos={false} />);
+    const gaps = row('Row with gaps');
+    expect(within(gaps).queryByRole('button')).not.toBeInTheDocument();
+    expect(gaps).toHaveTextContent('Made for a friend.');
+    expect(gaps).not.toHaveTextContent('[');
+    // A row with a summary still opens; a year typed as a number shows too.
+    expect(within(row('Row with a summary')).getByRole('button')).toHaveTextContent('2023');
   });
 
   test('once a todo() is replaced with words, they show everywhere', () => {
     const entries = [{
       ...UNFINISHED[0],
-      entry: { ...UNFINISHED[0].entry, why: 'I had nobody to check my thinking against.', take: todo('LATER') }
+      entry: {
+        ...UNFINISHED[0].entry,
+        sections: [
+          { title: 'Why I stopped', body: 'I had nobody to check my thinking against.' },
+          { title: 'What I’d take from it', body: todo('LATER') }
+        ]
+      }
     }];
     render(<Unfinished entries={entries} showTodos={false} />);
     expect(screen.getByRole('heading', { name: 'Why I stopped' })).toBeInTheDocument();
