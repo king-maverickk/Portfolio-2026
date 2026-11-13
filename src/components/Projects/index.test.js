@@ -37,6 +37,29 @@ test('/projects opens like the Lab, then lists every project with its own addres
   });
 });
 
+test('/projects opens at the top, wherever the page before was scrolled to', () => {
+  renderAt('/projects');
+  expect(window.scrollTo).toHaveBeenCalledWith(0, 0);
+});
+
+test('/projects#unfinished goes to the Unfinished section instead of the top', () => {
+  Element.prototype.scrollIntoView = jest.fn();
+  renderAt('/projects#unfinished');
+  expect(window.scrollTo).not.toHaveBeenCalledWith(0, 0);
+  expect(Element.prototype.scrollIntoView.mock.instances[0]).toBe(document.getElementById('unfinished'));
+  delete Element.prototype.scrollIntoView;
+});
+
+test('coming back from a project, the list keeps its place instead of jumping to the top', () => {
+  const [project] = PROJECTS;
+  const at = Date.now();
+  window.sessionStorage.setItem('projects:return', JSON.stringify({ origin: 'projects', id: project.id, y: 1234, at }));
+  window.sessionStorage.setItem('projects:heading', JSON.stringify({ id: project.id, rect: { left: 0, top: 0, width: 10, height: 10 }, at }));
+  renderAt('/projects');
+  expect(window.scrollTo).toHaveBeenCalledWith(0, 1234);
+  expect(window.scrollTo).not.toHaveBeenCalledWith(0, 0);
+});
+
 test('/projects ends with the Unfinished section, one row per entry, all closed', () => {
   renderAt('/projects');
   const section = screen.getByRole('region', { name: 'Unfinished' });

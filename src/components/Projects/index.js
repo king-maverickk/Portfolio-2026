@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, Redirect, useLocation, useParams } from 'react-router-dom';
 
 import DotGrid from 'components/DotGrid';
 import ProjectsList from 'components/ProjectsList';
 import ProjectDetail from './ProjectDetail';
 import Unfinished from './Unfinished';
+import { peekReturn } from './transition';
 import PROJECTS, { findProject } from './projects';
 import UNFINISHED from './unfinishedWork';
 import styles from './index.module.scss';
@@ -30,6 +31,23 @@ function ProjectIndex() {
   const headerRef = useRef(null);
   const unfinishedRef = useRef(null);
   const { hash } = useLocation();
+
+  // Is someone coming back from one of the projects? Then the list puts the
+  // scroll back where it was. Read once, before the list clears the note.
+  const [returning] = useState(() => {
+    const note = peekReturn('projects');
+    return Boolean(note && PROJECTS.some((project) => project.id === note.id));
+  });
+
+  // Anyone else arriving (a link, the address bar, back/forward) starts at the
+  // top. Without this, the page kept the scroll of the page before it: from
+  // the home page's "See all projects" that is far down, so it landed on
+  // Unfinished. (#unfinished… links are handled just below.)
+  useLayoutEffect(() => {
+    if (!returning && !hash.startsWith('#unfinished')) window.scrollTo(0, 0);
+    // Only on arrival.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const previousTitle = document.title;
