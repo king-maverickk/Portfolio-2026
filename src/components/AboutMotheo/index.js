@@ -126,8 +126,8 @@ function AboutMotheo({
                 I speak six{' '}
                 <InlineImg ratio={1.2} src={`/assets/Home/about_speech_bubble.png`} after=",">languages</InlineImg> plus{' '}
                 <InlineImg ratio={1} src={`assets/Home/about_design_wheel.png`}>design</InlineImg> and{' '}
-                <InlineImg ratio={1.5} src={`assets/Home/about_code_chip.png`} after=".">code</InlineImg> Based in Hamilton, I
-                design websites and build them too.
+                <InlineImg ratio={1.5} src={`assets/Home/about_code_chip.png`} after=".">code</InlineImg> Based in Hamilton, ON, I
+                design for the web and build on branding strategies.
               </HoverWords>
           </p>
           <p className={styles.statement}>
