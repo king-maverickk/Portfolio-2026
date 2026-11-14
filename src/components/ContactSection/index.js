@@ -4,7 +4,7 @@ import cn from 'classnames';
 
 import SentenceForm from 'components/SentenceForm';
 import { CONTACT } from 'components/HowIllDeliver/content/copy';
-import { CONTACT_EVENT } from './contactEvents';
+import { CONTACT_EVENT, takeContactRequest } from './contactEvents';
 import { CONTACT_SECTION, kindFor } from './copy';
 import styles from './index.module.scss';
 
@@ -33,6 +33,7 @@ function ContactSection({ className }) {
     let focusTimer;
 
     const onStart = (event) => {
+      takeContactRequest();
       const reason = event.detail?.reason;
       if (reason) {
         setDefaults({ reason });
@@ -46,6 +47,11 @@ function ContactSection({ className }) {
         document.getElementById('contact-name')?.focus({ preventScroll: true });
       }, reduced ? 0 : 700);
     };
+
+    // Asked for from another page (the site header's "Contact")? It was
+    // waiting for this section to arrive.
+    const waiting = takeContactRequest();
+    if (waiting) onStart({ detail: waiting });
 
     window.addEventListener(CONTACT_EVENT, onStart);
     return () => {

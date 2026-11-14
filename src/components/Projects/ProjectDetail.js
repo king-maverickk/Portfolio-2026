@@ -248,6 +248,15 @@ function ProjectDetail({ project }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Tells the site header the slim bar is out, so its two corner buttons move
+  // up to sit inside it (see SiteHeader/index.module.scss).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (compact) root.setAttribute('data-slim-bar', '');
+    else root.removeAttribute('data-slim-bar');
+    return () => root.removeAttribute('data-slim-bar');
+  }, [compact]);
+
   // Whichever heading you can see is the one that glides home.
   const visibleHeading = () => (compact ? barRowRef.current : headingRowRef.current);
 
@@ -308,14 +317,13 @@ function ProjectDetail({ project }) {
     >
       <DotGrid color="255, 255, 255" />
 
-      <nav ref={topBarRef} className={styles.topBar} aria-label="Site">
+      <nav ref={topBarRef} className={styles.topBar} aria-label="Back">
         <Link className={styles.back} to="/projects" onClick={close}>
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M15 6 9 12l6 6" />
           </svg>
           All projects
         </Link>
-        <span className={styles.byline}>motheo moleko</span>
       </nav>
 
       {/* The slim bar that follows you down (a copy of the heading). */}

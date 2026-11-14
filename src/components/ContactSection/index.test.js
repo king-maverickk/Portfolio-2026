@@ -118,6 +118,18 @@ test('a sheet’s button scrolls here with its answer already picked', () => {
   expect(screen.getByRole('group', { name: 'Budget' })).toBeInTheDocument();
 });
 
+test('asked for from another page, it answers as soon as it arrives', () => {
+  // The site header's "Contact", pressed on /lab: the request is made before
+  // the home page (and this section) exists.
+  startContact();
+  render(<ContactSection />);
+  expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(1);
+
+  // ...and only once.
+  render(<ContactSection />);
+  expect(Element.prototype.scrollIntoView).toHaveBeenCalledTimes(1);
+});
+
 test('shows the ways to reach you', () => {
   render(<ContactSection />);
   expect(screen.getByRole('link', { name: CONTACT.email })).toHaveAttribute('href', `mailto:${CONTACT.email}`);

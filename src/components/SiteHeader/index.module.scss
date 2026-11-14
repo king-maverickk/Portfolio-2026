@@ -1,0 +1,593 @@
+// The site header: mark and name top left, two corner buttons top right, and
+// the menu they open. Your cut-corner shape is the mark, and every box here
+// has the same cut corners (the `chamfer` mixin below).
+
+$page: #1c1c20;
+$card: #26262b;
+$button: #2b2b2f;
+$line: #3d3d44;
+$blue: #2864e8;
+$text: #f2f2f5;
+$soft: #c9c9d1;
+$muted: #a9a9b2;
+$quiet: #8d8d96;
+$font: "Outfit", "Segoe UI", sans-serif;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+// Below this the open menu is one column.
+$one-column: 1100px;
+// Below this the header sits closer to the top edge.
+$small: 700px;
+
+// Cuts the four corners off a box. `$cut` is how far in each cut starts.
+@mixin chamfer($cut) {
+  clip-path: polygon(
+    #{$cut} 0,
+    calc(100% - #{$cut}) 0,
+    100% #{$cut},
+    100% calc(100% - #{$cut}),
+    calc(100% - #{$cut}) 100%,
+    #{$cut} 100%,
+    0 calc(100% - #{$cut}),
+    0 #{$cut}
+  );
+}
+
+// The cut corners would cut an outline off too, so the focus ring is drawn
+// just inside the box.
+@mixin focus-ring($inset, $color: $text) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: -$inset;
+  }
+}
+
+// The same left and right edges as the pages: their side padding, and their
+// 1400px column on very wide screens.
+@mixin edges {
+  --site-edge: max(clamp(16px, 5.5vw, 80px), calc((100vw - 1400px) / 2));
+  --site-top: 26px;
+
+  @media (max-width: $small) {
+    --site-top: 14px;
+  }
+}
+
+// --- Closed: the mark and the two buttons -----------------------------------------
+
+.header {
+  @include edges;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1200;
+  height: 0;
+  font-family: $font;
+}
+
+.mark {
+  position: absolute;
+  top: var(--site-top);
+  left: var(--site-edge);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  color: $text;
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: none;
+
+  svg {
+    flex: none;
+    transition: transform 320ms $ease;
+  }
+
+  &:hover svg {
+    transform: rotate(90deg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 6px;
+  }
+}
+
+.buttons {
+  position: fixed;
+  top: var(--site-top);
+  right: var(--site-edge);
+  display: flex;
+  gap: 8px;
+  transition: top 320ms $ease;
+}
+
+// On a project page a slim bar slides down from the top once you scroll.
+// The buttons move up to sit inside it.
+:global(html[data-slim-bar]) .buttons {
+  top: 8px;
+}
+
+.corner,
+.close {
+  @include chamfer(8px);
+  @include focus-ring(5px);
+
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: $button;
+  color: $text;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+
+  &:hover {
+    background: #3a3a40;
+  }
+}
+
+.dots {
+  display: flex;
+  gap: 4px;
+}
+
+// --- Open -------------------------------------------------------------------------
+
+.overlay {
+  @include edges;
+
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: $text;
+  font-family: $font;
+}
+
+.dim {
+  position: fixed;
+  inset: 0;
+  background: rgb(12 12 15 / 72%);
+  animation: dim-in 200ms ease both;
+}
+
+// Clicks between the boxes fall through to the dimmed page (which closes).
+.layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 728px) clamp(400px, 35.4vw, 510px);
+  gap: 24px;
+  align-items: start;
+  justify-content: space-between;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: var(--site-top) var(--site-edge);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+// --- The three cards and "Let's talk" ----------------------------------------------
+
+.audiences {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.card {
+  @include chamfer(16px);
+  @include focus-ring(10px);
+
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  // Three cards, the bar under them and the gaps fill a 900px-tall window;
+  // a shorter window gets shorter cards.
+  height: 236px;
+  height: clamp(164px, calc((100svh - 2 * var(--site-top) - 64px - 36px) / 3), 236px);
+  padding: 22px 22px 22px 26px;
+  border: 0;
+  background: $card;
+  color: $text;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+  animation: rise-in 420ms $ease both;
+  animation-delay: calc(var(--card-index) * 45ms);
+
+  &:hover {
+    background: #2d2d33;
+  }
+}
+
+.cardWords {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.cardTop {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardTitle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  svg {
+    flex: none;
+  }
+}
+
+.cardLeadsTo {
+  font-weight: 500;
+}
+
+.cardText {
+  max-width: 300px;
+  color: $soft;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.cardTag {
+  color: var(--card-color);
+  font-size: 15px;
+}
+
+// The coloured square: as tall as the card's inside.
+.cardTile {
+  @include chamfer(20px);
+
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  aspect-ratio: 1;
+  background: var(--card-color);
+  color: $page;
+}
+
+.cardTileArrow {
+  width: 37.5%;
+  height: 37.5%;
+  stroke-width: 1.4;
+  transition: transform 320ms $ease;
+}
+
+.card:hover .cardTileArrow,
+.card:focus-visible .cardTileArrow {
+  transform: translate(8%, -8%);
+}
+
+.talk {
+  @include chamfer(12px);
+  @include focus-ring(7px, #fff);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 64px;
+  padding: 0 26px;
+  background: $blue;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+  animation: rise-in 420ms $ease both;
+  animation-delay: calc(var(--card-index) * 45ms);
+
+  svg {
+    transition: transform 320ms $ease;
+  }
+
+  &:hover {
+    background: #3a74f0;
+  }
+
+  &:hover svg {
+    transform: translateX(6px);
+  }
+}
+
+// --- The menu ---------------------------------------------------------------------
+
+.panel {
+  @include chamfer(16px);
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  // Top to bottom of the window, less the gap above and below.
+  min-height: calc(100vh - 2 * var(--site-top));
+  min-height: calc(100svh - 2 * var(--site-top));
+  padding: 14px 40px 36px;
+  background: $card;
+  animation: slide-in 420ms $ease both;
+}
+
+.panelLabel {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 48px;
+  margin: 0 0 0 -14px;
+  color: $muted;
+  font-size: 15px;
+}
+
+// Sits in the menu's top right corner. (Outside the menu's box in the page,
+// so that on small screens it can stay put while the menu scrolls.)
+.close {
+  position: absolute;
+  top: calc(var(--site-top) + 14px);
+  right: calc(var(--site-edge) + 14px);
+  background: transparent;
+  animation: dim-in 300ms ease 120ms both;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding-top: 18px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.22em 0 0.25em;
+  border-bottom: 1px solid $line;
+  color: $quiet;
+  // 64px in a 900px-tall window; smaller in a shorter one so all five fit.
+  font-size: 64px;
+  font-size: clamp(40px, 7.1svh, 64px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  text-decoration: none;
+  transition: color 200ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: $text;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: -2px;
+  }
+}
+
+.navLinkCurrent {
+  color: $text;
+}
+
+.navArrow {
+  flex: none;
+  transition: transform 320ms $ease;
+}
+
+.navLink:not(.navLinkCurrent):hover .navArrow {
+  transform: translateX(6px);
+}
+
+.elsewhere {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  margin-top: auto;
+  padding-top: 32px;
+}
+
+.elsewhereLabel {
+  margin: 0;
+  padding-bottom: 14px;
+  color: $muted;
+  font-size: 15px;
+}
+
+.elsewhereLink {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  color: $text;
+  font-size: 17px;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $text;
+    outline-offset: 3px;
+  }
+}
+
+// --- A short window (a small laptop): tighter cards --------------------------------
+
+@media (min-width: #{$one-column + 1px}) and (max-height: 780px) {
+  .card {
+    gap: 20px;
+    padding: 18px 18px 18px 22px;
+  }
+
+  .cardTop {
+    gap: 6px;
+  }
+
+  .cardTitle {
+    font-size: 20px;
+  }
+
+  .cardText {
+    font-size: 14.5px;
+    line-height: 1.4;
+  }
+
+  .cardTag {
+    font-size: 14px;
+  }
+
+  .talk {
+    height: 56px;
+  }
+
+  .panel {
+    padding-bottom: 24px;
+  }
+
+  .elsewhere {
+    padding-top: 16px;
+  }
+
+  .elsewhereLabel {
+    padding-bottom: 6px;
+  }
+}
+
+// --- Tablets and phones: one column -----------------------------------------------
+// It starts with the half whose button you pressed. The close button stays in
+// the top right corner, where the two buttons were.
+
+@media (max-width: $one-column) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding-top: calc(var(--site-top) + 48px + 12px);
+    padding-bottom: 24px;
+  }
+
+  .overlay[data-first="menu"] .panel {
+    order: -1;
+  }
+
+  .panel {
+    min-height: 0;
+    padding: 6px 28px 28px;
+  }
+
+  .panelLabel {
+    margin-left: -6px;
+  }
+
+  .close {
+    position: fixed;
+    top: var(--site-top);
+    right: var(--site-edge);
+    background: $button;
+  }
+
+  .nav {
+    padding-top: 6px;
+  }
+
+  .navLink {
+    font-size: clamp(40px, 11vw, 64px);
+  }
+
+  .card {
+    height: auto;
+    min-height: 168px;
+  }
+
+  .cardTile {
+    align-self: flex-start;
+    width: clamp(96px, 22vw, 168px);
+    height: auto;
+  }
+}
+
+@media (max-width: $small) {
+  .card {
+    gap: 14px;
+    padding: 18px 16px 18px 20px;
+  }
+
+  .cardTitle {
+    font-size: 20px;
+  }
+
+  .cardText {
+    font-size: 15px;
+  }
+
+  .cardTile {
+    @include chamfer(12px);
+  }
+
+  .panel {
+    padding: 4px 20px 22px;
+  }
+}
+
+@keyframes dim-in {
+  from { opacity: 0; }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dim,
+  .card,
+  .talk,
+  .panel,
+  .close {
+    animation: none;
+  }
+
+  .buttons,
+  .mark svg,
+  .cardTileArrow,
+  .navArrow,
+  .talk svg {
+    transition: none;
+  }
+}

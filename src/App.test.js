@@ -16,5 +16,12 @@ test('/lab opens the Lab page', async () => {
   window.history.pushState({}, '', '/lab');
   render(<App />);
   expect(await screen.findByRole('heading', { level: 1, name: 'Lab' })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+});
+
+test('every page has the site header: the mark goes home, and the menu button is there', async () => {
+  window.history.pushState({}, '', '/lab');
+  render(<App />);
+  await screen.findByRole('heading', { level: 1, name: 'Lab' });
+  expect(screen.getByRole('link', { name: 'motheo moleko, home' })).toHaveAttribute('href', '/');
+  expect(screen.getByRole('button', { name: 'Open the menu' })).toBeInTheDocument();
 });

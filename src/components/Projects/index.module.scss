@@ -13,7 +13,8 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 .page {
   position: relative;
   min-height: 100svh;
-  padding: 0 clamp(16px, 5.5%, 80px) 120px;
+  // The top leaves room for the site header (the mark and the corner buttons).
+  padding: 74px clamp(16px, 5.5%, 80px) 120px;
   color: $text;
   font-family: $font;
 
@@ -22,62 +23,6 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     z-index: 1;
   }
-}
-
-// --- Top bar ---------------------------------------------------------------------
-
-.topBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 18px 0;
-}
-
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 38px;
-  padding: 0 16px 0 10px;
-  border-radius: 999px;
-  background: rgb(43 43 43 / 85%);
-  color: $text;
-  font-size: 0.95rem;
-  text-decoration: none;
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  transition: background-color 200ms ease, transform 200ms $ease;
-
-  svg {
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.75;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: transform 200ms $ease;
-  }
-
-  &:hover {
-    background: $card;
-  }
-
-  &:hover svg {
-    transform: translateX(-2px);
-  }
-
-  &:focus-visible {
-    outline: 2px solid $text;
-    outline-offset: 2px;
-  }
-}
-
-.byline {
-  color: $muted;
-  font-size: 0.95rem;
 }
 
 // --- Header ----------------------------------------------------------------------
@@ -118,11 +63,4 @@ $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   font-size: 0.68rem;
   letter-spacing: 0.06em;
   vertical-align: middle;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .back,
-  .back svg {
-    transition: none;
-  }
 }

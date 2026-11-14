@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Home from './components/Home';
+import SiteHeader from './components/SiteHeader';
 import AOS from 'aos';
 import { isMobile } from 'react-device-detect';
 
@@ -24,6 +25,8 @@ function App() {
 
   return (
     <Router basename={process.env.BASE_PATH}>
+      {/* On every page: the mark, the two corner buttons and the menu. */}
+      <SiteHeader />
       <Suspense fallback={null}>
         <Switch>
           <Route exact path="/" component={Home} />

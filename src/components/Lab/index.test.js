@@ -63,9 +63,10 @@ test('page-section components get the full row', () => {
   });
 });
 
-test('links back home', () => {
+test('leaves the way home to the site header (no top bar of its own)', () => {
   renderLab();
-  expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
+  expect(screen.queryByRole('link', { name: 'Home' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
 });
 
 test('the stage pills demo moves to the stage you pick', () => {

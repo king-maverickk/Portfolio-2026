@@ -22,7 +22,8 @@ $radius: 12px;
 .page {
   position: relative;
   min-height: 100svh;
-  padding: 0 clamp(16px, 5.5%, 80px) 120px;
+  // The top leaves room for the site header (the mark and the corner buttons).
+  padding: 74px clamp(16px, 5.5%, 80px) 120px;
   color: $text;
   font-family: $font;
 
@@ -48,7 +49,7 @@ $radius: 12px;
   padding-bottom: 0;
 }
 
-// --- Top bar (same as /projects and the Lab) ------------------------------------
+// --- The way back to the list (under the site header) ----------------------------
 
 .topBar {
   display: flex;
@@ -56,7 +57,7 @@ $radius: 12px;
   justify-content: space-between;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 18px 0;
+  padding: 6px 0 18px;
 }
 
 .back {
@@ -99,11 +100,6 @@ $radius: 12px;
     outline: 2px solid $text;
     outline-offset: 2px;
   }
-}
-
-.byline {
-  color: $muted;
-  font-size: 0.95rem;
 }
 
 // --- Heading (same size as the list rows, so the glide is a clean move) ---------
@@ -695,7 +691,30 @@ $radius: 12px;
 // Same breakpoint as the list, so the heading matches its row exactly.
 @media (max-width: 767px) {
   .page {
-    padding: 0 16px 96px;
+    // The site header sits closer to the top edge on phones.
+    padding: 62px 16px 96px;
+  }
+
+  // The slim bar: the name moves to the left, leaving the right for the site
+  // header's two corner buttons. A long name is cut short with "…".
+  .bar {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    padding: 0 136px 0 8px;
+  }
+
+  .barRow {
+    min-width: 0;
+  }
+
+  .barName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .barThumb {
+    flex: none;
   }
 
   .headingTitle {

@@ -29,7 +29,6 @@ function renderAt(path) {
 test('/projects opens like the Lab, then lists every project with its own address', () => {
   renderAt('/projects');
   expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('href', '/');
 
   const list = screen.getByRole('region', { name: 'Projects' });
   PROJECTS.forEach((project) => {

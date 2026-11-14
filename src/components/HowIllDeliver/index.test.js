@@ -1,6 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import HowIllDeliver from './index';
+import { openDeliverySheet } from './deliveryEvents';
 
 beforeEach(() => {
   window.matchMedia = jest.fn().mockReturnValue({ matches: false });
@@ -45,6 +46,29 @@ test('closes the sheet with Escape and returns focus to its trigger', () => {
 
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   expect(trigger).toHaveFocus();
+});
+
+test('the site header can open a sheet; closing it returns focus to the header’s button', () => {
+  const headerButton = document.createElement('button');
+  document.body.appendChild(headerButton);
+
+  render(<HowIllDeliver />);
+  screen.getByRole('button', { name: '(freelance/contract)' }).style.setProperty('--annotation-border-color', '#22C55E');
+  act(() => openDeliverySheet('freelance', headerButton));
+
+  expect(screen.getByRole('heading', { name: 'Freelance / contract' })).toBeInTheDocument();
+  expect(screen.getByRole('dialog').style.getPropertyValue('--sheet-accent-color')).toBe('#22C55E');
+
+  fireEvent.keyDown(document, { key: 'Escape' });
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  expect(headerButton).toHaveFocus();
+  headerButton.remove();
+});
+
+test('a sheet asked for from another page opens as soon as the section arrives', () => {
+  openDeliverySheet('hiring-manager');
+  render(<HowIllDeliver />);
+  expect(screen.getByRole('heading', { name: 'Hiring managers' })).toBeInTheDocument();
 });
 
 test('closes the sheet when the backdrop is clicked', () => {

@@ -1,6 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 import DotGrid from 'components/DotGrid';
@@ -194,16 +193,6 @@ function Lab() {
   return (
     <div className={styles.page}>
       <DotGrid color="255, 255, 255" />
-
-      <nav className={styles.topBar} aria-label="Site">
-        <Link className={styles.back} to="/">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M15 6 9 12l6 6" />
-          </svg>
-          Home
-        </Link>
-        <span className={styles.byline}>motheo moleko</span>
-      </nav>
 
       <header className={styles.header}>
         <h1 className={styles.title}>{INTRO.title}</h1>

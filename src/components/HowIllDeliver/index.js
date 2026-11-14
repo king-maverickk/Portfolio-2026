@@ -8,6 +8,7 @@ import FreelanceSheet from './content/FreelanceSheet';
 import OpenToWorkSheet from './content/OpenToWorkSheet';
 import { FREELANCE, HIRING, OPEN_TO_WORK, SECTION_PROMPT } from './content/copy';
 import { startContact } from 'components/ContactSection/contactEvents';
+import { DELIVERY_EVENT, takeDeliveryRequest } from './deliveryEvents';
 
 import styles from './index.module.scss';
 
@@ -218,6 +219,26 @@ function HowIllDeliver({ className, onAnnotationClick }) {
     setActiveAnnotation(id);
     onAnnotationClick?.(id);
   };
+
+  // The site header's three cards open a sheet from anywhere on the site (see
+  // deliveryEvents.js). The sheet takes its colour from its own label here,
+  // and closing it returns focus to the header button that started it.
+  const openFromOutside = useCallback(() => {
+    const request = takeDeliveryRequest();
+    if (!request || !SHEET_CONTENT[request.id]) return;
+
+    const label = annotationRefs.current[request.id];
+    triggerRef.current = request.returnFocus || label || null;
+    if (label) setSheetAccentColor(accentOf(label));
+    setActiveAnnotation(request.id);
+  }, []);
+
+  useEffect(() => {
+    // Asked for from another page? It was waiting for this section to arrive.
+    openFromOutside();
+    window.addEventListener(DELIVERY_EVENT, openFromOutside);
+    return () => window.removeEventListener(DELIVERY_EVENT, openFromOutside);
+  }, [openFromOutside]);
 
   // Moves an open sheet over to another one (e.g. "Read my resume" on the open
   // to work sheet). The new sheet takes its own colour, starts at the top, and
