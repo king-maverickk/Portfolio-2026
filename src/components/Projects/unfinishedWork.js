@@ -87,12 +87,16 @@ const UNFINISHED = [
       //           and blue label (a file in public/assets/…). No image = a
       //           plain grey card with the title on it. todo('…') = still to
       //           add: the card shows in `npm start` only, unless it has an href.
-      //   width, height   the picture's size on the page, in px
+      //   width, height   the picture's size on the page, in px (keeps its
+      //           place while it waits to load)
       //   tag     a blue label laid over the middle of the picture
       //   stack   on a group of exactly three pictures: piled up like the
       //           mockup, the first behind, the second in front on the left,
-      //           the third in front on the right (sizes are set in the
+      //           the third in front on the right (positions are in the
       //           stylesheet, under .stackPictures)
+      //
+      // The pictures load a couple at a time, in this order, as they come
+      // into view (see usePictureQueue in Unfinished.js).
       shelf: [
         {
           label: 'Notebook notes',
@@ -111,17 +115,23 @@ const UNFINISHED = [
             {
               title: 'YouTube Trailer',
               href: 'https://youtu.be/2ia7_uMDhM0',
-              image: '/assets/Unfinished/entelect/shelf-youtube-trailer.webp'
+              image: '/assets/Unfinished/entelect/shelf-youtube-trailer.webp',
+              width: 158,
+              height: 105
             },
             {
               title: 'IG: Workshop Post, the poster',
               href: 'https://www.instagram.com/p/C9URVyQtScE/',
-              image: '/assets/Unfinished/entelect/shelf-workshop-poster.webp'
+              image: '/assets/Unfinished/entelect/shelf-workshop-poster.webp',
+              width: 127,
+              height: 121
             },
             {
               title: 'IG: Workshop Post, photos from the day',
               href: 'https://www.instagram.com/p/C9hei_vtTPa/?img_index=3',
-              image: '/assets/Unfinished/entelect/shelf-workshop-photos.webp'
+              image: '/assets/Unfinished/entelect/shelf-workshop-photos.webp',
+              width: 125,
+              height: 132
             }
           ]
         },

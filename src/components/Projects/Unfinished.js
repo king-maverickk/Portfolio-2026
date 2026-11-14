@@ -143,24 +143,80 @@ Block.propTypes = { title: PropTypes.string.isRequired, body: PropTypes.any, sho
 // Is there anything to show a visitor on this card? A link or a real picture.
 const cardIsReal = (card) => Boolean(card.href) || (Boolean(card.image) && !isTodo(card.image));
 
+// The shelf's pictures load a couple at a time, in shelf order, and only once
+// they're in view or about to scroll into it (half a shelf ahead). On a phone
+// that means the first two or three, not all seven at once; the rest follow as
+// the shelf is swiped. Nothing loads while the row is closed: a hidden shelf
+// is never in view. Without IntersectionObserver, everything loads.
+const LOOK_AHEAD = '0px 50% 0px 0px';
+const AT_ONCE = 2;
+
+function usePictureQueue(rowRef, count) {
+  const canWatch = typeof window !== 'undefined' && 'IntersectionObserver' in window;
+  const [near, setNear] = useState(() => new Set());
+  const [started, setStarted] = useState(() => new Set());
+  const [settled, setSettled] = useState(() => new Set());
+
+  useEffect(() => {
+    const row = rowRef.current;
+    if (!canWatch || !row) return undefined;
+    const observer = new IntersectionObserver((changes) => {
+      const seen = changes.filter((change) => change.isIntersecting).map((change) => Number(change.target.dataset.order));
+      if (seen.length) setNear((current) => new Set([...current, ...seen]));
+    }, { root: row, rootMargin: LOOK_AHEAD });
+    row.querySelectorAll('[data-order]').forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [rowRef, canWatch, count]);
+
+  useEffect(() => {
+    if (!canWatch) return;
+    let free = AT_ONCE - [...started].filter((order) => !settled.has(order)).length;
+    const next = new Set(started);
+    for (let order = 0; order < count && free > 0; order += 1) {
+      if (near.has(order) && !next.has(order)) {
+        next.add(order);
+        free -= 1;
+      }
+    }
+    if (next.size !== started.size) setStarted(next);
+  }, [canWatch, count, near, started, settled]);
+
+  return {
+    canLoad: (order) => !canWatch || started.has(order),
+    onSettled: (order) => setSettled((current) => (current.has(order) ? current : new Set([...current, order])))
+  };
+}
+
 // One card on the shelf. With a picture, the picture is the card, shown as it
 // is (its own corners, tilt, shadow and blue label), with the title kept for
 // screen readers. Without, a plain grey card with the title on it. With a
 // link, the whole card is the link.
-function Card({ card, className }) {
+function Card({ card, className, order, queue }) {
   const picture = Boolean(card.image) && !isTodo(card.image);
+  const [loaded, setLoaded] = useState(false);
+  const settle = () => {
+    setLoaded(true);
+    queue.onSettled(order);
+  };
   const face = picture ? (
     <>
-      <img
-        className={styles.cardImage}
-        src={card.image}
-        alt=""
-        width={card.width}
-        height={card.height}
-        loading="lazy"
-        decoding="async"
-        draggable="false"
-      />
+      {queue.canLoad(order) ? (
+        <img
+          className={cn(styles.cardImage, loaded && styles.cardImageLoaded)}
+          src={card.image}
+          alt=""
+          width={card.width}
+          height={card.height}
+          decoding="async"
+          fetchpriority="low"
+          draggable="false"
+          onLoad={settle}
+          onError={settle}
+        />
+      ) : (
+        // Holds the picture's place until its turn comes.
+        <span className={styles.cardWaiting} style={{ aspectRatio: `${card.width} / ${card.height}` }} />
+      )}
       <span className={styles.srOnly}>{card.title}</span>
       {card.tag && <span className={styles.cardTag} aria-hidden="true">{card.tag}</span>}
     </>
@@ -172,15 +228,18 @@ function Card({ card, className }) {
   );
   const classes = cn(styles.card, picture && styles.cardPicture, card.href && styles.cardLink, className);
   const style = picture && card.width ? { width: card.width } : undefined;
-  if (!card.href) return <span className={classes} style={style}>{face}</span>;
+  const marker = picture ? { 'data-order': order } : {};
+  if (!card.href) return <span className={classes} style={style} {...marker}>{face}</span>;
   return (
-    <a className={classes} style={style} href={card.href} target="_blank" rel="noreferrer">
+    <a className={classes} style={style} href={card.href} target="_blank" rel="noreferrer" {...marker}>
       {face}
     </a>
   );
 }
 
-Card.propTypes = { card: PropTypes.object.isRequired, className: PropTypes.string };
+Card.propTypes = {
+  card: PropTypes.object.isRequired, className: PropTypes.string, order: PropTypes.number, queue: PropTypes.object.isRequired
+};
 
 const STACK_SPOTS = [styles.stackBack, styles.stackLeft, styles.stackRight];
 
@@ -260,20 +319,33 @@ function Shelf({ shelf, showTodos, id }) {
   const groups = shelf
     .map((group) => ({ ...group, cards: group.cards.filter((card) => cardIsReal(card) || showTodos) }))
     .filter((group) => group.cards.length > 0);
+  // Number the pictures in shelf order, for the queue.
+  let count = 0;
+  const numbered = groups.map((group) => ({
+    ...group,
+    cards: group.cards.map((card) => ({ card, order: card.image && !isTodo(card.image) ? count++ : undefined }))
+  }));
+  const queue = usePictureQueue(rowRef, count);
   if (!groups.length) return null;
 
   return (
     <section className={styles.shelf} aria-labelledby={id}>
       <h4 id={id} className={styles.shelfTitle}>Shelf-made:</h4>
       <ul ref={rowRef} className={styles.shelfRow}>
-        {groups.map((group) => {
+        {numbered.map((group) => {
           const stacked = group.stack && group.cards.length === 3;
-          const pictures = stacked && group.cards.every((card) => card.image && !isTodo(card.image));
+          const pictures = stacked && group.cards.every(({ card }) => card.image && !isTodo(card.image));
           return (
-            <li key={group.label} className={cn(styles.group, group.cards.some((card) => card.image && !isTodo(card.image)) && styles.groupPictures)}>
+            <li key={group.label} className={cn(styles.group, group.cards.some(({ order }) => order !== undefined) && styles.groupPictures)}>
               <div className={cn(styles.cards, stacked && styles.stack, pictures && styles.stackPictures)}>
-                {group.cards.map((card, index) => (
-                  <Card key={card.title} card={card} className={stacked ? STACK_SPOTS[index] : undefined} />
+                {group.cards.map(({ card, order }, index) => (
+                  <Card
+                    key={card.title}
+                    card={card}
+                    order={order}
+                    queue={queue}
+                    className={stacked ? STACK_SPOTS[index] : undefined}
+                  />
                 ))}
               </div>
               <p className={styles.groupLabel}>{group.label}</p>
@@ -315,10 +387,21 @@ Entry.propTypes = {
 
 const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTodos = SHOW_TODOS }, ref) {
   const [open, setOpen] = useState(() => entries.filter((entry) => entry.open).map((entry) => entry.id));
+  // A row's contents (and their pictures) are only put on the page once it's
+  // first opened, so a closed row costs nothing on load. Hovering a row with a
+  // mouse puts them on early, hidden (on a touch screen this happens on the tap
+  // that opens it anyway): the two small pictures in the sentence
+  // load then, so they're there when it opens. The shelf still waits until the
+  // row is open (see usePictureQueue).
+  const [mounted, setMounted] = useState(() => entries.filter((entry) => entry.open).map((entry) => entry.id));
+  const mount = (id) => setMounted((current) => (current.includes(id) ? current : [...current, id]));
 
-  const toggle = (id) => setOpen((current) => (
-    current.includes(id) ? current.filter((other) => other !== id) : [...current, id]
-  ));
+  const toggle = (id) => {
+    mount(id);
+    setOpen((current) => (
+      current.includes(id) ? current.filter((other) => other !== id) : [...current, id]
+    ));
+  };
 
   return (
     <section ref={ref} id="unfinished" className={styles.section} aria-labelledby="unfinished-title">
@@ -360,6 +443,7 @@ const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTo
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     onClick={() => toggle(entry.id)}
+                    onMouseEnter={() => mount(entry.id)}
                   >
                     {line}
                   </button>
@@ -370,7 +454,7 @@ const Unfinished = forwardRef(function Unfinished({ entries = UNFINISHED, showTo
 
               {canOpen && (
                 <div id={panelId} className={styles.panel} hidden={!isOpen}>
-                  {entry.entry ? (
+                  {!mounted.includes(entry.id) ? null : entry.entry ? (
                     <Entry entry={entry.entry} showTodos={showTodos} draft={entry.draft} id={`unfinished-${entry.id}`} />
                   ) : (
                     <div className={styles.stub}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { createEvent, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, createEvent, fireEvent, render, screen, within } from '@testing-library/react';
 
 import Unfinished from './Unfinished';
 import UNFINISHED, { todo } from './unfinishedWork';
@@ -33,8 +33,9 @@ test('every row starts closed; rows open and close on their own', () => {
   screen.getAllByRole('button').forEach((button) => expect(button).toHaveAttribute('aria-expanded', 'false'));
   const entelect = screen.getByRole('button', { name: /Entelect Challenge 2024/ });
   const sample = screen.getByRole('button', { name: /Sample row/ });
-  expect(screen.getByText(/A bot for Sproutopia/)).not.toBeVisible();
-  expect(screen.getByText(/Made for my dad/)).not.toBeVisible();
+  // A closed row's contents aren't on the page at all until it's first opened.
+  expect(screen.queryByText(/A bot for Sproutopia/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/Made for my dad/)).not.toBeInTheDocument();
 
   fireEvent.click(entelect);
   expect(entelect).toHaveAttribute('aria-expanded', 'true');
@@ -52,6 +53,53 @@ test('every row starts closed; rows open and close on their own', () => {
   expect(screen.getByText(/A bot for Sproutopia/)).not.toBeVisible();
 });
 
+test('a closed row loads nothing; hovering it with a mouse gets the sentence pictures ready', () => {
+  const { container } = render(<Unfinished />);
+  expect(container.querySelector('img')).toBeNull();
+
+  const entelect = screen.getByRole('button', { name: /Entelect Challenge 2024/ });
+  fireEvent.mouseEnter(entelect);
+  expect(container.querySelector('img[src$="chip-csharp.webp"]')).toBeInTheDocument();
+  expect(entelect).toHaveAttribute('aria-expanded', 'false');
+  expect(screen.getByText(/My first programming competition/)).not.toBeVisible();
+});
+
+test('the shelf loads its pictures in order, two at a time, as they come into view', () => {
+  const watched = [];
+  let report;
+  window.IntersectionObserver = jest.fn((callback, options) => {
+    report = callback;
+    expect(options.rootMargin).toBe('0px 50% 0px 0px');
+    return { observe: (card) => watched.push(card), disconnect: jest.fn() };
+  });
+  render(<Unfinished entries={[{ ...UNFINISHED[0], open: true }]} showTodos={false} />);
+  const shelf = screen.getByRole('region', { name: 'Shelf-made:' });
+  const loading = () => [...shelf.querySelectorAll('img')].map((img) => img.getAttribute('src').split('/').pop());
+  const inView = (from, to) => act(() => report(watched.slice(from, to).map((target) => ({ target, isIntersecting: true }))));
+
+  // Seven pictures watched; none load before the shelf says what's in view.
+  expect(watched).toHaveLength(7);
+  expect(loading()).toEqual([]);
+
+  // The first four are in view (or just past the edge): the first two start.
+  inView(0, 4);
+  expect(loading()).toEqual(['shelf-notebook.webp', 'shelf-youtube-trailer.webp']);
+
+  // One finishes (a failure counts too): the next in line starts.
+  fireEvent.load(shelf.querySelector('img[src$="shelf-notebook.webp"]'));
+  expect(loading()).toHaveLength(3);
+  fireEvent.error(shelf.querySelector('img[src$="shelf-youtube-trailer.webp"]'));
+  expect(loading()).toEqual(['shelf-notebook.webp', 'shelf-youtube-trailer.webp', 'shelf-workshop-poster.webp', 'shelf-workshop-photos.webp']);
+
+  // The rest wait until the shelf is swiped along to them.
+  ['shelf-workshop-poster.webp', 'shelf-workshop-photos.webp'].forEach((name) => fireEvent.load(shelf.querySelector(`img[src$="${name}"]`)));
+  expect(loading()).toHaveLength(4);
+  inView(4, 7);
+  expect(loading()).toHaveLength(6);
+
+  delete window.IntersectionObserver;
+});
+
 test('a row marked `open: true` in unfinishedWork.js starts open', () => {
   render(<Unfinished entries={[{ ...UNFINISHED[0], open: true }, SAMPLE]} />);
   expect(screen.getByRole('button', { name: /Entelect Challenge 2024/ })).toHaveAttribute('aria-expanded', 'true');
@@ -66,7 +114,9 @@ test('a row marked `disabled: true` is listed but greyed out, with nothing to op
   expect(off).toHaveTextContent('A hint.');
   expect(within(off).queryByRole('button')).not.toBeInTheDocument();
   expect(off).not.toHaveTextContent('+');
-  // Its summary isn't on the page at all, so it can't be reached by search or a screen reader.
+  // Its summary isn't on the page at all, so it can't be reached by search or a
+  // screen reader, even once the row beside it (same summary) is opened.
+  openRow('Sample row');
   expect(screen.getAllByText('Made for my dad.')).toHaveLength(1);
   // The row beside it is untouched.
   expect(row('Sample row')).not.toHaveClass('rowDisabled');
@@ -142,7 +192,8 @@ test('a shelf card with a picture shows the picture and keeps its name for scree
     entry: {
       ...UNFINISHED[0].entry,
       shelf: [{ label: 'Notebook notes', cards: [{ title: 'Notebook', image: '/assets/notebook.jpg' }] }]
-    }
+    },
+    open: true
   }];
   const { container } = render(<Unfinished entries={entries} showTodos={false} />);
   expect(container.querySelector('img[src="/assets/notebook.jpg"]')).toBeInTheDocument();
@@ -191,6 +242,7 @@ test('a shelf card still waiting for its picture: a reminder in npm start, left 
 describe('placeholders', () => {
   test('while developing: todo()s, reminders, picture chips and draft tags are shown', () => {
     const { container } = render(<Unfinished showTodos />);
+    openRow('Entelect Challenge 2024');
     expect(screen.getByText('[YOURS: WHY I STOPPED, TWO OR THREE SENTENCES]')).toBeInTheDocument();
     expect(screen.getByText('board')).toBeInTheDocument();
     expect(container.querySelectorAll('[data-draft]').length).toBeGreaterThan(0);

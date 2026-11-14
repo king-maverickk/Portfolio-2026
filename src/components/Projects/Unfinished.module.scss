@@ -542,7 +542,20 @@ $phone: 600px;
   display: block;
   width: 100%;
   height: auto;
+  opacity: 0;
+  transition: opacity 400ms ease;
   -webkit-user-drag: none;
+}
+
+// Fades in once it has loaded.
+.cardImageLoaded {
+  opacity: 1;
+}
+
+// Holds a picture's place until its turn to load comes (see usePictureQueue).
+.cardWaiting {
+  display: block;
+  width: 100%;
 }
 
 // A blue label laid over the middle of a picture, like the ones drawn into
@@ -625,9 +638,10 @@ $phone: 600px;
     box-shadow: none;
   }
 
-  .stackBack { top: 0; left: 42px; width: 158px; }
-  .stackLeft { top: 75px; left: 0; width: 127px; }
-  .stackRight { top: 79px; left: 101px; width: 125px; }
+  // Sizes are in unfinishedWork.js (width, height); these are the positions.
+  .stackBack { top: 0; left: 42px; }
+  .stackLeft { top: 75px; left: 0; }
+  .stackRight { top: 79px; left: 101px; }
 }
 
 // The line about the README, small under the shelf.
@@ -654,7 +668,8 @@ $phone: 600px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card {
+  .card,
+  .cardImage {
     transition: none;
   }
 }
