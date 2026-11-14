@@ -48,16 +48,20 @@ const UNFINISHED = [
     hint: 'C# Machine Learning game. Complex language, simple rules.',
     draft: true,
     entry: {
-      // The highlight sentence. Words and pictures, in order. A picture with
-      // no `img` yet shows as a labelled grey chip in `npm start` and is left
-      // out of the production build.
+      // The highlight sentence. Words and pictures, in order. A picture sits
+      // in a small grey chip:
+      //   img     the picture (a file in public/assets/…). No `img` yet = a
+      //           labelled grey chip in `npm start`, left out of production.
+      //   fit     'contain' = the whole picture inside the chip (a logo).
+      //           Without it, the picture fills the chip.
+      //   tilt    degrees: the picture pops out of the chip, turned this much.
       sentence: [
         'My first programming competition: five weeks teaching',
-        { img: null, label: 'console', alt: '' },
+        { img: '/assets/Unfinished/entelect/chip-csharp.webp', label: 'C#', alt: '', fit: 'contain' },
         'a C# bot to claim land on',
         { img: null, label: 'board', alt: '' },
         'a field it could only see a corner of, with the plan worked out in',
-        { img: null, label: 'notebook', alt: '' },
+        { img: '/assets/Unfinished/entelect/chip-notebook.webp', label: 'notebook', alt: '', tilt: -7 },
         'a notebook.'
       ],
       // The story: a bold title and a short paragraph each. A todo() body is
@@ -76,38 +80,80 @@ const UNFINISHED = [
       ],
       // The shelf: cards in a row that scrolls sideways. Each group has a
       // label under it and one or more cards.
-      //   title   the words on the card (and what a screen reader says)
+      //   title   what a screen reader says for the card (the picture says
+      //           it for everyone else)
       //   href    where the card goes. No href = not a link.
-      //   image   a picture that fills the card (a file in public/assets/…).
-      //           todo('…') = still to add: the card shows in `npm start`
-      //           only, unless it has an href.
-      //   stack   on a group of exactly three cards: pile them up, the first
-      //           wide and behind, the other two tilted in front.
+      //   image   the picture, shown as it is: its own corners, tilt, shadow
+      //           and blue label (a file in public/assets/…). No image = a
+      //           plain grey card with the title on it. todo('…') = still to
+      //           add: the card shows in `npm start` only, unless it has an href.
+      //   width, height   the picture's size on the page, in px
+      //   tag     a blue label laid over the middle of the picture
+      //   stack   on a group of exactly three pictures: piled up like the
+      //           mockup, the first behind, the second in front on the left,
+      //           the third in front on the right (sizes are set in the
+      //           stylesheet, under .stackPictures)
       shelf: [
         {
           label: 'Notebook notes',
-          cards: [{ title: 'Notebook', image: todo('ADD NOTEBOOK PHOTOS') }]
+          cards: [{
+            title: '2024 notebook',
+            image: '/assets/Unfinished/entelect/shelf-notebook.webp',
+            width: 160,
+            height: 201,
+            tag: '2024 notebook'
+          }]
         },
         {
           label: 'Trailer and Workshop',
           stack: true,
           cards: [
-            { title: 'Trailer', href: 'https://www.instagram.com/p/C4vYg27tUGZ/' },
-            { title: 'Workshop poster', href: 'https://www.instagram.com/p/C9URVyQtScE/' },
-            { title: 'Workshop photos', href: 'https://www.instagram.com/p/C9hei_vtTPa/?img_index=3' }
+            {
+              title: 'YouTube Trailer',
+              href: 'https://youtu.be/2ia7_uMDhM0',
+              image: '/assets/Unfinished/entelect/shelf-youtube-trailer.webp'
+            },
+            {
+              title: 'IG: Workshop Post, the poster',
+              href: 'https://www.instagram.com/p/C9URVyQtScE/',
+              image: '/assets/Unfinished/entelect/shelf-workshop-poster.webp'
+            },
+            {
+              title: 'IG: Workshop Post, photos from the day',
+              href: 'https://www.instagram.com/p/C9hei_vtTPa/?img_index=3',
+              image: '/assets/Unfinished/entelect/shelf-workshop-photos.webp'
+            }
           ]
         },
         {
-          label: 'GitHub',
-          cards: [{ title: 'GitHub', href: 'https://github.com/king-maverickk/ent-chal-bot-v1/tree/NEATBot' }]
+          label: 'C# implementation',
+          cards: [{
+            title: 'GitHub Repo',
+            href: 'https://github.com/king-maverickk/ent-chal-bot-v1/tree/NEATBot',
+            image: '/assets/Unfinished/entelect/shelf-github-repo.webp',
+            width: 179,
+            height: 224
+          }]
         },
         {
-          label: 'The game',
-          cards: [{ title: 'Game rules', href: 'https://github.com/EntelectChallenge/2024-Sproutopia/blob/main/Sproutopia/GAMERULES.md' }]
+          label: 'Game rules',
+          cards: [{
+            title: 'Markdown of Rules',
+            href: 'https://github.com/EntelectChallenge/2024-Sproutopia/blob/main/Sproutopia/GAMERULES.md',
+            image: '/assets/Unfinished/entelect/shelf-game-rules.webp',
+            width: 179,
+            height: 224
+          }]
         },
         {
-          label: 'Workshop notes',
-          cards: [{ title: 'Entelect’s gist', href: 'https://gist.github.com/EntelectChallenge/9bdb52a082c00dbe55c80c29cab0716f' }]
+          label: 'Challenge resources',
+          cards: [{
+            title: 'GitHub Gist',
+            href: 'https://gist.github.com/EntelectChallenge/9bdb52a082c00dbe55c80c29cab0716f',
+            image: '/assets/Unfinished/entelect/shelf-challenge-resources.webp',
+            width: 179,
+            height: 224
+          }]
         }
       ],
       // Shown small under the shelf, beside the link to the repo.

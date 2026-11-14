@@ -2,6 +2,8 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
+import InlineImg from 'components/InlineImg';
+
 import UNFINISHED, { UNFINISHED_INTRO, isTodo } from './unfinishedWork';
 import styles from './Unfinished.module.scss';
 
@@ -44,23 +46,76 @@ function DraftTag({ show }) {
 
 DraftTag.propTypes = { show: PropTypes.bool };
 
-// The highlight sentence: words with small pictures between them.
+// A picture in the sentence, as an InlineImg (components/InlineImg): it scales
+// with the text, keeps to the word before it so it never starts a line on its
+// own, and spins (or flips) on hover. Inside the chip's grey box: a logo
+// (`fit: 'contain'`) whole, a picture with a `tilt` popping out, turned, any
+// other picture filling the box. No picture yet: the chip's label (dev only).
+const CHIP_RATIO = 16 / 9;
+
+function Chip({ part, word }) {
+  const popped = typeof part.tilt === 'number';
+  if (!part.img) {
+    return (
+      <InlineImg ratio={CHIP_RATIO} className={cn(styles.chipFrame, styles.chipEmpty)} icon={<span>{part.label}</span>}>
+        {word}
+      </InlineImg>
+    );
+  }
+  if (part.fit !== 'contain' && !popped) {
+    return <InlineImg ratio={CHIP_RATIO} src={part.img} alt={part.alt || ''}>{word}</InlineImg>;
+  }
+  return (
+    <InlineImg
+      ratio={CHIP_RATIO}
+      alt={part.alt || ''}
+      className={cn(styles.chipFrame, popped && styles.chipPopFrame)}
+      icon={(
+        <img
+          className={popped ? styles.chipPop : styles.chipLogo}
+          src={part.img}
+          alt=""
+          decoding="async"
+          style={popped ? { '--chip-tilt': `${part.tilt}deg` } : undefined}
+        />
+      )}
+    >
+      {word}
+    </InlineImg>
+  );
+}
+
+Chip.propTypes = { part: PropTypes.object.isRequired, word: PropTypes.string };
+
+// The highlight sentence: words with small pictures between them. The last
+// word before each picture goes inside its InlineImg, so the two stay on one line.
 function Sentence({ parts, showTodos, draft }) {
   const visible = parts.filter((part) => typeof part === 'string' || part.img || showTodos);
+  const pieces = [];
+  let word = null;
+  visible.forEach((part, index) => {
+    if (typeof part === 'string') {
+      let text = part;
+      const next = visible[index + 1];
+      if (next && typeof next !== 'string') {
+        const cut = text.search(/\S+$/);
+        word = text.slice(cut);
+        text = text.slice(0, cut).trimEnd();
+      }
+      if (text) pieces.push({ key: index, node: text, joins: /^[,.;:!?]/.test(text) });
+    } else {
+      pieces.push({ key: index, node: <Chip part={part} word={word || undefined} /> });
+      word = null;
+    }
+  });
   return (
     <p className={styles.sentence}>
-      {visible.map((part, index) => {
-        const before = index > 0 && !(typeof part === 'string' && /^[,.;:!?]/.test(part)) ? ' ' : '';
-        if (typeof part === 'string') return <React.Fragment key={index}>{before}{part}</React.Fragment>;
-        return (
-          <React.Fragment key={index}>
-            {before}
-            {part.img
-              ? <img className={styles.chip} src={part.img} alt={part.alt || ''} />
-              : <span className={cn(styles.chip, styles.chipEmpty)} aria-hidden="true">{part.label}</span>}
-          </React.Fragment>
-        );
-      })}
+      {pieces.map((piece, index) => (
+        <React.Fragment key={piece.key}>
+          {index > 0 && !piece.joins ? ' ' : ''}
+          {piece.node}
+        </React.Fragment>
+      ))}
       {draft && <> <DraftTag show={showTodos} /></>}
     </p>
   );
@@ -88,20 +143,38 @@ Block.propTypes = { title: PropTypes.string.isRequired, body: PropTypes.any, sho
 // Is there anything to show a visitor on this card? A link or a real picture.
 const cardIsReal = (card) => Boolean(card.href) || (Boolean(card.image) && !isTodo(card.image));
 
-// One card on the shelf. With a picture, the picture fills it; without, the
-// title sits on a plain light card. With a link, the whole card is the link.
+// One card on the shelf. With a picture, the picture is the card, shown as it
+// is (its own corners, tilt, shadow and blue label), with the title kept for
+// screen readers. Without, a plain grey card with the title on it. With a
+// link, the whole card is the link.
 function Card({ card, className }) {
-  const picture = card.image && !isTodo(card.image);
-  const face = (
+  const picture = Boolean(card.image) && !isTodo(card.image);
+  const face = picture ? (
     <>
-      {picture && <img className={styles.cardImage} src={card.image} alt="" loading="lazy" decoding="async" />}
-      <span className={cn(styles.cardTitle, picture && styles.srOnly)}>{card.title}</span>
+      <img
+        className={styles.cardImage}
+        src={card.image}
+        alt=""
+        width={card.width}
+        height={card.height}
+        loading="lazy"
+        decoding="async"
+        draggable="false"
+      />
+      <span className={styles.srOnly}>{card.title}</span>
+      {card.tag && <span className={styles.cardTag} aria-hidden="true">{card.tag}</span>}
+    </>
+  ) : (
+    <>
+      <span className={styles.cardTitle}>{card.title}</span>
       {isTodo(card.image) && <span className={styles.cardTodo}>[{card.image.todo}]</span>}
     </>
   );
-  if (!card.href) return <span className={cn(styles.card, className)}>{face}</span>;
+  const classes = cn(styles.card, picture && styles.cardPicture, card.href && styles.cardLink, className);
+  const style = picture && card.width ? { width: card.width } : undefined;
+  if (!card.href) return <span className={classes} style={style}>{face}</span>;
   return (
-    <a className={cn(styles.card, styles.cardLink, className)} href={card.href} target="_blank" rel="noreferrer">
+    <a className={classes} style={style} href={card.href} target="_blank" rel="noreferrer">
       {face}
     </a>
   );
@@ -191,13 +264,14 @@ function Shelf({ shelf, showTodos, id }) {
 
   return (
     <section className={styles.shelf} aria-labelledby={id}>
-      <h4 id={id} className={styles.shelfTitle}>Shelf</h4>
+      <h4 id={id} className={styles.shelfTitle}>Shelf-made:</h4>
       <ul ref={rowRef} className={styles.shelfRow}>
         {groups.map((group) => {
           const stacked = group.stack && group.cards.length === 3;
+          const pictures = stacked && group.cards.every((card) => card.image && !isTodo(card.image));
           return (
-            <li key={group.label} className={styles.group}>
-              <div className={cn(styles.cards, stacked && styles.stack)}>
+            <li key={group.label} className={cn(styles.group, group.cards.some((card) => card.image && !isTodo(card.image)) && styles.groupPictures)}>
+              <div className={cn(styles.cards, stacked && styles.stack, pictures && styles.stackPictures)}>
                 {group.cards.map((card, index) => (
                   <Card key={card.title} card={card} className={stacked ? STACK_SPOTS[index] : undefined} />
                 ))}

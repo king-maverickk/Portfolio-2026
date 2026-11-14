@@ -318,34 +318,53 @@ $phone: 600px;
 
 // The highlight sentence, with small pictures in the line.
 .sentence {
+  // The pictures are InlineImg chips, sized in em so they scale with the text:
+  // 1.5em tall (36px here, 32px on phones), 16:9 wide.
+  --inline-img-size: 1.5;
+  --inline-img-gap: 0.35em;
+
   font-size: 24px;
   font-weight: 400;
   line-height: 1.6;
 
   @media (max-width: $phone) { font-size: 21px; }
+
+  // Nested so these beat InlineImg's own rules whatever order the two
+  // stylesheets load in.
+  .chipFrame {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // The notebook pokes out of its chip.
+  .chipPopFrame {
+    overflow: visible;
+  }
+
+  // A picture that hasn't been added yet (dev only): the chip's label. Sized
+  // on the label, not the chip: the chip is sized in em of its own text.
+  .chipEmpty {
+    color: #d5d5db;
+
+    span {
+      font-size: 11px;
+      line-height: 1;
+    }
+  }
 }
 
-.chip {
-  display: inline-block;
-  width: 64px;
-  height: 36px;
-  margin: 0 3px;
-  border-radius: 7px;
-  object-fit: cover;
-  vertical-align: middle;
-
-  @media (max-width: $phone) { width: 56px; height: 32px; }
+.chipLogo {
+  width: auto;
+  height: 104%;
 }
 
-// A picture that hasn't been added yet (dev only).
-.chipEmpty {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: #3a3a41;
-  color: #d5d5db;
-  font-size: 11px;
-  line-height: 1;
+.chipPop {
+  width: auto;
+  height: 128%;
+  border-radius: 2px;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 45%);
+  transform: rotate(var(--chip-tilt, 0deg));
 }
 
 // --- The story -------------------------------------------------------------------------
@@ -404,6 +423,7 @@ $phone: 600px;
 // cut off by the scrolling box.
 .shelfRow {
   display: flex;
+  align-items: flex-end;
   gap: 28px;
   margin: 0 0 0 -8px;
   padding: 14px 24px 14px 8px;
@@ -451,7 +471,13 @@ $phone: 600px;
 .groupLabel {
   color: $text;
   font-size: 15px;
+  font-weight: 600;
   line-height: 1.3;
+}
+
+// Pictures carry a soft shadow below them; tuck the label up into it.
+.groupPictures .groupLabel {
+  margin-top: -14px;
 }
 
 .cards {
@@ -493,14 +519,47 @@ $phone: 600px;
 
     box-shadow: 0 10px 24px rgb(0 0 0 / 35%);
   }
+
+  // A picture has its shadow drawn in; a box shadow would show its edges.
+  .cardPicture.cardLink:hover {
+    box-shadow: none;
+  }
+}
+
+// A card that is a picture: the picture as it is, with its own corners, tilt,
+// shadow and blue label. Its width comes from unfinishedWork.js (or, in a
+// stack, from .stackPictures below).
+.cardPicture {
+  display: block;
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  border-radius: 0;
+  background: none;
 }
 
 .cardImage {
-  position: absolute;
-  inset: 0;
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  -webkit-user-drag: none;
+}
+
+// A blue label laid over the middle of a picture, like the ones drawn into
+// the other pictures.
+.cardTag {
+  position: absolute;
+  top: 48%;
+  left: 52%;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
 }
 
 .cardTitle {
@@ -550,6 +609,25 @@ $phone: 600px;
   left: 96px;
   width: 90px;
   height: 118px;
+}
+
+// Three pictures piled up like the mockup: the trailer behind, the poster in
+// front on the left, the photo in front on the right. The pictures are already
+// turned, so no tilt here.
+.stackPictures {
+  width: 226px;
+  height: 211px;
+
+  .card {
+    --tilt: 0deg;
+
+    height: auto;
+    box-shadow: none;
+  }
+
+  .stackBack { top: 0; left: 42px; width: 158px; }
+  .stackLeft { top: 75px; left: 0; width: 127px; }
+  .stackRight { top: 79px; left: 101px; width: 125px; }
 }
 
 // The line about the README, small under the shelf.

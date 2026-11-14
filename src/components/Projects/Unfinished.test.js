@@ -5,6 +5,9 @@ import Unfinished from './Unfinished';
 import UNFINISHED, { todo } from './unfinishedWork';
 
 const row = (name) => screen.getByRole('heading', { level: 3, name: new RegExp(name) }).closest('li');
+// The highlight sentence as one line of text (its words are split across the
+// InlineImgs that hold the pictures).
+const sentenceText = (container) => container.querySelector('.sentence').textContent.replace(/\s+/g, ' ');
 // Rows start closed. Opens one and returns its <li>.
 const openRow = (name) => {
   fireEvent.click(screen.getByRole('button', { name: new RegExp(name) }));
@@ -75,7 +78,7 @@ test('the Entelect entry: the sentence, four short sections and the shelf', () =
   const entry = openRow('Entelect Challenge 2024');
   expect(within(entry).getByText(/My first programming competition/)).toBeInTheDocument();
   expect(within(entry).getAllByRole('heading', { level: 4 }).map((heading) => heading.textContent))
-    .toEqual(['What it was', 'How far it got', 'Why I stopped', 'What I’d take from it', 'Shelf']);
+    .toEqual(['What it was', 'How far it got', 'Why I stopped', 'What I’d take from it', 'Shelf-made:']);
   expect(within(entry).getByText(/30\+ commits over five weeks/)).toBeInTheDocument();
   expect(within(entry).getByText(/reconstructed with an AI agent/)).toBeInTheDocument();
 });
@@ -83,25 +86,32 @@ test('the Entelect entry: the sentence, four short sections and the shelf', () =
 test('the shelf: a labelled group per pile of cards, each card a link out', () => {
   render(<Unfinished showTodos={false} />);
   openRow('Entelect Challenge 2024');
-  const shelf = screen.getByRole('region', { name: 'Shelf' });
-  expect(within(shelf).getByRole('link', { name: 'GitHub' }))
+  const shelf = screen.getByRole('region', { name: 'Shelf-made:' });
+  expect(within(shelf).getByRole('link', { name: 'GitHub Repo' }))
     .toHaveAttribute('href', expect.stringContaining('github.com/king-maverickk/ent-chal-bot-v1'));
-  expect(within(shelf).getByRole('link', { name: 'Trailer' })).toHaveAttribute('target', '_blank');
+  expect(within(shelf).getByRole('link', { name: 'YouTube Trailer' })).toHaveAttribute('target', '_blank');
 
-  // Trailer and the two workshop posts are piled up: one behind, two tilted.
+  // The trailer and the two workshop posts are piled up: one behind, two in front.
   const pile = within(shelf).getByText('Trailer and Workshop').closest('li');
+  expect(pile.querySelector('.stackPictures')).not.toBeNull();
   expect(within(pile).getAllByRole('link')).toHaveLength(3);
-  expect(within(pile).getByRole('link', { name: 'Trailer' })).toHaveClass('stackBack');
-  expect(within(pile).getByRole('link', { name: 'Workshop poster' })).toHaveClass('stackLeft');
-  expect(within(pile).getByRole('link', { name: 'Workshop photos' })).toHaveClass('stackRight');
+  expect(within(pile).getByRole('link', { name: 'YouTube Trailer' })).toHaveClass('stackBack');
+  expect(within(pile).getByRole('link', { name: /the poster/ })).toHaveClass('stackLeft');
+  expect(within(pile).getByRole('link', { name: /photos from the day/ })).toHaveClass('stackRight');
+
+  // Every card is its picture; the notebook isn't a link and wears its label.
+  expect(shelf.querySelectorAll('img')).toHaveLength(7);
+  const notebook = within(shelf).getByText('Notebook notes').closest('li');
+  expect(within(notebook).queryByRole('link')).not.toBeInTheDocument();
+  expect(within(notebook).getAllByText('2024 notebook')).toHaveLength(2); // one for screen readers, one on the picture
 });
 
 test('the shelf can be dragged sideways with the mouse, without opening a card', () => {
   render(<Unfinished showTodos={false} />);
   openRow('Entelect Challenge 2024');
-  const shelf = screen.getByRole('region', { name: 'Shelf' });
+  const shelf = screen.getByRole('region', { name: 'Shelf-made:' });
   const cards = within(shelf).getByRole('list');
-  const github = within(shelf).getByRole('link', { name: 'GitHub' });
+  const github = within(shelf).getByRole('link', { name: 'GitHub Repo' });
   const click = () => {
     const event = createEvent.click(github);
     fireEvent(github, event);
@@ -139,14 +149,50 @@ test('a shelf card with a picture shows the picture and keeps its name for scree
   expect(screen.getByText('Notebook')).toHaveClass('srOnly');
 });
 
+test('the sentence: the C# logo sits in its chip, the notebook pops out of its own', () => {
+  const { container } = render(<Unfinished entries={[{ ...UNFINISHED[0], open: true }]} showTodos={false} />);
+  const logo = container.querySelector('img[src$="chip-csharp.webp"]');
+  const notebook = container.querySelector('img[src$="chip-notebook.webp"]');
+  expect(logo).toHaveClass('chipLogo');
+  expect(logo.parentElement).toHaveClass('chipFrame');
+  expect(notebook).toHaveClass('chipPop');
+  expect(notebook.style.getPropertyValue('--chip-tilt')).toBe('-7deg');
+
+  // Both are InlineImgs, each kept on one line with the word before it.
+  expect(logo.closest('.bind')).toHaveTextContent(/^teaching$/);
+  expect(notebook.closest('.bind')).toHaveTextContent(/^in$/);
+  expect(logo.parentElement).toHaveClass('media');
+  expect(sentenceText(container)).toMatch(/five weeks teaching a C# bot to claim land on a field/);
+});
+
+test('a shelf card still waiting for its picture: a reminder in npm start, left out in production', () => {
+  const entries = [{
+    ...UNFINISHED[0],
+    open: true,
+    entry: {
+      ...UNFINISHED[0].entry,
+      shelf: [
+        { label: 'Sketches', cards: [{ title: 'Sketches', image: todo('ADD SKETCHES') }] },
+        { label: 'Rules', cards: [{ title: 'Rules', href: 'https://example.com/rules' }] }
+      ]
+    }
+  }];
+  const { unmount } = render(<Unfinished entries={entries} showTodos />);
+  expect(screen.getByText('[ADD SKETCHES]')).toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: /Sketches/ })).not.toBeInTheDocument();
+  unmount();
+
+  render(<Unfinished entries={entries} showTodos={false} />);
+  expect(screen.queryByText('Sketches')).not.toBeInTheDocument();
+  // A card with a link but no picture is a plain grey card with its title.
+  expect(screen.getByRole('link', { name: 'Rules' })).not.toHaveClass('cardPicture');
+});
+
 describe('placeholders', () => {
   test('while developing: todo()s, reminders, picture chips and draft tags are shown', () => {
     const { container } = render(<Unfinished showTodos />);
     expect(screen.getByText('[YOURS: WHY I STOPPED, TWO OR THREE SENTENCES]')).toBeInTheDocument();
-    // The notebook card has no photos yet: it shows as a reminder, not as a link.
-    expect(screen.getByText('[ADD NOTEBOOK PHOTOS]')).toBeInTheDocument();
-    expect(screen.queryByRole('link', { name: /Notebook/ })).not.toBeInTheDocument();
-    expect(screen.getByText('console')).toBeInTheDocument();
+    expect(screen.getByText('board')).toBeInTheDocument();
     expect(container.querySelectorAll('[data-draft]').length).toBeGreaterThan(0);
   });
 
@@ -158,12 +204,10 @@ describe('placeholders', () => {
     });
     expect(container.textContent).not.toMatch(/\[[A-Z]/);
     expect(container.querySelector('[data-draft]')).toBeNull();
-    expect(screen.queryByText('console')).not.toBeInTheDocument();
+    expect(screen.queryByText('board')).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Why I stopped' })).not.toBeInTheDocument();
-    // A card with no link and no picture yet is left off the shelf, and so is its group.
-    expect(screen.queryByText('Notebook notes')).not.toBeInTheDocument();
     // The sentence still reads as one sentence without its pictures.
-    expect(screen.getByText(/five weeks teaching a C# bot to claim land on a field/)).toBeInTheDocument();
+    expect(sentenceText(container)).toMatch(/five weeks teaching a C# bot to claim land on a field/);
   });
 
   // These use their own rows, so filling in a year or a hint in
