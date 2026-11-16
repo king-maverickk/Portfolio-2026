@@ -1,0 +1,709 @@
+// The Hiring managers sheet, from the "Hiring managers sheet: redesign mock"
+// Design file and the Freeform sketch over it (15 Nov 2026).
+//
+// - The hello sentence, the roles, the documents, the profile cards and the
+//   projects sit straight on the sheet, 56px apart.
+// - Proof, Working with me and Still learning are the same containers the
+//   Freelance sheet uses (SheetBox.js), retuned below: rounder, smaller
+//   titles, and the hint stays when a container is open.
+// - Sizes follow the Design file (800px wide); under 768px things stack.
+
+$ink: #2b2b2b;
+$muted: #5b5851;
+$faint: #77736b; // lightest grey that still reads on the white cards
+$rule: rgb(43 43 43 / 12%);
+$fill: rgb(43 43 43 / 6%);
+$blue: #2864e8;
+$ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+$font: "Outfit", "Segoe UI", sans-serif;
+
+.sheet {
+  display: grid;
+  gap: 56px;
+  color: $ink;
+  font-family: $font;
+}
+
+// --- The hello sentence --------------------------------------------------------
+
+.hello {
+  --inline-img-radius: 0; // the drawings have no box to round off
+  --inline-img-gap: 0.18em;
+
+  max-width: 34em;
+  font-size: clamp(1.25rem, 3.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+// --- A block: title (and maybe something on its right), then content -----------
+
+.block {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.blockHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+}
+
+.blockTitle {
+  margin: 0;
+  font-family: $font;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.blockCaption {
+  color: $muted;
+  font-size: 0.875rem;
+  text-align: right;
+}
+
+// --- Roles ---------------------------------------------------------------------
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.role {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 18px 22px;
+  border-radius: 14px;
+  color: $ink;
+  font-family: $font;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+
+  &:hover {
+    background: $fill;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 2px;
+  }
+}
+
+.roleLabel {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.roleText {
+  color: $muted;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  transition: color 200ms ease;
+}
+
+.rolePicked,
+.rolePicked:hover {
+  background: $ink;
+  color: #f7f7f7;
+
+  .roleText {
+    color: #c9c5bd;
+  }
+}
+
+// --- Resume and open letter ------------------------------------------------------
+
+.docTabs {
+  flex: none;
+  width: 248px;
+}
+
+// The page (index.module.scss .paper) with only its top showing.
+.page {
+  margin-top: 0;
+}
+
+.pageClosed {
+  position: relative;
+  max-height: 320px;
+  overflow: hidden;
+  cursor: zoom-in;
+
+  &::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 96px;
+    background: linear-gradient(rgb(255 253 249 / 0%), #fffdf9 85%);
+    content: "";
+    pointer-events: none;
+  }
+}
+
+.pageActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 48px;
+  padding: 0 22px;
+  border: 1px solid rgb(43 43 43 / 24%);
+  border-radius: 999px;
+  color: $ink;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 200ms ease;
+
+  &:hover {
+    background: rgb(255 255 255 / 85%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 3px;
+  }
+}
+
+// Reads as the line of help under the page; it is also the page's switch.
+.pageToggle {
+  min-height: 44px;
+  padding: 0;
+  color: $muted;
+  font-family: $font;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    color: $ink;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 3px;
+  }
+}
+
+// --- Online: the two profile cards -----------------------------------------------
+// A tinted frame with the service's name, and a white card inside it. The
+// frames' colours are sampled from the Figma exports.
+
+.profiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 12px;
+}
+
+.profile {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-width: 0;
+  padding: 0 6px 6px;
+  border-radius: 16px;
+  transition: transform 200ms $ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  // One outline for the whole card when its link has the keyboard.
+  &:focus-within:has(:focus-visible) {
+    outline: 2px solid $ink;
+    outline-offset: 3px;
+  }
+}
+
+.profileLinkedin {
+  background: linear-gradient(#55b5f5, #a9d9fa 55%, #f0f8fe);
+}
+
+.profileGithub {
+  background: linear-gradient(#1a1f26, #3d4249 45%, #b1b6b9);
+}
+
+.profileService {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 40px;
+  color: #fff;
+  font-size: 1.0625rem;
+  font-weight: 500;
+}
+
+.profileLogo {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+.profileCard {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
+  padding: 14px 14px 12px;
+  border-radius: 11px;
+  background: #f7f7f7;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 10%);
+}
+
+.profileTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+}
+
+.profileName {
+  min-width: 0;
+  color: $ink;
+  font-size: 1.1875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.avatar {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 22%);
+}
+
+// Until there's a picture: initials.
+.avatarEmpty {
+  display: grid;
+  place-items: center;
+  background: #e4e1da;
+  color: $muted;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.profileText {
+  color: $faint;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.profileFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.profileNote {
+  color: $ink;
+}
+
+// The card's one link. Its click area covers the whole frame.
+.profileLink {
+  text-decoration: none;
+  outline: none;
+
+  &::after {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    content: "";
+  }
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.profileLinkAccent {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #1f56cf; // the accent blue, a step darker so it reads at this size
+}
+
+.profileArrow {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.2;
+}
+
+.profileStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 6px;
+  color: $faint;
+  font-size: 0.75rem;
+  line-height: 1.35;
+
+  strong {
+    color: $ink;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+}
+
+// --- The containers: Proof, Working with me, Still learning ----------------------
+
+.stack {
+  --box-radius: 12px;
+  --box-title-size: 1.25rem;
+  --box-head-pad: 15px 12px 15px 20px;
+  --box-head-pad-sm: 14px 10px 14px 16px;
+  --box-content-pad: 2px 20px 20px;
+  --box-content-pad-sm: 2px 16px 16px;
+  --box-teaser-open: 1;
+  --box-teaser-open-display: block;
+
+  display: grid;
+  gap: 8px;
+}
+
+// --- Proof: one small card per scenario ------------------------------------------
+// Figure on top (it carries the point), then a tag, a title and one sentence.
+
+.scenarios {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.scenario {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid $rule;
+  border-radius: 12px;
+  background: #fff;
+}
+
+// The statement, in context: two tiles and the sign between them.
+.figure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px;
+  border-radius: 8px;
+  background: #f1f0ec;
+}
+
+.figureTile {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(43 43 43 / 10%);
+}
+
+.figureValue {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.figureLabel {
+  color: $muted;
+  font-size: 0.75rem;
+  line-height: 1.3;
+}
+
+// The option that wasn't picked: flat and grey, so the other one stands out.
+.figureTileQuiet {
+  background: none;
+  box-shadow: none;
+
+  .figureValue {
+    color: $faint;
+  }
+}
+
+.figureJoiner {
+  align-self: center;
+  min-width: 18px;
+  color: $muted;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.scenarioBody {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+.scenarioTag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sheet-accent-color, #{$blue}) 12%, #fff);
+  color: #1c4fb8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.scenarioTitle {
+  margin: 2px 0 0;
+  font-family: $font;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.scenarioText {
+  color: $muted;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.scenarioLink {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 4px;
+  color: $ink;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  span {
+    transition: transform 200ms $ease;
+  }
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  &:hover span {
+    transform: translateX(3px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 2px;
+  }
+}
+
+// Only for screen readers.
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// --- Working with me, Still learning: label / text rows --------------------------
+
+.rows {
+  display: grid;
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 24px;
+  padding: 14px 0;
+  border-top: 1px solid $rule;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+
+  dt {
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    color: $muted;
+  }
+}
+
+// --- Projects: a name pill over a screenshot --------------------------------------
+
+.projects {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.project {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid $rule;
+  border-radius: 14px;
+  background: #fff;
+  color: $ink;
+  text-decoration: none;
+  transition: transform 200ms $ease, box-shadow 200ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -18px rgb(43 43 43 / 45%);
+  }
+
+  &:hover .projectArrow {
+    transform: translateX(2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: 3px;
+  }
+}
+
+.projectShot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// No screenshot yet: quiet hatching, like the sketch.
+.projectShotEmpty {
+  background:
+    repeating-linear-gradient(-45deg, rgb(43 43 43 / 7%) 0 1px, transparent 1px 9px),
+    #f1f0ec;
+}
+
+.projectPill {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 20px);
+  padding: 6px 6px 6px 14px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(43 43 43 / 12%), 0 6px 14px -8px rgb(43 43 43 / 40%);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.projectArrow {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: $ink;
+  color: #f7f7f7;
+  font-size: 0.875rem;
+  transition: transform 200ms $ease;
+}
+
+// --- Small screens ---------------------------------------------------------------
+
+@media (max-width: 767px) {
+  .sheet {
+    gap: 44px;
+  }
+
+  .blockHead {
+    flex-wrap: wrap;
+  }
+
+  .blockCaption {
+    text-align: left;
+  }
+
+  .roles,
+  .scenarios {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .role {
+    padding: 14px 18px;
+  }
+
+  .docTabs {
+    width: 100%;
+  }
+
+  .pageClosed {
+    max-height: 280px;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  .projectPill {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .projects {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .profileStats {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role,
+  .roleText,
+  .download,
+  .profile,
+  .project,
+  .projectArrow,
+  .scenarioLink span {
+    transition: none;
+  }
+}

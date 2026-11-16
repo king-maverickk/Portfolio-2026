@@ -16,6 +16,15 @@ $fill: rgb(43 43 43 / 6%);
 $radius: 6px; // sharp-ish corners on the containers
 $change: 320ms; // closed <-> open look
 
+// Another sheet that uses these containers (SheetBox.js) can retune them by
+// setting these on a parent. Each falls back to the Freelance look:
+//   --box-radius           corner radius
+//   --box-title-size       the row's title
+//   --box-head-pad         padding of the title row (--box-head-pad-sm on phones)
+//   --box-content-pad      padding of the content (--box-content-pad-sm on phones)
+//   --box-teaser-open      opacity of the hint once the container is open (0 = it leaves)
+//   --box-teaser-open-display   on phones the open hint is removed; "block" keeps it
+
 .stack {
   display: grid;
   gap: 8px;
@@ -23,7 +32,7 @@ $change: 320ms; // closed <-> open look
 
 .box {
   position: relative;
-  border-radius: $radius;
+  border-radius: var(--box-radius, #{$radius});
   background: rgb(255 255 255 / 45%);
   box-shadow: 0 0 0 1px rgb(43 43 43 / 7%);
   color: $ink;
@@ -65,9 +74,9 @@ $change: 320ms; // closed <-> open look
   align-items: center;
   column-gap: 18px;
   width: 100%;
-  padding: 20px 18px 20px 26px;
+  padding: var(--box-head-pad, 20px 18px 20px 26px);
   border: 0;
-  border-radius: $radius;
+  border-radius: var(--box-radius, #{$radius});
   background: none;
   color: inherit;
   font: inherit;
@@ -96,7 +105,7 @@ button.boxHead {
 
 .boxTitle {
   min-width: 0;
-  font-size: clamp(1.3rem, 3vw, 1.55rem);
+  font-size: var(--box-title-size, clamp(1.3rem, 3vw, 1.55rem));
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -122,8 +131,8 @@ button.boxHead {
 }
 
 .open .boxTeaser {
-  opacity: 0;
-  transform: translateY(-4px);
+  opacity: var(--box-teaser-open, 0);
+  transform: translateY(calc((1 - var(--box-teaser-open, 0)) * -4px));
 }
 
 // + when closed, − when open: the vertical bar folds away.
@@ -179,7 +188,7 @@ button.boxHead {
 }
 
 .boxContent {
-  padding: 0 26px 28px;
+  padding: var(--box-content-pad, 0 26px 28px);
   opacity: 0;
   transition: opacity 220ms ease;
 }
@@ -413,7 +422,7 @@ button.boxHead {
 
 @media (max-width: 767px) {
   .boxHead {
-    padding: 18px 12px 16px 20px;
+    padding: var(--box-head-pad-sm, 18px 12px 16px 20px);
   }
 
   // Hint under the title, toggle on the right of both.
@@ -431,7 +440,7 @@ button.boxHead {
   }
 
   .open .boxTeaser {
-    display: none;
+    display: var(--box-teaser-open-display, none);
   }
 
   .topic {
@@ -440,7 +449,7 @@ button.boxHead {
   }
 
   .boxContent {
-    padding: 0 20px 24px;
+    padding: var(--box-content-pad-sm, 0 20px 24px);
   }
 
   // The headline container: more room below the buttons on phones.

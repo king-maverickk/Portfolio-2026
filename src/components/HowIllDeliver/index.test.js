@@ -1,7 +1,12 @@
 import React from 'react';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { act, fireEvent, render as rtlRender, screen, within } from '@testing-library/react';
 import HowIllDeliver from './index';
 import { openDeliverySheet } from './deliveryEvents';
+
+// The hiring manager sheet links to project pages, so the section renders
+// inside a router, as it does on the site.
+const render = (ui) => rtlRender(ui, { wrapper: MemoryRouter });
 
 beforeEach(() => {
   window.matchMedia = jest.fn().mockReturnValue({ matches: false });
@@ -23,7 +28,7 @@ test.each([
   expect(screen.getByRole('dialog').style.getPropertyValue('--sheet-accent-color')).toBe(accentColor);
 });
 
-test('the hiring manager sheet shows the resume after its two lines; the others do not', () => {
+test('the hiring manager sheet shows the resume; the others do not', () => {
   const { unmount } = render(<HowIllDeliver />);
 
   fireEvent.click(screen.getByRole('button', { name: '(hiring manager)' }));

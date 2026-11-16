@@ -69,14 +69,6 @@ $font: "Outfit", "Segoe UI", sans-serif;
   }
 }
 
-.intro {
-  position: relative;
-
-  .draftTag {
-    margin: 0 0 10px;
-  }
-}
-
 // Freelance: "For businesses that depend on…" with icons inside the sentence,
 // matched to the Figma frame (32px Outfit Medium, 40px lines, 3 lines).
 // Big, with plenty of room above and below so it reads as the sheet's opener.
@@ -285,82 +277,6 @@ $font: "Outfit", "Segoe UI", sans-serif;
   font-size: 1.35rem;
   font-weight: 500;
   letter-spacing: -0.02em;
-}
-
-// --- Link cards ----------------------------------------------------------------
-
-.linkCards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 10px;
-
-  li {
-    display: block;
-    min-width: 0;
-  }
-}
-
-.linkCard {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 100%;
-  padding: 12px 14px;
-  border: 1px solid $rule;
-  border-radius: 12px;
-  background: $card;
-  color: $ink;
-  text-decoration: none;
-  transition: background-color 200ms ease, transform 200ms $ease, border-color 200ms ease;
-
-  &:hover {
-    border-color: rgb(43 43 43 / 24%);
-    background: $card-hover;
-    transform: translateY(-2px);
-  }
-
-  &:hover .linkArrow {
-    transform: translate(2px, -2px);
-    color: $ink;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $ink;
-    outline-offset: 2px;
-  }
-}
-
-.linkIcon {
-  flex: none;
-  width: 22px;
-  height: 22px;
-}
-
-.linkText {
-  display: grid;
-  min-width: 0;
-  flex: 1;
-}
-
-.linkTitle {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.linkDetail {
-  overflow: hidden;
-  color: $muted;
-  font-size: 0.82rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.linkArrow {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  color: $faint;
-  transition: transform 200ms $ease, color 200ms ease;
 }
 
 // --- Freelance: pain point cards (card shuffle) --------------------------------
@@ -665,8 +581,6 @@ $shuffle-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
 @media (prefers-reduced-motion: reduce) {
   .tabHighlight,
-  .linkCard,
-  .linkArrow,
   .primaryAction,
   .secondaryAction {
     transition: none;

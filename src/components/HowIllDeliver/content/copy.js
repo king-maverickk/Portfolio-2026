@@ -25,40 +25,228 @@ export const CONTACT = {
 export const SECTION_PROMPT = 'Which one are you? Pick a tag.';
 
 // --- (hiring manager) --------------------------------------------------------
+//
+// The sheet, top to bottom (HiringManagerSheet.js): the hello sentence, the
+// roles, the resume and open letter, your two profile cards, then Proof,
+// Working with me and Still learning as containers, and your projects.
+//
+// The hello sentence has icons inside it, so its words live in
+// HiringManagerSheet.js (like the Freelance headline).
 
 export const HIRING = {
   title: 'Hiring managers',
   description: 'Looking for a designer-developer?',
 
-  intro: {
-    draft: true,
-    paragraphs: [
-      'I design interfaces and build them myself, so what gets approved in Figma is what ships. Six years of self-taught development, now pointed at design.',
-      'My resume and a short cover letter are below, readable right here. Nothing to download.'
+  // Three buttons. Picking one only moves the highlight for now: the day each
+  // role has its own resume and letter, this is where they switch.
+  roles: {
+    title: 'Roles I’m excited by',
+    items: [
+      { id: 'interaction', label: 'Interaction design', text: 'Hovers, drags and reveals, prototyped in the browser.' },
+      { id: 'ux', label: 'UI/UX design', text: 'Research, sketches and Figma screens.' },
+      { id: 'frontend', label: 'Front-end development', text: 'React builds of my own designs or yours deployed.' }
     ]
   },
 
-  // Short facts a recruiter can repeat to a colleague. All from your resume.
-  glance: [
-    { label: 'Roles', value: 'Interaction design · UI/UX design · Front-end development' },
-    { label: 'Based in', value: 'Hamilton, Ontario' },
-    { label: 'Proof', value: '3rd place, Microsoft AI for Social Good 2025 · Azure Developer Associate (AZ-204)' },
-    { label: 'Also', value: 'Founder of Hamilton Creative Group · Speaks six languages' }
-  ],
+  // The page shows the top of the document; a click opens the rest. Put each
+  // PDF in public/ (e.g. public/assets/HowIllDeliver/motheo-moleko-resume.pdf),
+  // set its path here, and the "Download PDF" button appears for that tab.
+  documents: {
+    title: 'Resume and open letter',
+    resume: { label: 'Resume', pdf: '' },
+    letter: { label: 'Open letter', pdf: '' },
+    closedHint: 'Click the page to read it full size.',
+    openHint: 'Fold the page back.'
+  },
 
-  // The general (open) cover letter. Draft: leads with what you shipped and lets
-  // the dates show your level, as the plan suggested. Rewrite in your voice.
+  // The open letter. Draft: says which site launched and which two were
+  // designs, and describes the hackathon app the way its project page does.
+  // Rewrite in your voice.
   coverLetter: {
     draft: true,
     greeting: 'Hello,',
     paragraphs: [
       'I’m Motheo, a designer-developer in Hamilton. I take a page from sketch to screen to motion on my own: the research, the layout and type, the prototype, and the React build that goes live.',
-      'Recently I designed and built sites for a photographer, a holistic healer and an illustrator, each focused on bringing in clients and showing their work well. Before that I designed Milk & Honey TV’s website in Figma, built it in React and deployed it on Azure, and worked on cloud back-end services at Queers Code.',
-      'In 2025 my teammate and I placed 3rd at Microsoft’s AI for Social Good hackathon with an app that turns historical topics into geotagged podcast shorts. I designed its interface and built the front end.',
+      'Recently I designed and built a site for a Hamilton photographer, and designed two more for a holistic healer and an illustrator. Before that I designed Milk & Honey TV’s website in Figma, built it in React and deployed it on Azure, and worked on cloud back-end services at Queers Code.',
+      'In 2025 my teammate and I placed 3rd at Microsoft’s AI for Good hackathon with an app that finds where you are and turns the history around you into two-voice podcast episodes. I built its backend and cloud side there, then redesigned and rebuilt it on my own.',
       'Outside client work I started Hamilton Creative Group, which now runs two weekly meetups for local designers, developers and animators.',
       'I’m looking for a team where design and code sit close together. If that’s yours, I’d like to talk.'
     ],
     signOff: 'Motheo Moleko'
+  },
+
+  // Your two profile cards, rebuilt from your Figma exports (ProfileCards.js).
+  // The numbers are typed in: update them by hand. `avatar` is a file in
+  // public/ (e.g. '/assets/HowIllDeliver/avatar_linkedin.jpg'); until it's set
+  // the card shows your initials.
+  online: {
+    title: 'Online',
+    caption: 'Find me: LinkedIn, GitHub',
+    linkedin: {
+      name: 'Motheo M Moleko',
+      headline: 'Creative Design | Motion, Web & Interaction Design | Technical | Positive Collaboration',
+      href: 'https://www.linkedin.com/in/motheo-m-moleko/',
+      cta: 'View Profile',
+      notes: ['Open to Work', 'Skills'],
+      avatar: '',
+      initials: 'MM'
+    },
+    github: {
+      handle: '@king-maverickk',
+      bio: 'Microsoft Certified Azure Developer Associate, 6 years of personal programming experience.',
+      href: 'https://github.com/king-maverickk',
+      // CHECK: your card says 377 contributions, your sketch says 337.
+      stats: [
+        { value: '377', label: 'contributions in 2026' },
+        { value: '19', label: 'public repos' },
+        { value: '33', label: 'private repos' }
+      ],
+      avatar: '',
+      initials: 'KM'
+    }
+  },
+
+  // Proof: scenarios you've been in and how you got through them. One small
+  // card each (Scenarios.js): a figure that puts the statement in context,
+  // a tag, a title, ONE or two short sentences (20 words at most) and the
+  // project it comes from.
+  //
+  // `figure.parts` are the tiles, `figure.joiner` sits between them:
+  //   '='  one thing amounts to the other     '→'  first this, then that
+  //   'vs' two options side by side (give the one you didn't pick `quiet: true`)
+  //
+  // The facts are in Portfolio Project Copy: Photos by Alex/README.md and
+  // Living Histories/README.md ("Scenarios used on the Hiring managers sheet").
+  proof: {
+    draft: true,
+    title: 'Proof',
+    teaser: 'Scenarios I’ve been in, and how I got through them',
+    scenarios: [
+      {
+        id: 'everything-page',
+        tag: 'Thinking',
+        // CHECK: what the 2 hours cover (it's from your sketch).
+        figure: {
+          joiner: '=',
+          parts: [
+            { value: '400', label: 'albums' },
+            { value: '2 hr', label: 'job' }
+          ]
+        },
+        title: '400 albums I couldn’t sort by hand',
+        text: 'Alex wanted two decades of photos online. I scripted his Facebook albums into a database and designed each a preview.',
+        project: 'Photos by Alex',
+        to: '/projects/photos-by-alex'
+      },
+      {
+        id: 'certification',
+        tag: 'Skill',
+        figure: {
+          joiner: '→',
+          parts: [
+            { value: 'Certified', label: 'Azure, Aug 2025' },
+            { value: 'Rebuilt', label: 'Oct to Nov 2025' }
+          ]
+        },
+        title: 'Learn it first, then rebuild',
+        text: 'My hackathon app’s cloud setup was more than I understood, so I got Azure-certified and came back to re-architect it.',
+        project: 'Living Histories',
+        to: '/projects/living-histories'
+      },
+      {
+        id: 'cost',
+        tag: 'Cost',
+        // CHECK: swap $$$ and $ for real monthly figures if you have them.
+        figure: {
+          joiner: 'vs',
+          parts: [
+            { value: '$$$', label: 'SQL DB, 24/7', quiet: true },
+            { value: '$', label: 'NoSQL DB' }
+          ]
+        },
+        title: 'Paid AI on about US$5 a month',
+        text: 'Every episode costs money. A NoSQL database and one free episode a day per visitor kept the bill low.',
+        project: 'Living Histories',
+        to: '/projects/living-histories'
+      },
+      {
+        // You said there's a fourth scenario but not which. This one is
+        // Claude's pick, from your interview answers: swap it if another fits.
+        id: 'hallucination',
+        tag: 'Research',
+        figure: {
+          joiner: '→',
+          parts: [
+            { value: '36 hrs', label: 'to build it' },
+            { value: '3rd', label: 'of 160+ teams' }
+          ]
+        },
+        title: 'An AI that can make up history',
+        text: 'A real safeguard wouldn’t fit in 36 hours. We researched one, then pitched the risk and how we’d fix it.',
+        project: 'Living Histories',
+        to: '/projects/living-histories'
+      }
+    ]
+  },
+
+  workingWithMe: {
+    title: 'Working with me',
+    teaser: 'Feedback, being stuck, what I need from a lead',
+    rows: [
+      {
+        label: 'When I’m stuck',
+        text: 'I leave the screen. First a library or bookstore for design books, then Pinterest, Awwwards, and the tabs and collections I’ve been saving for a day like this.'
+      },
+      {
+        label: 'Feedback I agree with',
+        text: 'If I trust the person, I take the note. It usually comes with a suggestion, and I try it.'
+      },
+      {
+        label: 'Feedback I disagree with',
+        text: 'My first reaction isn’t always graceful, so I give it a moment. Then I ask questions until I understand what the note is trying to fix. If I still disagree, I write out what the design is meant to achieve and argue both sides, often with Claude, before I decide.'
+      },
+      {
+        // Draft: reworded on 15 Nov from your note (open communication, sharing
+        // and comparing each other's work, suggestions). Was "…whose taste I trust".
+        label: 'From a lead',
+        draft: true,
+        text: 'Room to explore, and open communication: sharing and comparing each other’s work, with suggestions going both ways. I’ve mostly been the one leading, and I’ve never had a design lead of my own. I’d like one: a senior designer who still loves the craft and will tell me where my work falls short.'
+      },
+      {
+        label: 'On AI',
+        text: 'I research and design everything myself. In development I use AI on components I’ve written and directed.'
+      }
+    ]
+  },
+
+  stillLearning: {
+    title: 'Still learning',
+    teaser: 'What I’m not yet',
+    rows: [
+      {
+        label: 'Motion timing and easing',
+        text: 'I know how I want something to move, but I still lean on AI for the exact values. I’m learning to set them by hand.'
+      },
+      {
+        label: 'Colour',
+        text: 'Most of my work sits on white or near-black. I want to design confidently on coloured backgrounds.'
+      }
+    ]
+  },
+
+  // One card per project (from Projects/projects.js) and per written-up
+  // unfinished entry (Projects/unfinishedWork.js), each leading to its page.
+  // `screenshots`: a picture per project id, a file in public/. Until one is
+  // set the card shows a hatched placeholder.
+  projects: {
+    title: 'Projects',
+    caption: 'Overview, repos, images',
+    screenshots: {
+      'photos-by-alex': '',
+      'hamilton-creative-group': '',
+      'living-histories': '',
+      'entelect-challenge-2024': ''
+    }
   }
 };
 

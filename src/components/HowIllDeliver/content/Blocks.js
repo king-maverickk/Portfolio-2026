@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 
-import { CONTACT } from './copy';
 import styles from './index.module.scss';
 
 const SHOW_DRAFT_MARKERS = process.env.NODE_ENV !== 'production';
@@ -105,36 +104,6 @@ Icon.propTypes = {
   name: PropTypes.oneOf(Object.keys(LINK_ICONS)).isRequired,
   className: PropTypes.string
 };
-
-// LinkedIn, GitHub (once you add the URL) and email, as small cards.
-export function LinkCards() {
-  const links = [
-    { id: 'linkedin', title: 'LinkedIn', detail: CONTACT.linkedinLabel, href: CONTACT.linkedin, external: true },
-    { id: 'github', title: 'GitHub', detail: CONTACT.githubLabel || CONTACT.github, href: CONTACT.github, external: true },
-    { id: 'mail', title: 'Email', detail: CONTACT.email, href: `mailto:${CONTACT.email}` }
-  ].filter(({ href }) => href);
-
-  return (
-    <ul className={styles.linkCards}>
-      {links.map(({ id, title, detail, href, external }) => (
-        <li key={id}>
-          <a
-            className={styles.linkCard}
-            href={href}
-            {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-          >
-            <Icon name={id} className={styles.linkIcon} />
-            <span className={styles.linkText}>
-              <span className={styles.linkTitle}>{title}</span>
-              <span className={styles.linkDetail}>{detail}</span>
-            </span>
-            <Icon name="arrow" className={styles.linkArrow} />
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 // "Start a project →": closes the sheet and takes the visitor to the contact
 // form at the bottom of the page (see HowIllDeliver/index.js).
