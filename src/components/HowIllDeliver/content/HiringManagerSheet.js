@@ -22,60 +22,46 @@ import hx from './hiringSheet.module.scss';
 //   → Proof / Working with me / Still learning (containers) → Projects
 //
 // Everything above the containers sits straight on the sheet. The words are in
-// copy.js (HIRING), apart from the hello sentence, which has icons inside it.
+// copy.js (HIRING), apart from the hello sentence, which has pictures inside it.
 
 const TABS = ['resume', 'letter'];
 
-// The five small drawings inside the hello sentence, from the Design file.
-const HELLO_ICONS = {
-  code: (
-    <svg viewBox="0 0 32 32" fill="none">
-      <path d="M12 9L5 16L12 23M20 9L27 16L20 23" stroke="#2864E8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  ),
-  design: (
-    <svg viewBox="0 0 32 32" fill="none">
-      <path d="M16 16L16 3A13 13 0 0 1 29 16Z" fill="#2864E8" />
-      <path d="M16 16L29 16A13 13 0 0 1 16 29Z" fill="#F2A33A" />
-      <path d="M16 16L16 29A13 13 0 0 1 3 16Z" fill="#D9482B" />
-      <path d="M16 16L3 16A13 13 0 0 1 16 3Z" fill="#3DBE8B" />
-      <circle cx="16" cy="16" r="4.5" fill="var(--sheet-paper, #F3F4F1)" />
-    </svg>
-  ),
-  sketch: (
-    <svg viewBox="0 0 32 32" fill="none">
-      <path d="M21 5L27 11L12 26L5 27L6 20Z" fill="#F2C94C" stroke="#2B2B2B" strokeWidth="2.2" strokeLinejoin="round" />
-      <path d="M18 8L24 14" stroke="#2B2B2B" strokeWidth="2.2" />
-    </svg>
-  ),
-  build: (
-    <svg viewBox="0 0 40 40" fill="none">
-      <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(45 20 20)" stroke="#2B2B2B" strokeWidth="2.4" />
-      <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(-45 20 20)" stroke="#2B2B2B" strokeWidth="2.4" />
-      <circle cx="20" cy="20" r="3.2" fill="#2B2B2B" />
-      <circle cx="31.3" cy="31.3" r="2.8" fill="#2864E8" />
-      <circle cx="31.3" cy="8.7" r="2.8" fill="#2864E8" />
-    </svg>
-  ),
-  launch: (
-    <svg viewBox="0 0 40 40" fill="none">
-      <path d="M14 5V2M9 10H6M10.5 6.5L8.4 4.4" stroke="#2864E8" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M14 10L14 33L19.5 28L23.5 37L27.5 35.2L23.5 26.2L31.5 26.2Z" fill="#2B2B2B" stroke="#2B2B2B" strokeWidth="1.5" strokeLinejoin="round" />
-    </svg>
-  )
+// The five small pictures inside the hello sentence. Four are the site's own:
+// the code chip and colour wheel from About (AboutMotheo), and the pencil and
+// interactivity icons from the stages on Home (ProjectStages/StageIcons.js).
+// "build" has no picture of its own yet, so it keeps the drawing from the
+// Design file. `ratio` is width / height, as InlineImg wants it.
+const ASSETS = `${process.env.PUBLIC_URL}/assets/Home`;
+
+const HELLO_PICTURES = {
+  code: { src: `${ASSETS}/about_code_chip.png`, ratio: 1.5 },
+  design: { src: `${ASSETS}/about_design_wheel.png`, ratio: 1 },
+  sketch: { src: `${ASSETS}/pencil.svg`, ratio: 1 },
+  build: {
+    icon: (
+      <svg viewBox="0 0 40 40" fill="none">
+        <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(45 20 20)" stroke="#2B2B2B" strokeWidth="2.4" />
+        <ellipse cx="20" cy="20" rx="16" ry="6.5" transform="rotate(-45 20 20)" stroke="#2B2B2B" strokeWidth="2.4" />
+        <circle cx="20" cy="20" r="3.2" fill="#2B2B2B" />
+        <circle cx="31.3" cy="31.3" r="2.8" fill="#2864E8" />
+        <circle cx="31.3" cy="8.7" r="2.8" fill="#2864E8" />
+      </svg>
+    )
+  },
+  launch: { src: `${ASSETS}/interactivity.svg`, ratio: 1 }
 };
 
-// A word with its drawing straight after it; the two never split across lines.
-function Word({ icon, after, children }) {
+// A word with its picture straight after it; the two never split across lines.
+function Word({ picture, after, children }) {
   return (
-    <InlineImg icon={HELLO_ICONS[icon]} after={after} size={1.15}>
+    <InlineImg {...HELLO_PICTURES[picture]} after={after} size={1.15}>
       {children}
     </InlineImg>
   );
 }
 
 Word.propTypes = {
-  icon: PropTypes.oneOf(Object.keys(HELLO_ICONS)).isRequired,
+  picture: PropTypes.oneOf(Object.keys(HELLO_PICTURES)).isRequired,
   after: PropTypes.string,
   children: PropTypes.node.isRequired
 };
@@ -83,11 +69,11 @@ Word.propTypes = {
 function Hello() {
   return (
     <div className={hx.hello}>
-      Hello, I’ve been teaching myself to <Word icon="code">code</Word> since 2019, and somewhere
-      along the way <Word icon="design">design</Word> pulled me in. Now
-      I <Word icon="sketch" after=",">sketch</Word> design
-      and <Word icon="build">build</Word> it all myself, and I’ve taken a client’s site from first
-      call to <Word icon="launch" after=".">launch</Word>
+      Hello, I’ve been teaching myself to <Word picture="code">code</Word> since 2019, and somewhere
+      along the way <Word picture="design">design</Word> pulled me in. Now
+      I <Word picture="sketch" after=",">sketch</Word> design
+      and <Word picture="build">build</Word> it all myself, and I’ve taken a client’s site from first
+      call to <Word picture="launch" after=".">launch</Word>
     </div>
   );
 }
