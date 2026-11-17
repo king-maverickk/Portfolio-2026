@@ -37,7 +37,8 @@ const HELLO_PICTURES = {
   react: { src: `${ASSETS}/hiring-manager_icon_react.png`, ratio: 1, className: hx.iconReact }
 };
 
-// A word with its icon straight after it; the two never split across lines.
+// The last word of a phrase with its icon straight after it ("screens" +
+// Figma); the two never split across lines.
 function Word({ picture, after, children }) {
   const { className, ...image } = HELLO_PICTURES[picture];
   return (
@@ -56,7 +57,8 @@ Word.propTypes = {
 function Hello() {
   return (
     <p className={cn(styles.forStatement, hx.hello)}>
-      For teams that need the <Word picture="figma">Figma</Word> screens, the <Word picture="prototype">prototype</Word> <Word picture="react">&</Word> React build from one person.
+      For teams that need a fancy Figma <Word picture="figma" after=", ">screen</Word> the <Word picture="prototype" after=" ">prototype</Word> &amp;
+      React <Word picture="react">build</Word> from one person.
     </p>
   );
 }
