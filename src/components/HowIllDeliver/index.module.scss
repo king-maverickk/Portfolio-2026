@@ -315,7 +315,7 @@
   max-width: 14ch;
   margin: 0;
   font-family: "Outfit", "Segoe UI", sans-serif;
-  font-size: clamp(2.25rem, 6vw, 3.5rem);
+  font-size: var(--box-title-size, clamp(1.3rem, 3vw, 1.55rem));
   font-weight: 500;
   line-height: 1;
   letter-spacing: -0.045em;
@@ -385,7 +385,8 @@
   padding-bottom: clamp(12px, 2.4vw, 20px);
 }
 
-.sheetSections .sheetBody {
+.sheetSections .sheetBody,
+.sheetOwnsTitle .sheetBody {
   margin-top: 0;
 }
 

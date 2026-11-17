@@ -111,8 +111,12 @@ button.boxHead {
   letter-spacing: -0.02em;
 }
 
-// The first container carries the sheet's name, so it stays big.
-.boxIntro .boxTitle {
+// The first container carries the sheet's name, so it stays big. .sheetName
+// is the same title for a sheet that sets its name outside a container
+// (Hiring managers): wrap it in .sheetNameFrame and set --sheet-name-ems for
+// the phone size (see the phone rules below).
+.boxIntro .boxTitle,
+.sheetName {
   font-size: clamp(2rem, 5.5vw, 3.1rem);
   font-weight: 500;
   line-height: 1;
@@ -209,6 +213,11 @@ button.boxHead {
 // big margins, which are !important to win over the sheet's paragraph styles.)
 .box .introHeadline {
   margin: 4px 0 6px !important;
+}
+
+// What .sheetName measures itself against on phones: the column it sits in.
+.sheetNameFrame {
+  container-type: inline-size;
 }
 
 // "Start a project" and "See how a project runs" under the headline.
@@ -421,6 +430,10 @@ button.boxHead {
 }
 
 @media (max-width: 767px) {
+  .sheetTitle {
+    font-size: 12.2549019608cqi;
+  }
+
   .boxHead {
     padding: var(--box-head-pad-sm, 18px 12px 16px 20px);
   }
@@ -468,8 +481,11 @@ button.boxHead {
     container-type: inline-size;
   }
 
-  .boxIntro .boxTitle {
-    font-size: calc(100cqi / 8.16);
+  // --sheet-name-ems: the title's width in em, plus a little. "Freelance /
+  // contract" is 8.10em (8.16); "Hiring managers" is 6.75em (6.80).
+  .boxIntro .boxTitle,
+  .sheetName {
+    font-size: calc(100cqi / var(--sheet-name-ems, 8.16));
     white-space: nowrap;
   }
 

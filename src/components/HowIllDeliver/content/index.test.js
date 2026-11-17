@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { fireEvent, render as rtlRender, screen, within } from '@testing-library/react';
+import { act, fireEvent, render as rtlRender, screen, within } from '@testing-library/react';
 
 import HowIllDeliver from '../index';
 import HiringManagerSheet from './HiringManagerSheet';
@@ -19,66 +19,99 @@ beforeEach(() => {
 });
 
 describe('hiring manager sheet', () => {
-  test('resume first, open letter one tab away', () => {
+  test('the resume is on top of the pile, the open letter behind it; the pages are buttons, not readable text', () => {
     render(<HiringManagerSheet />);
 
-    expect(screen.getByRole('tab', { name: 'Resume' })).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('article', { name: 'Resume' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Read the resume' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Bring the open letter to the front' })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('tab', { name: 'Open letter' }));
-    expect(screen.getByRole('article', { name: 'Open letter' })).toBeInTheDocument();
+    // The shrunk pages are pictures of the documents: no article, no links.
     expect(screen.queryByRole('article', { name: 'Resume' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: CONTACT.email })).not.toBeInTheDocument();
+  });
 
-    // Arrow keys move between the tabs too.
-    fireEvent.keyDown(screen.getByRole('tab', { name: 'Open letter' }), { key: 'ArrowRight' });
-    expect(screen.getByRole('tab', { name: 'Resume' })).toHaveFocus();
+  test('clicking the back page slides it out, then puts it on top', () => {
+    jest.useFakeTimers();
+    try {
+      render(<HiringManagerSheet />);
+      const letter = screen.getByRole('button', { name: 'Bring the open letter to the front' });
+
+      fireEvent.click(letter);
+      // Still on its way out.
+      expect(letter).toHaveAccessibleName('Bring the open letter to the front');
+
+      act(() => { jest.advanceTimersByTime(400); });
+      expect(letter).toHaveAccessibleName('Read the open letter');
+      expect(screen.getByRole('button', { name: 'Bring the resume to the front' })).toBeInTheDocument();
+      expect(screen.getByText('Open letter on top.')).toBeInTheDocument();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  test('with reduced motion the pages swap straight away', () => {
+    window.matchMedia = jest.fn().mockReturnValue({ matches: true });
+    render(<HiringManagerSheet />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Bring the open letter to the front' }));
+    expect(screen.getByRole('button', { name: 'Read the open letter' })).toBeInTheDocument();
+  });
+
+  test('clicking the top page opens it to read; "Back to the pile" puts it back', () => {
+    render(<HiringManagerSheet />);
+    const { backToPile } = HIRING.documents;
+
+    fireEvent.click(screen.getByRole('button', { name: 'Read the resume' }));
     expect(screen.getByRole('article', { name: 'Resume' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: CONTACT.email })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: backToPile })[0]).toHaveFocus();
+
+    fireEvent.click(screen.getAllByRole('button', { name: backToPile })[0]);
+    expect(screen.queryByRole('article', { name: 'Resume' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Read the resume' })).toHaveFocus();
   });
 
-  test('the page shows its top; a click on it, or its button, opens the rest', () => {
+  test('the open letter opens the same way once it is on top', () => {
+    window.matchMedia = jest.fn().mockReturnValue({ matches: true });
     render(<HiringManagerSheet />);
-    const { closedHint, openHint } = HIRING.documents;
 
-    const toggle = screen.getByRole('button', { name: closedHint });
-    expect(toggle).toHaveAttribute('aria-expanded', 'false');
-
-    // A click on the page itself opens it.
-    fireEvent.click(screen.getByRole('article', { name: 'Resume' }));
-    expect(screen.getByRole('button', { name: openHint })).toHaveAttribute('aria-expanded', 'true');
-
-    // The button folds it back, and opens it again.
-    fireEvent.click(screen.getByRole('button', { name: openHint }));
-    expect(screen.getByRole('button', { name: closedHint })).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  test('a link inside the closed page still works as a link, and tabbing into the page opens it', () => {
-    render(<HiringManagerSheet />);
-    const email = screen.getByRole('link', { name: CONTACT.email });
-
-    fireEvent.click(email);
-    expect(screen.getByRole('button', { name: HIRING.documents.closedHint })).toBeInTheDocument();
-
-    fireEvent.focus(email);
-    expect(screen.getByRole('button', { name: HIRING.documents.openHint })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Bring the open letter to the front' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Read the open letter' }));
+    expect(screen.getByRole('article', { name: 'Open letter' })).toBeInTheDocument();
+    expect(screen.getByText(HIRING.coverLetter.greeting)).toBeInTheDocument();
   });
 
   test('no Download button until a PDF is set in copy.js', () => {
     render(<HiringManagerSheet />);
-    expect(Boolean(screen.queryByRole('link', { name: /Download PDF/ }))).toBe(Boolean(HIRING.documents.resume.pdf));
+    expect(Boolean(screen.queryByRole('link', { name: /Download/ }))).toBe(Boolean(HIRING.documents.resume.pdf));
   });
 
-  test('picking a role moves the highlight', () => {
+  test('Roles is a closed container whose hint names the roles; open, it lists them, design engineering first', () => {
     render(<HiringManagerSheet />);
-    const roles = within(screen.getByRole('group', { name: HIRING.roles.title }));
+    const { title, teaser, items } = HIRING.roles;
 
-    expect(roles.getByRole('button', { name: /Interaction design/ })).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(roles.getByRole('button', { name: /Front-end development/ }));
-    expect(roles.getByRole('button', { name: /Front-end development/ })).toHaveAttribute('aria-pressed', 'true');
-    expect(roles.getByRole('button', { name: /Interaction design/ })).toHaveAttribute('aria-pressed', 'false');
+    const toggle = screen.getByRole('button', { name: new RegExp(`^${title}`) });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle).toHaveTextContent(teaser);
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    const roles = within(screen.getByRole('region', { name: new RegExp(`^${title}`) }));
+    const labels = roles.getAllByRole('term').map((term) => term.textContent);
+    expect(labels).toHaveLength(items.length);
+    expect(items[0].id).toBe('design-engineering');
+    expect(labels[0]).toContain(items[0].label);
+    items.forEach(({ text }) => expect(roles.getByText(text)).toBeInTheDocument());
   });
 
-  test('Online: the two profile cards, each with one link', () => {
+  test('Online is a closed container; open, it shows the two profile cards, each with one link', () => {
     render(<HiringManagerSheet />);
+    const toggle = screen.getByRole('button', { name: /^Online/ });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle).toHaveTextContent(HIRING.online.teaser);
+    fireEvent.click(toggle);
+
     const online = within(screen.getByRole('region', { name: /^Online/ }));
     const { linkedin, github } = HIRING.online;
 
@@ -91,11 +124,14 @@ describe('hiring manager sheet', () => {
     github.stats.forEach(({ value }) => expect(online.getByText(value)).toBeInTheDocument());
   });
 
-  test('Proof starts open: one card per scenario, each leading to its project', () => {
+  test('Proof starts closed; open, it has one card per scenario, each leading to its project', () => {
     render(<HiringManagerSheet />);
     const { scenarios } = HIRING.proof;
 
-    expect(screen.getByRole('button', { name: /^Proof/ })).toHaveAttribute('aria-expanded', 'true');
+    const toggle = screen.getByRole('button', { name: /^Proof/ });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
     const proof = within(screen.getByRole('region', { name: /^Proof/ }));
     expect(proof.getAllByRole('listitem')).toHaveLength(scenarios.length);
 
@@ -183,7 +219,8 @@ test('“Read my resume” turns the open to work sheet into the hiring manager 
   fireEvent.click(screen.getByRole('button', { name: 'Read my resume' }));
   const dialog = screen.getByRole('dialog');
   expect(within(dialog).getByRole('heading', { name: 'Hiring managers' })).toBeInTheDocument();
-  expect(within(dialog).getByRole('article', { name: 'Resume' })).toBeInTheDocument();
+  // The resume is on top of the pile.
+  expect(within(dialog).getByRole('button', { name: 'Read the resume' })).toBeInTheDocument();
 
   // Closing it returns focus to the label of the sheet now showing.
   fireEvent.keyDown(document, { key: 'Escape' });

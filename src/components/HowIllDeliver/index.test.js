@@ -33,6 +33,7 @@ test('the hiring manager sheet shows the resume; the others do not', () => {
 
   fireEvent.click(screen.getByRole('button', { name: '(hiring manager)' }));
   const dialog = screen.getByRole('dialog');
+  fireEvent.click(within(dialog).getByRole('button', { name: 'Read the resume' }));
   expect(within(dialog).getByRole('article', { name: 'Resume' })).toBeInTheDocument();
   expect(within(dialog).getByText('Backend & Cloud Engineer, Queers Code')).toBeInTheDocument();
   unmount();
@@ -40,6 +41,7 @@ test('the hiring manager sheet shows the resume; the others do not', () => {
   render(<HowIllDeliver />);
   fireEvent.click(screen.getByRole('button', { name: '(freelance/contract)' }));
   expect(screen.queryByRole('article', { name: 'Resume' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: 'Read the resume' })).not.toBeInTheDocument();
 });
 
 test('closes the sheet with Escape and returns focus to its trigger', () => {

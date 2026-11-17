@@ -176,56 +176,7 @@ $font: "Outfit", "Segoe UI", sans-serif;
   }
 }
 
-// --- Documents: tabs + paper -------------------------------------------------
-
-.tabs {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(var(--tab-count), minmax(0, 1fr));
-  width: min(320px, 100%);
-  padding: 4px;
-  border-radius: 10px;
-  background: rgb(43 43 43 / 7%);
-}
-
-.tabHighlight {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 4px;
-  width: calc((100% - 8px) / var(--tab-count));
-  border-radius: 7px;
-  background: $ink;
-  transform: translateX(calc(100% * var(--tab-index)));
-  transition: transform 300ms $ease;
-  pointer-events: none;
-}
-
-.tab {
-  position: relative;
-  z-index: 1;
-  height: 34px;
-  border-radius: 7px;
-  color: $muted;
-  font-family: $font;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: color 200ms ease;
-
-  &:hover {
-    color: $ink;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $ink;
-    outline-offset: 2px;
-  }
-}
-
-.tabActive,
-.tabActive:hover {
-  color: #f7f7f7;
-}
+// --- Documents: the open page (Hiring managers, Documents.js) -------------------
 
 // The document itself: a whiter sheet lying on the cream one.
 .paper {
@@ -557,10 +508,6 @@ $shuffle-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     gap: 2px;
   }
 
-  .tabs {
-    width: 100%;
-  }
-
   .paper {
     padding: 18px 16px;
   }
@@ -580,7 +527,6 @@ $shuffle-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tabHighlight,
   .primaryAction,
   .secondaryAction {
     transition: none;

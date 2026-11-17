@@ -35,29 +35,32 @@ export const SECTION_PROMPT = 'Which one are you? Pick a tag.';
 
 export const HIRING = {
   title: 'Hiring managers',
-  description: 'Looking for a designer-developer?',
 
-  // Three buttons. Picking one only moves the highlight for now: the day each
-  // role has its own resume and letter, this is where they switch.
+  // A container like Freelance's "Working together": the role on the left, a
+  // line on the right. It starts closed, so the hint names the roles: keep
+  // the two in step.
   roles: {
     title: 'Roles I’m excited by',
+    teaser: 'Design-Engineering, UI/UX, front-end',
     items: [
+      // Draft: the line is Claude's. Rewrite in your words.
+      { id: 'design-engineering', label: 'Design-Engineering', text: 'Using AI in development; designing by hand.' },
       { id: 'interaction', label: 'Interaction design', text: 'Hovers, drags and reveals, prototyped in the browser.' },
       { id: 'ux', label: 'UI/UX design', text: 'Research, sketches and Figma screens.' },
       { id: 'frontend', label: 'Front-end development', text: 'React builds of my own designs or yours deployed.' }
     ]
   },
 
-  // The page shows the top of the document; a click opens the rest. Put each
-  // PDF in public/ (e.g. public/assets/HowIllDeliver/motheo-moleko-resume.pdf),
-  // set its path here, and the "Download PDF" button appears for that tab.
+  // The two documents, as a pile of pages (Documents.js). Put each PDF in
+  // public/ (e.g. public/assets/HowIllDeliver/motheo-moleko-resume.pdf) and
+  // set its path here: a Download button appears for the page on top.
   documents: {
     title: 'Resume and open letter',
     resume: { label: 'Resume', pdf: '' },
     letter: { label: 'Open letter', pdf: '' },
-    closedHint: 'Click the page to read it full size.',
-    openHint: 'Fold the page back.'
+    backToPile: 'Back to the pile'
   },
+
 
   // The open letter. Draft: says which site launched and which two were
   // designs, and describes the hackathon app the way its project page does.
@@ -75,13 +78,14 @@ export const HIRING = {
     signOff: 'Motheo Moleko'
   },
 
-  // Your two profile cards, rebuilt from your Figma exports (ProfileCards.js).
+  // Your two profile cards, rebuilt from your Figma exports (ProfileCards.js),
+  // in a container that starts closed; `teaser` is the hint on its row.
   // The numbers are typed in: update them by hand. `avatar` is a file in
   // public/ (e.g. '/assets/HowIllDeliver/avatar_linkedin.jpg'); until it's set
   // the card shows your initials.
   online: {
     title: 'Online',
-    caption: 'Find me: LinkedIn, GitHub',
+    teaser: 'Find me: LinkedIn, GitHub',
     linkedin: {
       name: 'Motheo M Moleko',
       headline: 'Creative Design | Motion, Web & Interaction Design | Technical | Positive Collaboration',

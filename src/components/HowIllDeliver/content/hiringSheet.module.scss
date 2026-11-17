@@ -24,6 +24,14 @@ $font: "Outfit", "Segoe UI", sans-serif;
   font-family: $font;
 }
 
+// --- The title (freelanceSheet.module.scss .sheetName) ------------------------
+
+.title {
+  --sheet-name-ems: 6.8;
+
+  margin: 0;
+}
+
 // --- The hello sentence --------------------------------------------------------
 
 .hello {
@@ -66,134 +74,211 @@ $font: "Outfit", "Segoe UI", sans-serif;
   text-align: right;
 }
 
-// --- Roles ---------------------------------------------------------------------
+// --- Roles -------------------------------------------------------------------
+// Freelance's "Working together" rows (freelanceSheet.module.scss .topics),
+// without the gap that sits under its intro line there.
 
-.roles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.role {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  padding: 18px 22px;
-  border-radius: 14px;
-  color: $ink;
-  font-family: $font;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 200ms ease, color 200ms ease;
-
-  &:hover {
-    background: $fill;
-  }
-
-  &:focus-visible {
-    outline: 2px solid $ink;
-    outline-offset: 2px;
-  }
-}
-
-.roleLabel {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.roleText {
-  color: $muted;
-  font-size: 0.875rem;
-  line-height: 1.45;
-  transition: color 200ms ease;
-}
-
-.rolePicked,
-.rolePicked:hover {
-  background: $ink;
-  color: #f7f7f7;
-
-  .roleText {
-    color: #c9c5bd;
-  }
-}
-
-// --- Resume and open letter ------------------------------------------------------
-
-.docTabs {
-  flex: none;
-  width: 248px;
-}
-
-// The page (index.module.scss .paper) with only its top showing.
-.page {
+.stack .roleTopics {
   margin-top: 0;
 }
 
-.pageClosed {
-  position: relative;
-  max-height: 320px;
-  overflow: hidden;
-  cursor: zoom-in;
+// --- Resume and open letter: a pile of two pages (Documents.js) -----------------
+// Both pages share one grid cell. The one on top leans left; the other peeks
+// out on the right with its name on a pill. Click the back page: it slides out
+// ($paper-out), then lands on top while the other drops behind ($paper-settle).
+//
+// The motion, for tuning by hand:
+//   $paper-out     ease-in, so it speeds up as it leaves, like a page tugged
+//                  from under another. Short: it's only the wind-up.
+//   $paper-settle  a spring: the last value above 1 (1.4) overshoots, so the
+//                  page lands a touch past its spot and eases back. Same family
+//                  as the Freelance card shuffle ($shuffle-spring, 1.56), a bit
+//                  calmer because paper is lighter than a card being thrown.
+// Change OUT_MS in Documents.js when you change $paper-out's duration.
+//
+// Each page is the real document laid out 450px wide (about a letter page at
+// this type size) and shrunk with zoom to the page's width: --paper-zoom is
+// --paper-w / 450.
 
+$paper-out: 260ms cubic-bezier(0.55, 0, 1, 0.45);
+$paper-settle: 560ms cubic-bezier(0.3, 1.4, 0.6, 1);
+$paper-bg: #fffdf9;
+
+.pile {
+  --paper-w: 340px;
+  --paper-zoom: 0.7556;
+  // Where each page sits, as a share of the page's width: the top page left
+  // of centre, the back page right of it. Phones spread them a little further
+  // so the back page's pill clears the top page.
+  --paper-front-x: -0.2;
+  --paper-back-x: 0.28;
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 10px 0 24px;
+}
+
+.paper {
+  --paper-fill: #{$paper-bg};
+
+  position: relative;
+  grid-area: 1 / 1;
+  width: var(--paper-w);
+  overflow: hidden;
+  aspect-ratio: 8.5 / 11;
+  border-radius: 3px;
+  background: var(--paper-fill);
+  box-shadow:
+    0 1px 2px rgb(43 43 43 / 10%),
+    0 12px 28px -10px rgb(43 43 43 / 30%);
+  transition:
+    transform $paper-settle,
+    box-shadow 300ms ease;
+
+  // The bottom fades into the paper, so the page reads as "more below".
   &::after {
     position: absolute;
     right: 0;
     bottom: 0;
     left: 0;
-    height: 96px;
-    background: linear-gradient(rgb(255 253 249 / 0%), #fffdf9 85%);
+    height: 34%;
+    background: linear-gradient(transparent, var(--paper-fill) 70%);
     content: "";
     pointer-events: none;
   }
 }
 
-.pageActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 14px;
+.paperOnTop {
+  z-index: 2;
+  transform: translateX(calc(var(--paper-w) * var(--paper-front-x))) rotate(-2deg);
+
+  &:hover,
+  &:focus-within {
+    box-shadow:
+      0 1px 2px rgb(43 43 43 / 10%),
+      0 22px 40px -12px rgb(43 43 43 / 34%);
+    transform: translateX(calc(var(--paper-w) * var(--paper-front-x))) translateY(-6px) rotate(-1.4deg);
+  }
 }
 
-.download {
+// A shade warmer than the top page, as if a little further from the light.
+.paperBehind {
+  --paper-fill: #f8f4ec;
+
+  z-index: 1;
+  transform: translateX(calc(var(--paper-w) * var(--paper-back-x))) translateY(12px) rotate(4deg);
+
+  // Pointing at it tugs it out a little: a hint that it comes out.
+  &:hover,
+  &:focus-within {
+    transform: translateX(calc(var(--paper-w) * (var(--paper-back-x) + 0.07))) translateY(6px) rotate(5.5deg);
+  }
+}
+
+.paperBehind.paperLifting {
+  transform: translateX(calc(var(--paper-w) * 0.66)) translateY(-16px) rotate(10deg);
+  transition: transform $paper-out;
+}
+
+// The document itself, shrunk to the page. index.module.scss .paper does the
+// same reset: the resume brings its own top rule from when it sat on the sheet.
+.paperPreview {
+  width: 450px;
+  padding: 40px 38px;
+  zoom: var(--paper-zoom);
+  pointer-events: none;
+  user-select: none;
+
+  > article {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+}
+
+// The whole page is the button; the pill is its visible label.
+.paperButton {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: inherit;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $ink;
+    outline-offset: -5px;
+  }
+}
+
+.paperPill {
+  position: absolute;
+  bottom: 18px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-family: $font;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.paperOnTop .paperPill {
+  left: 50%;
+  background: $ink;
+  color: #f7f7f7;
+  transform: translateX(-50%);
+}
+
+// In the strip of the back page that shows past the top one.
+.paperBehind .paperPill {
+  right: 14px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(43 43 43 / 18%);
+  color: $ink;
+}
+
+// Open: the whole document on the sheet's paper.
+.reader {
+  margin-top: 0;
+}
+
+.readerFoot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.docActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+// "Download …" and "Back to the pile".
+.pillButton {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 48px;
-  padding: 0 22px;
+  height: 40px;
+  padding: 0 18px;
   border: 1px solid rgb(43 43 43 / 24%);
   border-radius: 999px;
+  background: none;
   color: $ink;
+  font-family: $font;
   font-size: 0.9375rem;
   font-weight: 500;
   text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
   transition: background-color 200ms ease;
 
   &:hover {
     background: rgb(255 255 255 / 85%);
-  }
-
-  &:focus-visible {
-    outline: 2px solid $ink;
-    outline-offset: 3px;
-  }
-}
-
-// Reads as the line of help under the page; it is also the page's switch.
-.pageToggle {
-  min-height: 44px;
-  padding: 0;
-  color: $muted;
-  font-family: $font;
-  font-size: 0.875rem;
-  text-align: left;
-  cursor: pointer;
-
-  &:hover {
-    color: $ink;
-    text-decoration: underline;
-    text-underline-offset: 3px;
   }
 
   &:focus-visible {
@@ -377,7 +462,6 @@ $font: "Outfit", "Segoe UI", sans-serif;
 
 .stack {
   --box-radius: 12px;
-  --box-title-size: 1.25rem;
   --box-head-pad: 15px 12px 15px 20px;
   --box-head-pad-sm: 14px 10px 14px 16px;
   --box-content-pad: 2px 20px 20px;
@@ -659,21 +743,14 @@ $font: "Outfit", "Segoe UI", sans-serif;
     text-align: left;
   }
 
-  .roles,
   .scenarios {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .role {
-    padding: 14px 18px;
-  }
-
-  .docTabs {
-    width: 100%;
-  }
-
-  .pageClosed {
-    max-height: 280px;
+  // Smaller pages, same proportions: zoom is the width / 450.
+  .pile {
+    --paper-w: 280px;
+    --paper-zoom: 0.6222;
   }
 
   .row {
@@ -687,6 +764,23 @@ $font: "Outfit", "Segoe UI", sans-serif;
 }
 
 @media (max-width: 479px) {
+  .pile {
+    --paper-w: 210px;
+    --paper-zoom: 0.4667;
+    --paper-front-x: -0.17;
+    --paper-back-x: 0.34;
+  }
+
+  .paperPill {
+    bottom: 14px;
+    padding: 6px 11px;
+    font-size: 0.8125rem;
+  }
+
+  .paperBehind .paperPill {
+    right: 10px;
+  }
+
   .projects {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -697,9 +791,8 @@ $font: "Outfit", "Segoe UI", sans-serif;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .role,
-  .roleText,
-  .download,
+  .paper,
+  .pillButton,
   .profile,
   .project,
   .projectArrow,
