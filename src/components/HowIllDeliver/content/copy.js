@@ -44,7 +44,7 @@ export const HIRING = {
     teaser: 'Design-Engineering, UI/UX, front-end',
     items: [
       // Draft: the line is Claude's. Rewrite in your words.
-      { id: 'design-engineering', label: 'Design-Engineering', text: 'Using AI in development; designing by hand.' },
+      { id: 'design-engineering', label: 'Design-Engineering', text: 'Using AI in development; designing by hand. A new role for designers who code/coders who design.' },
       { id: 'interaction', label: 'Interaction design', text: 'Hovers, drags and reveals, prototyped in the browser.' },
       { id: 'ux', label: 'UI/UX design', text: 'Research, sketches and Figma screens.' },
       { id: 'frontend', label: 'Front-end development', text: 'React builds of my own designs or yours deployed.' }
