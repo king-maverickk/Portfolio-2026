@@ -1,12 +1,12 @@
 // The Hiring managers sheet, from the "Hiring managers sheet: redesign mock"
 // Design file and the Freeform sketch over it (15 Nov 2026).
 //
-// - The hello sentence, the roles, the documents, the profile cards and the
-//   projects sit straight on the sheet, 56px apart.
-// - Proof, Working with me and Still learning are the same containers the
-//   Freelance sheet uses (SheetBox.js), retuned below: rounder, smaller
-//   titles, and the hint stays when a container is open.
-// - Sizes follow the Design file (800px wide); under 768px things stack.
+// - The title and opening sentence, the resume pile and Projects sit straight
+//   on the sheet, 56px apart, inset to line up with the container titles.
+// - Online, Roles, Proof, Working with me and Still learning are the same
+//   containers the Freelance sheet uses (SheetBox.js), sized like Freelance's;
+//   the one difference is that the hint stays when a container is open.
+// - The sheet has Freelance's slim margins; under 768px things stack.
 
 $ink: #2b2b2b;
 $muted: #5b5851;
@@ -17,11 +17,23 @@ $blue: #2864e8;
 $ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 $font: "Outfit", "Segoe UI", sans-serif;
 
+// The sheet has Freelance's slim margins (index.module.scss .sheetSections),
+// so the containers run nearly edge to edge. Everything that sits straight on
+// the sheet (title and sentence, the pile, Projects) is inset by the same
+// 26px (20px on phones) the containers pad their titles with, so every left
+// edge lines up, as on the Freelance sheet.
 .sheet {
+  --hiring-inset: 26px;
+
   display: grid;
   gap: 56px;
+  padding-bottom: 8px;
   color: $ink;
   font-family: $font;
+
+  > :not(.stack) {
+    margin-inline: var(--hiring-inset);
+  }
 }
 
 // --- The title (freelanceSheet.module.scss .sheetName) ------------------------
@@ -32,17 +44,42 @@ $font: "Outfit", "Segoe UI", sans-serif;
   margin: 0;
 }
 
-// --- The hello sentence --------------------------------------------------------
+// --- The opening sentence -----------------------------------------------------
+// The Freelance sentence's class does the work (index.module.scss
+// .forStatement and .forIcon): size, line height, and the icons popping in one
+// after another as the sheet finishes sliding in. Two things are set here:
+//
+// - Spacing: the Freelance sentence sits 24px under its title (22px on phones)
+//   because it's inside its first container. Here the title and sentence share
+//   .opening, so the sheet's 56px gap comes after the sentence, not before it.
+// - The icons. The Freelance exports have wide transparent shadow edges, so
+//   their tiles are smaller than their files; these fill nearly their whole
+//   file. 1.6em of file makes a tile of about 1.5em, the size of the
+//   Freelance receipt tile. Delays match Freelance's 520 / 640 / 760ms.
 
-.hello {
-  --inline-img-radius: 0; // the drawings have no box to round off
-  --inline-img-gap: 0.18em;
+// The title sits where a container's title would: 20px down (18px on phones),
+// like Freelance's, which lives in its first container.
+.opening {
+  padding-top: 20px;
+}
 
-  max-width: 34em;
-  font-size: clamp(1.25rem, 3.2vw, 1.5rem);
-  font-weight: 500;
-  line-height: 1.5;
-  text-wrap: pretty;
+.opening .hello {
+  margin: 24px 0 0 !important;
+}
+
+.hello .iconFigma {
+  --inline-img-size: 1.6;
+  --pop-delay: 520ms;
+}
+
+.hello .iconPrototype {
+  --inline-img-size: 1.6;
+  --pop-delay: 640ms;
+}
+
+.hello .iconReact {
+  --inline-img-size: 1.6;
+  --pop-delay: 760ms;
 }
 
 // --- A block: title (and maybe something on its right), then content -----------
@@ -458,14 +495,10 @@ $paper-bg: #fffdf9;
   }
 }
 
-// --- The containers: Proof, Working with me, Still learning ----------------------
+// --- The containers: Online, Roles, Proof, Working with me, Still learning ------
+// Freelance's sizes and padding; only the hint stays visible when one opens.
 
 .stack {
-  --box-radius: 12px;
-  --box-head-pad: 15px 12px 15px 20px;
-  --box-head-pad-sm: 14px 10px 14px 16px;
-  --box-content-pad: 2px 20px 20px;
-  --box-content-pad-sm: 2px 16px 16px;
   --box-teaser-open: 1;
   --box-teaser-open-display: block;
 
@@ -733,6 +766,18 @@ $paper-bg: #fffdf9;
 @media (max-width: 767px) {
   .sheet {
     gap: 44px;
+  }
+
+  .sheet {
+    --hiring-inset: 20px;
+  }
+
+  .opening {
+    padding-top: 18px;
+  }
+
+  .opening .hello {
+    margin-top: 22px !important;
   }
 
   .blockHead {

@@ -80,10 +80,10 @@ const SHEET_CONTENT = {
     title: HIRING.title,
     description: HIRING.description,
     Body: HiringManagerSheet,
-    // Sets its own title (id="delivery-sheet-title") with the Freelance
-    // title's rules, so the two sheets' names match.
+    // Like Freelance: sets its own title (id="delivery-sheet-title") with the
+    // Freelance title's rules, and has the same slim sheet margins.
     ownsTitle: true,
-    className: styles.sheetOwnsTitle
+    className: styles.sheetSections
   }
 };
 

@@ -12,6 +12,7 @@ import SheetBox from './SheetBox';
 import Documents from './Documents';
 import ProfileCards from './ProfileCards';
 import Scenarios from './Scenarios';
+import styles from './index.module.scss';
 import sx from './freelanceSheet.module.scss';
 import hx from './hiringSheet.module.scss';
 
@@ -22,25 +23,25 @@ import hx from './hiringSheet.module.scss';
 //   / Proof / Working with me / Still learning (containers) → Projects
 //
 // Everything above the containers sits straight on the sheet. The words are in
-// copy.js (HIRING), apart from the hello sentence, which has pictures inside it.
+// copy.js (HIRING), apart from the opening sentence, which has icons inside it.
 
-// The five small pictures inside the hello sentence. Four are the site's own:
-// the code chip and colour wheel from About (AboutMotheo), and the pencil and
-// interactivity icons from the stages on Home (ProjectStages/StageIcons.js).
-// "build" has no picture of its own yet, so it keeps the drawing from the
-// Design file. `ratio` is width / height, as InlineImg wants it.
+// The opening sentence follows the Freelance sentence's rules (index.module.scss
+// .forStatement): same size and line height, and the icons pop in one after
+// another once the sheet has slid in (.forIcon). Each icon's size and delay is
+// in hiringSheet.module.scss.
 const ASSETS = `${process.env.PUBLIC_URL}/assets/HowIllDeliver`;
 
 const HELLO_PICTURES = {
-  figma: { src: `${ASSETS}/hiring-manager_icon_figma.png`, ratio: 1 },
-  prototype: { src: `${ASSETS}/hiring-manager_icon_prototype.png`, ratio: 1 },
-  react: { src: `${ASSETS}/hiring-manager_icon_react.png`, ratio: 1 }
+  figma: { src: `${ASSETS}/hiring-manager_icon_figma.png`, ratio: 1, className: hx.iconFigma },
+  prototype: { src: `${ASSETS}/hiring-manager_icon_prototype.png`, ratio: 1, className: hx.iconPrototype },
+  react: { src: `${ASSETS}/hiring-manager_icon_react.png`, ratio: 1, className: hx.iconReact }
 };
 
-// A word with its picture straight after it; the two never split across lines.
+// A word with its icon straight after it; the two never split across lines.
 function Word({ picture, after, children }) {
+  const { className, ...image } = HELLO_PICTURES[picture];
   return (
-    <InlineImg {...HELLO_PICTURES[picture]} after={after} size={1.15}>
+    <InlineImg {...image} after={after} className={cn(styles.forIcon, className)}>
       {children}
     </InlineImg>
   );
@@ -54,9 +55,9 @@ Word.propTypes = {
 
 function Hello() {
   return (
-    <div className={hx.hello}>
+    <p className={cn(styles.forStatement, hx.hello)}>
       For teams that need the <Word picture="figma">Figma</Word> screens, the <Word picture="prototype">prototype</Word> <Word picture="react">&</Word> React build from one person.
-    </div>
+    </p>
   );
 }
 
@@ -182,10 +183,13 @@ function HiringManagerSheet() {
   return (
     <div className={hx.sheet}>
       {/* The sheet's name, with the same rules as the Freelance title. */}
-      <div className={sx.sheetNameFrame}>
-        <h2 id="delivery-sheet-title" className={cn(sx.sheetName, hx.title)}>{HIRING.title}</h2>
-      </div>
-      <Hello />
+      {/* Title and sentence together, so the sheet's gap doesn't come between them. */}
+      <header className={hx.opening}>
+        <div className={sx.sheetNameFrame}>
+          <h2 id="delivery-sheet-title" className={cn(sx.sheetName, hx.title)}>{HIRING.title}</h2>
+        </div>
+        <Hello />
+      </header>
       <Documents />
 
       <div className={hx.stack}>
