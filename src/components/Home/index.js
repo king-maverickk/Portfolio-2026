@@ -235,9 +235,9 @@ function Home(props) {
         </div>
       </div>
       <ProjectStages project={homeProject} />
+      <AboutMotheo />
       <HowIllDeliver />
       <ProjectsList />
-      <AboutMotheo />
       <ContactSection />
     </>
   );
