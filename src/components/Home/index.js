@@ -234,8 +234,8 @@ function Home(props) {
           </section>
         </div>
       </div>
-      <ProjectStages project={homeProject} />
       <AboutMotheo />
+      <ProjectStages project={homeProject} />
       <HowIllDeliver />
       <ProjectsList />
       <ContactSection />
